@@ -122,7 +122,7 @@ type Message struct {
 	
 	Content string
 	Message_sender int  `sql:"type:int REFERENCES users(id)"`
-	Message_recepient int  `sql:"type:int REFERENCES users(id)"`
+	Message_recepient int  `sql:"type:int REFERENCES groups(id)"`
 	Message_content_type int `sql:"type:int REFERENCES message_content_types(id)"`
 }
 

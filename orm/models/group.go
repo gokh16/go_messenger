@@ -10,6 +10,7 @@ type Group struct {
 	User User
 	Group_Type Group_Type
 	
+	Group_name string
 	Group_ownerID uint
 	Group_typeID uint 
 }

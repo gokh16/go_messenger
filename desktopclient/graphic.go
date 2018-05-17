@@ -1,13 +1,17 @@
 package desktopclient
 
-import "github.com/andlabs/ui"
+import (
+	"github.com/ProtonMail/ui"
+)
+
 
 func Draw(){
 	err := ui.Main(func() {
 		window := ui.NewWindow("Chat", 500, 500, false)
 		input := ui.NewEntry()
 		send := ui.NewButton("Send")
-		output := ui.NewLabel("")
+		output := ui.NewMultilineNonWrappingEntry()
+		output.SetReadOnly(true)
 		mainBox := ui.NewHorizontalBox()
 		userExample1 := ui.NewButton("USER1")
 		userExample2 := ui.NewButton("USER2")

@@ -1,4 +1,4 @@
-package dekstopclient
+package desktopclient
 //
 //type mimetype struct {
 //	text string

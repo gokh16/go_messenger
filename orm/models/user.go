@@ -10,5 +10,6 @@ type User struct {
 	Login string
 	Password string
 	Username string
+	Status bool
 	UserIcon string
 }

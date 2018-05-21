@@ -3,14 +3,16 @@ package main
 import (
 	"./db"
 	"./db/dbservice"
+	"fmt"
 )
+
 func init(){
 	db.CreateDatabase();
 }
 
 func main(){
 
-	dbservice.CreateMessageType("text")
+	/*dbservice.CreateMessageType("text")
 	dbservice.CreateRelationType("friends")
 	dbservice.CreateGroupType("private_message")
 
@@ -24,6 +26,14 @@ func main(){
 	dbservice.AddGroupMember("_lunarlexy","Group1","Hello lexy")
 	
 	dbservice.AddMessage("I am your friend","_lunarmax","Group1",1)
-	
-	dbservice.CreateUserRelation("_lunarmax","_lunarlexy",1)
+	dbservice.AddMessage("Test1","_lunarmax","Group1",1)
+	dbservice.AddMessage("Test2","_lunarmax","Group1",1)
+	dbservice.AddMessage("Test3","_lunarmax","Group1",1)
+	dbservice.AddMessage("Test4","_lunarmax","Group1",1)
+	dbservice.AddMessage("Test5","_lunarmax","Group1",1)*/
+
+	u := dbservice.GetContactList("_lunarmax")
+	for i,_:= range u{
+		fmt.Println(u[i].Username)
+	}
 }

@@ -9,7 +9,7 @@ type User_Relation struct {
 	
 	Relation_Type Relation_Type
 
-	Relating_user int `sql:"type:int REFERENCES users(id)"`
-	Related_user int `sql:"type:int REFERENCES users(id)"`
-	Relation_typeID int 
+	Relating_user uint `sql:"type:int REFERENCES users(id)"`
+	Related_user uint `sql:"type:int REFERENCES users(id)"`
+	Relation_typeID uint 
 }

@@ -4,12 +4,12 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type User_Relation struct {
+type UserRelation struct {
 	gorm.Model
-	
-	Relation_Type Relation_Type
 
-	Relating_user uint `sql:"type:int REFERENCES users(id)"`
-	Related_user uint `sql:"type:int REFERENCES users(id)"`
-	Relation_typeID uint 
+	RelationType RelationType
+
+	RelatingUser   uint `sql:"type:int REFERENCES users(id)"`
+	RelatedUser    uint `sql:"type:int REFERENCES users(id)"`
+	RelationTypeID uint
 }

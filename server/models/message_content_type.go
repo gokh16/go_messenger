@@ -4,8 +4,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Message_Content_Type struct {
+type MessageContentType struct {
 	gorm.Model
 
-	Type string
+	Type string `json:"message_content_type"`
 }

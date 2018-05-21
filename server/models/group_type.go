@@ -4,8 +4,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Group_Type struct {
+type GroupType struct {
 	gorm.Model
 
-	Type string
+	Type string `json:"group_type"`
 }

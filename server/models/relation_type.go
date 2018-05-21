@@ -4,8 +4,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Relation_Type struct {
+type RelationType struct {
 	gorm.Model
 
-	Type string
+	Type string `json:"relation_type"`
 }

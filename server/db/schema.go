@@ -3,11 +3,12 @@ package db
 import (
 	"log"
 	"fmt"
+
+	"../models"
 	"github.com/go-gormigrate/gormigrate"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
-	"../models"
 )
 
 func CreateDatabase() {

@@ -7,10 +7,10 @@ import (
 type Group struct {
 	gorm.Model
 
-	User User
-	Group_Type Group_Type
-	
-	Group_name string
-	Group_ownerID uint
-	Group_typeID uint 
+	User      User
+	GroupType GroupType
+
+	GroupName    string `json:"group_name"`
+	GroupOwnerID uint   `json:"group_owner_id"`
+	GroupTypeID  uint   `json:"group_type_id"`
 }

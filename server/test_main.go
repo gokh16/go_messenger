@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./orm"
+	"./db"
 )
 
 func main(){
-	orm.CreateDatabase();
+	db.CreateDatabase();
 }

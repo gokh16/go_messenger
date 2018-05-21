@@ -1,29 +1,29 @@
-package orm
+package db
 
 import (
 	"log"
 
-	"./models"
+	"../models"
 	"github.com/go-gormigrate/gormigrate"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 func CreateDatabase() {
-	db, err := gorm.Open("postgres", "host=0.0.0.0 port=5434 user=postgres " +
+	database, err := gorm.Open("postgres", "host=0.0.0.0 port=5434 user=postgres " +
 		"dbname=golangDB password=golang sslmode=disable")
 	if err != nil {
         log.Fatal(err)
     }
-    if err = db.DB().Ping(); err != nil {
+    if err = database.DB().Ping(); err != nil {
         log.Fatal(err)
     }
 
-    db.LogMode(true)
+    database.LogMode(true)
 
-	defer db.Close()
+	defer database.Close()
 
-	 m := gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{
+	 m := gormigrate.New(database, gormigrate.DefaultOptions, []*gormigrate.Migration{
 	 	{
 			ID: "0",
 			Migrate: func(tx *gorm.DB) error {
@@ -63,10 +63,10 @@ func CreateDatabase() {
 		{
 			ID: "4",
 			Migrate: func(tx *gorm.DB) error {
-				db.CreateTable(&models.Message{})
-				db.Model(&models.Message{}).AddForeignKey("message_sender_id", "users(id)", "RESTRICT", "RESTRICT")
-				db.Model(&models.Message{}).AddForeignKey("message_recipient_id", "groups(id)", "RESTRICT", "RESTRICT")
-				db.Model(&models.Message{}).AddForeignKey("message_content_type_id", "message_content_types(id)", "RESTRICT", "RESTRICT")
+				database.CreateTable(&models.Message{})
+				database.Model(&models.Message{}).AddForeignKey("message_sender_id", "users(id)", "RESTRICT", "RESTRICT")
+				database.Model(&models.Message{}).AddForeignKey("message_recipient_id", "groups(id)", "RESTRICT", "RESTRICT")
+				database.Model(&models.Message{}).AddForeignKey("message_content_type_id", "message_content_types(id)", "RESTRICT", "RESTRICT")
 				return tx.AutoMigrate(&models.Message{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
@@ -76,9 +76,9 @@ func CreateDatabase() {
 		{
 			ID: "5",
 			Migrate: func(tx *gorm.DB) error {
-				db.CreateTable(&models.Group{})
-				db.Model(&models.Group{}).AddForeignKey("group_owner_id", "users(id)", "RESTRICT", "RESTRICT")
-				db.Model(&models.Group{}).AddForeignKey("group_type_id", "group_types(id)", "RESTRICT", "RESTRICT")
+				database.CreateTable(&models.Group{})
+				database.Model(&models.Group{}).AddForeignKey("group_owner_id", "users(id)", "RESTRICT", "RESTRICT")
+				database.Model(&models.Group{}).AddForeignKey("group_type_id", "group_types(id)", "RESTRICT", "RESTRICT")
 				return tx.AutoMigrate(&models.Group{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
@@ -88,10 +88,10 @@ func CreateDatabase() {
 		{
 			ID: "6",
 			Migrate: func(tx *gorm.DB) error {
-				db.CreateTable(&models.Group_Member{})
-				db.Model(&models.Group_Member{}).AddForeignKey("user_id", "users(id)", "RESTRICT", "RESTRICT")
-				db.Model(&models.Group_Member{}).AddForeignKey("group_id", "groups(id)", "RESTRICT", "RESTRICT")
-				db.Model(&models.Group_Member{}).AddForeignKey("last_read_message_id", "messages(id)", "RESTRICT", "RESTRICT")
+				database.CreateTable(&models.Group_Member{})
+				database.Model(&models.Group_Member{}).AddForeignKey("user_id", "users(id)", "RESTRICT", "RESTRICT")
+				database.Model(&models.Group_Member{}).AddForeignKey("group_id", "groups(id)", "RESTRICT", "RESTRICT")
+				database.Model(&models.Group_Member{}).AddForeignKey("last_read_message_id", "messages(id)", "RESTRICT", "RESTRICT")
 				return tx.AutoMigrate(&models.Group_Member{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
@@ -101,8 +101,8 @@ func CreateDatabase() {
 		{
 			ID: "7",
 			Migrate: func(tx *gorm.DB) error {
-				db.CreateTable(&models.User_Relation{})
-				db.Model(&models.User_Relation{}).AddForeignKey("relation_type_id", "relation_types(id)", "RESTRICT", "RESTRICT")				
+				database.CreateTable(&models.User_Relation{})
+				database.Model(&models.User_Relation{}).AddForeignKey("relation_type_id", "relation_types(id)", "RESTRICT", "RESTRICT")				
 
 				return tx.AutoMigrate(&models.User_Relation{}).Error
 			},

@@ -1,21 +1,21 @@
 package dbservice
 	
 import (
+	"fmt"
+
+	"../../db"
 	"../../models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 func dbconnect() *gorm.DB{
-	database, err := gorm.Open("postgres", "host=0.0.0.0 port=5434 user=postgres " +
-		"dbname=golangDB password=golang sslmode=disable")
+	dbinfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", db.DB_HOST, db.DB_PORT, db.DB_USER, db.DB_NAME, db.DB_PASSWORD, db.DB_SSLMODE)
+	db, err := gorm.Open("postgres", dbinfo)
 	if err != nil {
-        panic(err)
-    }
-    if err = database.DB().Ping(); err != nil {
-        panic(err)
-    }
-    return database
+		panic(err)
+	}
+    return db
 }
 
 func CreateUser(login string, password string, username string,email string, status bool, usericon string ) bool{
@@ -30,10 +30,10 @@ func CreateUser(login string, password string, username string,email string, sta
 	}
 }
 
-func CreateGroupType(group_type string) bool{
+func CreateGroupType(groupType string) bool{
 	db := dbconnect()
 	defer db.Close()
-	gtype := models.GroupType{Type: group_type}
+	gtype := models.GroupType{Type: groupType}
 	if db.NewRecord(gtype){
 		db.Create(&gtype)
 		return true
@@ -41,10 +41,10 @@ func CreateGroupType(group_type string) bool{
 		return false
 	}
 }
-func CreateMessageType(message_type string) bool{
+func CreateMessageType(messageType string) bool{
 	db := dbconnect()
 	defer db.Close()
-	mtype := models.MessageContentType{Type: message_type}
+	mtype := models.MessageContentType{Type: messageType}
 	if db.NewRecord(mtype){
 		db.Create(&mtype)
 		return true
@@ -53,10 +53,10 @@ func CreateMessageType(message_type string) bool{
 	}
 }
 
-func CreateRelationType(relation_type string) bool{
+func CreateRelationType(relationType string) bool{
 	db := dbconnect()
 	defer db.Close()
-	rtype := models.RelationType{Type: relation_type}
+	rtype := models.RelationType{Type: relationType}
 	if db.NewRecord(rtype){
 		db.Create(&rtype)
 		return true
@@ -65,14 +65,14 @@ func CreateRelationType(relation_type string) bool{
 	}
 }
 
-func CreateUserRelation(relating_user string, related_user string, relation_type uint) bool{
+func CreateUserRelation(relatingUser string, relatedUser string, relationType uint) bool{
 	db := dbconnect()
 	defer db.Close()
-	relating_u := models.User{}
-	related_u := models.User{}
-	db.Where("username = ?", relating_user).First(&relating_u)
-	db.Where("username = ?", related_user).First(&related_u)
-	relation := models.UserRelation{RelatingUser:relating_u.ID, RelatedUser: related_u.ID,RelationTypeID:relation_type}
+	relatingU := models.User{}
+	relatedU := models.User{}
+	db.Where("username = ?", relatingUser).First(&relatingU)
+	db.Where("username = ?", relatedUser).First(&relatedU)
+	relation := models.UserRelation{RelatingUser:relatingU.ID, RelatedUser: relatedU.ID,RelationTypeID:relationType}
 	if db.NewRecord(relation){
 		db.Create(&relation)
 		return true
@@ -81,12 +81,12 @@ func CreateUserRelation(relating_user string, related_user string, relation_type
 	}
 }
 
-func CreateGroup(group_name string, group_owner string, group_type uint) bool{
+func CreateGroup(groupName string, groupOwner string, groupType uint) bool{
 	db := dbconnect()
 	defer db.Close()
 	owner := models.User{}
-	db.Where("username = ?", group_owner).First(&owner)
-	group := models.Group{GroupName:group_name,GroupOwnerID: owner.ID,GroupTypeID:group_type}
+	db.Where("username = ?", groupOwner).First(&owner)
+	group := models.Group{GroupName:groupName,GroupOwnerID: owner.ID,GroupTypeID:groupType}
 	if db.NewRecord(group){
 		db.Create(&group)
 		return true
@@ -95,14 +95,14 @@ func CreateGroup(group_name string, group_owner string, group_type uint) bool{
 	}
 }
 
-func AddMessage(content string, username string, group_name string, content_type uint) bool{
+func AddMessage(content string, username string, groupName string, contentType uint) bool{
 	db := dbconnect()
 	defer db.Close()
 	sender := models.User{}
 	recipient := models.Group{}
 	db.Where("username = ?", username).First(&sender)
-	db.Where("group_name = ?", group_name).First(&recipient)
-	message := models.Message{Content: content,MessageSenderID: sender.ID,MessageRecipientID: recipient.ID,MessageContentTypeID:content_type}
+	db.Where("group_name = ?", groupName).First(&recipient)
+	message := models.Message{Content: content,MessageSenderID: sender.ID,MessageRecipientID: recipient.ID,MessageContentTypeID:contentType}
 	if db.NewRecord(message){
 		db.Create(&message)
 		return true
@@ -111,14 +111,14 @@ func AddMessage(content string, username string, group_name string, content_type
 	}
 }
 
-func AddGroupMember(username string, group_name string, lastmessage string) bool{
+func AddGroupMember(username string, groupName string, lastmessage string) bool{
 	db := dbconnect()
 	defer db.Close()
 	user := models.User{}
 	group := models.Group{}
 	message := models.Message{}
 	db.Where("username = ?", username).First(&user)
-	db.Where("group_name = ?", group_name).First(&group)
+	db.Where("group_name = ?", groupName).First(&group)
 	db.Where("content = ?", lastmessage).First(&message)
 	member := models.GroupMember{UserID: user.ID,GroupID: group.ID,LastReadMessageID: message.ID}
 	if db.NewRecord(member){

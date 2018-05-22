@@ -2,10 +2,14 @@ package desktop_client
 
 import (
 	"github.com/ProtonMail/ui"
+	"net"
+	"log"
+	"fmt"
 )
 
 
 func Draw(){
+	conn, _ := net.Dial("tcp", ":8080")
 	err := ui.Main(func() {
 		window := ui.NewWindow("Chat", 500, 500, false)
 		input := ui.NewEntry()
@@ -30,7 +34,13 @@ func Draw(){
 		mainBox.Append(messageBox, true)
 
 		send.OnClicked(func(*ui.Button) {
-			output.SetText("Login -->  " + input.Text())
+			_, err := conn.Write([]byte(JSONencode(userExample1.Text(),input.Text(),"SendMessageTo")))
+			if err!=nil{
+				fmt.Println("OnClickedError!")
+			}
+			//writer,_ := io.Writer.Write(JSONencode(userExample1.Text(),input.Text(),"SendMessageTo"))
+			fmt.Println(input.Text())
+			//fmt.Fprintf(conn, input.Text()+"\n")
 			input.SetText("")
 		})
 		window.SetChild(mainBox)
@@ -41,6 +51,7 @@ func Draw(){
 		window.Show()
 	})
 	if err!=nil{
-		panic(err)
+		log.Fatal(err)
 	}
+	//defer conn.Close()
 }

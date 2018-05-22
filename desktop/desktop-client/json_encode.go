@@ -3,7 +3,6 @@ package desktop_client
 import (
 	"encoding/json"
 	"log"
-	"fmt"
 )
 type User struct {
 	Login    string
@@ -26,12 +25,9 @@ type Message struct {
 
 func JSONencode(user string, message string, function string) string{
 	incomingData := Message{User{user}, message}
-	//incomingData := models.Message{models.User{user}}
 	outcomingData, err := json.Marshal(incomingData)
 	if err!=nil{
 		log.Fatal()
 	}
-	fmt.Println(string(outcomingData))
-	fmt.Println(outcomingData)
 	return string(outcomingData)+"\n"
 }

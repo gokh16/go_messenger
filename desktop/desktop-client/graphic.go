@@ -5,6 +5,7 @@ import (
 	"net"
 	"log"
 	"fmt"
+	"bufio"
 )
 
 
@@ -32,15 +33,21 @@ func Draw(){
 		messageBox.Append(send, false)
 		mainBox.Append(usersBox, false)
 		mainBox.Append(messageBox, true)
-
 		send.OnClicked(func(*ui.Button) {
 			_, err := conn.Write([]byte(JSONencode(userExample1.Text(),input.Text(),"SendMessageTo")))
 			if err!=nil{
 				fmt.Println("OnClickedError!")
 			}
-			//writer,_ := io.Writer.Write(JSONencode(userExample1.Text(),input.Text(),"SendMessageTo"))
-			fmt.Println(input.Text())
-			//fmt.Fprintf(conn, input.Text()+"\n")
+			go func() {
+				fmt.Println("``````````````````")
+				message, err := bufio.NewReader(conn).ReadString('\n')
+				if err!=nil{
+					log.Fatal(err)
+				}
+				output.SetText(message)
+				fmt.Println(message)
+				fmt.Println("``````````````````")
+			}()
 			input.SetText("")
 		})
 		window.SetChild(mainBox)
@@ -49,9 +56,19 @@ func Draw(){
 			return true
 		})
 		window.Show()
+		//go func() {
+		//	message, err := bufio.NewReader(conn).ReadString('\n')
+		//	if err!=nil{
+		//		log.Fatal(err)
+		//	}
+		//	//output.SetText(message)
+		//	fmt.Println("``````````````````")
+		//	fmt.Println(message)
+		//	fmt.Println("``````````````````")
+		//}()
 	})
 	if err!=nil{
 		log.Fatal(err)
 	}
-	//defer conn.Close()
+	defer conn.Close()
 }

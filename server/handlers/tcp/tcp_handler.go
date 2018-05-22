@@ -51,7 +51,8 @@ func HandleJSON(conn net.Conn) {
 		if err!=nil {
 			log.Fatal(err)
 		}
-		ParseJSON([]byte(data)) //TODO create verse broadcast and rewrite scanner for scan by strings
+		ParseJSON([]byte(data))
+		conn.Write([]byte("HERE!"))
 	}
 }
 

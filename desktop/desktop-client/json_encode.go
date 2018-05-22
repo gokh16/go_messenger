@@ -26,6 +26,7 @@ type Message struct {
 
 func JSONencode(user string, message string, function string) string{
 	incomingData := Message{User{user}, message}
+	//incomingData := models.Message{models.User{user}}
 	outcomingData, err := json.Marshal(incomingData)
 	if err!=nil{
 		log.Fatal()

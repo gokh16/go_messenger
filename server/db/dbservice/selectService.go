@@ -41,8 +41,6 @@ func FindUser(username string) models.User{
 	return user
 }
 
-
-//ЭТОТ МЕТОД ПОКА НЕ РАБОТАЕТ
 func GetContactList(username string) []models.User{
 	db := dbconnect()
 	defer db.Close()

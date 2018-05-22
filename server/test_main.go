@@ -13,7 +13,7 @@ func init(){
 func main(){
 
 	
-	/*dbservice.CreateMessageType("text")
+	dbservice.CreateMessageType("text")
 	dbservice.CreateRelationType("friends")
 	dbservice.CreateGroupType("private_message")
 
@@ -39,7 +39,7 @@ func main(){
 	
 	dbservice.CreateUser("0953644890","qwerty123","Lyxid","lyxid@gmail.com",false,"htttps:")
 	dbservice.CreateUserRelation("_lunarlexy","Lyxid",1)
-	*/
+	
 	fmt.Println("GetMessages(5,'Group1')")
 	u := dbservice.GetMessages(5,"Group1")
 	for i,_:= range u{
@@ -68,6 +68,4 @@ func main(){
 	for i,_:= range u4{
 		fmt.Println(u4[i].Username)
 	}
-
-
 }

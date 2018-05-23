@@ -51,12 +51,11 @@ func HandleJSON(conn net.Conn) {
 		if err!=nil {
 			log.Fatal(err)
 		}
-		ParseJSON([]byte(data))
-		conn.Write([]byte("HERE!"))
+		ParseJSON([]byte(data), conn)
 	}
 }
 
-func ParseJSON(bytes []byte) (Message, string, string){
+func ParseJSON(bytes []byte, conn net.Conn) (Message, string, string){
 	flag := "tcp"
 	message := Message{}
 	err := json.Unmarshal(bytes, &message)
@@ -67,5 +66,6 @@ func ParseJSON(bytes []byte) (Message, string, string){
 	}
 	fmt.Println(message.User.Login)
 	fmt.Println(message.Content)
+	conn.Write([]byte(message.Content))
 	return message, "func", flag
 }

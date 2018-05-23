@@ -5,7 +5,6 @@ import (
 	"net"
 	"log"
 	"fmt"
-	"bufio"
 )
 
 
@@ -38,16 +37,6 @@ func Draw(){
 			if err!=nil{
 				fmt.Println("OnClickedError!")
 			}
-			go func() {
-				fmt.Println("``````````````````")
-				message, err := bufio.NewReader(conn).ReadString('\n')
-				if err!=nil{
-					log.Fatal(err)
-				}
-				output.SetText(message)
-				fmt.Println(message)
-				fmt.Println("``````````````````")
-			}()
 			input.SetText("")
 		})
 		window.SetChild(mainBox)

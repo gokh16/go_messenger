@@ -1,14 +1,14 @@
 package desktop_client
 
 import (
-	"github.com/ProtonMail/ui"
-	"net"
-	"log"
+	"bufio"
 	"fmt"
+	"github.com/ProtonMail/ui"
+	"log"
+	"net"
 )
 
-
-func Draw(){
+func Draw() {
 	conn, _ := net.Dial("tcp", ":8080")
 	err := ui.Main(func() {
 		window := ui.NewWindow("Chat", 500, 500, false)
@@ -26,15 +26,15 @@ func Draw(){
 		usersBox.Append(userExample2, false)
 		usersBox.Append(userExample3, false)
 		usersBox.Append(userExample4, false)
-		messageBox:=ui.NewVerticalBox()
+		messageBox := ui.NewVerticalBox()
 		messageBox.Append(output, true)
 		messageBox.Append(input, false)
 		messageBox.Append(send, false)
 		mainBox.Append(usersBox, false)
 		mainBox.Append(messageBox, true)
 		send.OnClicked(func(*ui.Button) {
-			_, err := conn.Write([]byte(JSONencode(userExample1.Text(),input.Text(),"SendMessageTo")))
-			if err!=nil{
+			_, err := conn.Write([]byte(JSONencode(userExample1.Text(), input.Text(), "SendMessageTo")))
+			if err != nil {
 				fmt.Println("OnClickedError!")
 			}
 			input.SetText("")
@@ -45,18 +45,18 @@ func Draw(){
 			return true
 		})
 		window.Show()
-		//go func() {
-		//	message, err := bufio.NewReader(conn).ReadString('\n')
-		//	if err!=nil{
-		//		log.Fatal(err)
-		//	}
-		//	//output.SetText(message)
-		//	fmt.Println("``````````````````")
-		//	fmt.Println(message)
-		//	fmt.Println("``````````````````")
-		//}()
+		go func() {
+			message, err := bufio.NewReader(conn).ReadString('\n')
+			if err != nil {
+				log.Fatal(err)
+			}
+			//output.SetText(message)
+			fmt.Println("``````````````````")
+			fmt.Println(message)
+			fmt.Println("``````````````````")
+		}()
 	})
-	if err!=nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	defer conn.Close()

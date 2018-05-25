@@ -4,30 +4,25 @@ import (
 	"encoding/json"
 	"log"
 )
-type User struct {
-	Login    string
-	//Password string
-	//Username string `json:"username"`
-	//Email    string `json:"email"`
-	//Status   bool
-	//UserIcon string
-}
 
 type Message struct {
-	User               User
-	//Group              Group
-	//MessageContentType MessageContentType
-	Content              string `json:"message_content"`
-	//MessageSenderID      uint   `json:"message_sender_id"`
-	//MessageRecipientID   uint   `json:"message_recepient_id"`
-	//MessageContentTypeID uint   `json:"message_content_type_id"`
+	UserName    string
+	GroupName   string
+	ContentType string
+	Content     string
+	Login       string
+	Password    string
+	Email       string
+	Status      bool
+	UserIcon    string
+	Action      string
 }
 
-func JSONencode(user string, message string, function string) string{
-	incomingData := Message{User{user}, message}
+func JSONencode(user string, groupName string, contentType string, content string, login string, password string, email string, status bool, userIcon string, action string) string {
+	incomingData := Message{user, groupName, contentType, content, login, password, email, status, userIcon, action}
 	outcomingData, err := json.Marshal(incomingData)
-	if err!=nil{
-		log.Fatal()
+	if err != nil {
+		log.Fatal(err)
 	}
-	return string(outcomingData)+"\n"
+	return string(outcomingData) + "\n"
 }

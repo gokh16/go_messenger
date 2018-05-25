@@ -1,42 +1,36 @@
 package tcp
 
 import (
-	"net"
-	"log"
-	"encoding/json"
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"log"
+	"net"
 )
 
-
-type User struct {
-	Login    string
-	//Password string
-	//Username string `json:"username"`
-	//Email    string `json:"email"`
-	//Status   bool
-	//UserIcon string
-}
-
 type Message struct {
-	User               User
-	//Group              Group
-	//MessageContentType MessageContentType
-	Content              string `json:"message_content"`
-	//MessageSenderID      uint   `json:"message_sender_id"`
-	//MessageRecipientID   uint   `json:"message_recepient_id"`
-	//MessageContentTypeID uint   `json:"message_content_type_id"`
+	UserName    string
+	GroupName   string
+	ContentType string
+	Content     string
+	Login       string
+	Password    string
+	Email       string
+	Status      bool
+	UserIcon    string
+	Action      string
 }
 
-func Handler(){
+func Handler() {
 	ln, err := net.Listen("tcp", ":8080")
-	if err!=nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	defer ln.Close()
-	for{
+	for {
 		conn, err := ln.Accept()
-		if err!=nil{
+		if err != nil {
+			log.Print("Connection doesn't accepted: ")
 			log.Fatal(err)
 		}
 		go HandleJSON(conn)
@@ -47,24 +41,24 @@ func HandleJSON(conn net.Conn) {
 	remoteAddr := conn.RemoteAddr().String()
 	fmt.Println("Client connected from " + remoteAddr)
 	for {
-		data, err:=bufio.NewReader(conn).ReadString('\n')
-		if err!=nil {
-			log.Fatal(err)
+		data, err := bufio.NewReader(conn).ReadString('\n')
+		if err != nil {
+			log.Print("Data didn't read right: ")
+			continue
 		}
 		ParseJSON([]byte(data), conn)
 	}
 }
 
-func ParseJSON(bytes []byte, conn net.Conn) (Message, string, string){
+func ParseJSON(bytes []byte, conn net.Conn) (Message, string, string) {
 	flag := "tcp"
 	message := Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
-		fmt.Println(string(bytes))
-		fmt.Println("here")
+		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	fmt.Println(message.User.Login)
+	fmt.Println(message.Login)
 	fmt.Println(message.Content)
 	conn.Write([]byte(message.Content))
 	return message, "func", flag

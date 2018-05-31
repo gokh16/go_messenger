@@ -21,6 +21,8 @@ type Message struct {
 	Action      string
 }
 
+var connections []net.Conn
+
 func Handler() {
 	ln, err := net.Listen("tcp", ":8080")
 	if err != nil {
@@ -29,10 +31,12 @@ func Handler() {
 	defer ln.Close()
 	for {
 		conn, err := ln.Accept()
+		connections = append(connections, conn)
 		if err != nil {
 			log.Print("Connection doesn't accepted: ")
 			log.Fatal(err)
 		}
+
 		go HandleJSON(conn)
 	}
 }
@@ -42,9 +46,10 @@ func HandleJSON(conn net.Conn) {
 	fmt.Println("Client connected from " + remoteAddr)
 	for {
 		data, err := bufio.NewReader(conn).ReadString('\n')
+		log.Println(data, err)
 		if err != nil {
 			log.Print("Data didn't read right: ")
-			continue
+			log.Fatal(err)
 		}
 		ParseJSON([]byte(data), conn)
 	}
@@ -60,6 +65,9 @@ func ParseJSON(bytes []byte, conn net.Conn) (Message, string, string) {
 	}
 	fmt.Println(message.Login)
 	fmt.Println(message.Content)
-	conn.Write([]byte(message.Content))
+	for _, conns := range connections {
+		conns.Write([]byte(message.Content))
+		conns.Write([]byte("\n"))
+	}
 	return message, "func", flag
 }

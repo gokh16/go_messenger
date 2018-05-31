@@ -10,6 +10,7 @@ import (
 
 func Draw() {
 	conn, _ := net.Dial("tcp", ":8080")
+	defer conn.Close()
 	err := ui.Main(func() {
 		window := ui.NewWindow("Chat", 500, 500, false)
 		input := ui.NewEntry()
@@ -32,12 +33,23 @@ func Draw() {
 		messageBox.Append(send, false)
 		mainBox.Append(usersBox, false)
 		mainBox.Append(messageBox, true)
+
+		go func() {
+			scanner := bufio.NewScanner(conn)
+			for scanner.Scan() {
+				fmt.Println("here")
+				fmt.Println(scanner.Text())
+				output.Append(scanner.Text() + "\n")
+
+			}
+		}()
 		send.OnClicked(func(*ui.Button) {
-			_, err := conn.Write([]byte(JSONencode(userExample1.Text(), input.Text(), "SendMessageTo")))
+			_, err := conn.Write([]byte(JSONencode(userExample1.Text(), "", "", input.Text(), userExample1.Text(), " ", " ", false, " ", "SendMessageTo")))
 			if err != nil {
 				fmt.Println("OnClickedError!")
 			}
 			input.SetText("")
+
 		})
 		window.SetChild(mainBox)
 		window.OnClosing(func(*ui.Window) bool {
@@ -45,19 +57,8 @@ func Draw() {
 			return true
 		})
 		window.Show()
-		go func() {
-			message, err := bufio.NewReader(conn).ReadString('\n')
-			if err != nil {
-				log.Fatal(err)
-			}
-			//output.SetText(message)
-			fmt.Println("``````````````````")
-			fmt.Println(message)
-			fmt.Println("``````````````````")
-		}()
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer conn.Close()
 }

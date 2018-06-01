@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gokh16/go_messenger/server/models"
+	"../../models"
 	"github.com/gorilla/websocket"
 )
 

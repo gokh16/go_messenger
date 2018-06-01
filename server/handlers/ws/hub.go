@@ -1,6 +1,6 @@
 package handlers
 
-import "github.com/gokh16/go_messenger/server/models"
+import "../../models"
 
 type Hub struct {
 	clients    map[*Client]bool

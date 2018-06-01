@@ -1,8 +1,10 @@
 package desktop_client
 
 import (
+	"bufio"
 	"encoding/json"
 	"log"
+	"net"
 )
 
 type Message struct {
@@ -25,4 +27,14 @@ func JSONencode(user string, groupName string, contentType string, content strin
 		log.Fatal(err)
 	}
 	return string(outcomingData) + "\n"
+}
+
+func JSONdecode(conn net.Conn) Message {
+	message := Message{}
+	jsonObj, err := bufio.NewReader(conn).ReadBytes('\n')
+	if err != nil {
+		log.Println(err)
+	}
+	err = json.Unmarshal(jsonObj, &message)
+	return message
 }

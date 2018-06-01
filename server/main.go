@@ -30,7 +30,7 @@ func wsHandler() {
 func main() {
 	go wsHandler()
 	fmt.Println("good")
-	go tcp.Handler()
+	tcp.Handler()
 	fmt.Println("good")
 
 }

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 body {
     display: flex;
     min-height: 100vh;
@@ -23,30 +22,4 @@ nav img {
     height: 60vh;
     width: 100%;
     overflow-y: auto;
-=======
-body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-}
-
-main {
-    flex: 1 0 auto;
-}
-
-nav {
-    background-color: #ffffff;
-}
-
-nav img {
-    margin: 8px 15px;
-}
-
-
-#chat-messages {
-    min-height: 10vh;
-    height: 60vh;
-    width: 100%;
-    overflow-y: auto;
->>>>>>> 3661ec18fda6f6db02155e9be22dd834f0e1cd48
 }

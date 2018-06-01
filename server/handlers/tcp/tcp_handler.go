@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"go_messenger/server/userConnections"
 	"log"
 	"net"
 )
@@ -32,6 +33,7 @@ func Handler() {
 	for {
 		conn, err := ln.Accept()
 		connections = append(connections, conn)
+
 		if err != nil {
 			log.Print("Connection doesn't accepted: ")
 			log.Fatal(err)
@@ -55,19 +57,19 @@ func HandleJSON(conn net.Conn) {
 	}
 }
 
-func ParseJSON(bytes []byte, conn net.Conn) (Message, string, string) {
-	flag := "tcp"
+func ParseJSON(bytes []byte, conn net.Conn) (Message, string) {
 	message := Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	fmt.Println(message.Login)
+	fmt.Println(message.UserName)
 	fmt.Println(message.Content)
-	for _, conns := range connections {
+	userConnections.TCPConnections[conn] = message.UserName
+	for conns, _ := range userConnections.TCPConnections {
 		conns.Write([]byte(message.Content))
 		conns.Write([]byte("\n"))
 	}
-	return message, "func", flag
+	return message, " func "
 }

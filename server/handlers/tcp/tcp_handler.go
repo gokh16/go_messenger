@@ -39,8 +39,6 @@ func Handler() {
 	defer ln.Close()
 	for {
 		conn, err := ln.Accept()
-		connections = append(connections, conn)
-
 		if err != nil {
 			log.Print("Connection doesn't accepted: ")
 			log.Fatal(err)
@@ -55,7 +53,6 @@ func HandleJSON(conn net.Conn) {
 	fmt.Println("Client connected from " + remoteAddr)
 	for {
 		data, err := bufio.NewReader(conn).ReadString('\n')
-		log.Println(data, err)
 		if err != nil {
 			log.Print("Data didn't read right: ")
 			log.Fatal(err)
@@ -74,9 +71,19 @@ func ParseJSON(bytes []byte, conn net.Conn) (Message, string) {
 	fmt.Println(message.UserName)
 	fmt.Println(message.Content)
 	userConnections.TCPConnections[conn] = message.UserName
-	for conns, _ := range userConnections.TCPConnections {
+	for conns := range userConnections.TCPConnections {
 		conns.Write([]byte(message.Content))
 		conns.Write([]byte("\n"))
 	}
 	return message, " func "
+}
+
+func WaitJSON(conns []net.Conn, str Message) {
+	outcomingData, err := json.Marshal(&str)
+	if err != nil {
+		log.Println(err)
+	}
+	for _, conn := range conns {
+		conn.Write(outcomingData)
+	}
 }

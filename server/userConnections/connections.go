@@ -11,6 +11,9 @@ type Connections struct{
 	OutChan chan *Message
 }
 
-func (c *Connections) AddTCPConn() *Connections{
-
+func (c *Connections) AddTCPConn(conn net.Conn, userName string, outChan *Message) Connections{
+	newStr := Connections{}
+	newStr.TCPConnections[conn] = userName
+	newStr.OutChan <- outChan
+	return newStr
 }

@@ -2,13 +2,12 @@ package service
 
 import (
 	"go_messenger/server/db/dbservice"
-	"go_messenger/server/routing"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/userConnections"
 )
 
 //SendMessageTo ...
-func SendMessageTo(content, userName, groupName string, contentType uint) {
+func SendMessageTo(content, userName, groupName string, contentType string, chanOut chan *userConnections.Message) {
 	var mi interfaces.MI = dbservice.Message{}
 	var gmi interfaces.GMI = dbservice.GroupMember{}
 	mi.AddMessage(content, userName, groupName, contentType)
@@ -19,5 +18,5 @@ func SendMessageTo(content, userName, groupName string, contentType uint) {
 	}
 
 	message := userConnections.Message{Content: content, UserName: userName, GroupName: groupName, GroupMember: groupMember}
-	routing.RouterOut(message)
+	chanOut <- &message
 }

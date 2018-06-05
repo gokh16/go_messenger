@@ -5,5 +5,12 @@ import (
 	"net"
 )
 
-var WSConnections = map[*websocket.Conn]string{} // connection:login
-var TCPConnections = map[net.Conn]string{}       // connection:login
+type Connections struct{
+	WSConnections map[*websocket.Conn]string // connection:login
+	TCPConnections map[net.Conn]string // connection:login
+	OutChan chan *Message
+}
+
+func (c *Connections) AddTCPConn() *Connections{
+
+}

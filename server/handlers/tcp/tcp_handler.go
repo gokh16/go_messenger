@@ -9,20 +9,15 @@ import (
 	"net"
 )
 
-type Message struct {
-	UserName    string
-	GroupName   string
-	ContentType string
-	Content     string
-	Login       string
-	Password    string
-	Email       string
-	Status      bool
-	UserIcon    string
-	Action      string
+type TCPHandler struct {
+	Connection *userConnections.Connections
 }
 
-var connections []net.Conn
+func (c *TCPHandler) NewTCPHandler (conns *userConnections.Connections) *TCPHandler{
+	tcp := TCPHandler{conns}
+	go Handler()
+	return &tcp
+}
 
 func Handler() {
 	ln, err := net.Listen("tcp", ":8080")
@@ -54,8 +49,8 @@ func HandleJSON(conn net.Conn) {
 	}
 }
 
-func ParseJSON(bytes []byte, conn net.Conn) (Message, string) {
-	message := Message{}
+func ParseJSON(bytes []byte, conn net.Conn) (userConnections.Message, string) {
+	message := userConnections.Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Print("Unmarshal doesn't work: ")
@@ -69,14 +64,4 @@ func ParseJSON(bytes []byte, conn net.Conn) (Message, string) {
 		conns.Write([]byte("\n"))
 	}
 	return message, " func "
-}
-
-func WaitJSON(conns []net.Conn, str Message) {
-	outcomingData, err := json.Marshal(&str)
-	if err != nil {
-		log.Println(err)
-	}
-	for _, conn := range conns {
-		conn.Write(outcomingData)
-	}
 }

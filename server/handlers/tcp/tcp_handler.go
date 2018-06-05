@@ -49,7 +49,7 @@ func HandleJSON(conn net.Conn) {
 	}
 }
 
-func ParseJSON(bytes []byte, conn net.Conn) (userConnections.Message, string) {
+func ParseJSON(bytes []byte, conn net.Conn) chan *userConnections.Message{
 	message := userConnections.Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
@@ -58,10 +58,6 @@ func ParseJSON(bytes []byte, conn net.Conn) (userConnections.Message, string) {
 	}
 	fmt.Println(message.UserName)
 	fmt.Println(message.Content)
-	userConnections.TCPConnections[conn] = message.UserName
-	for conns := range userConnections.TCPConnections {
-		conns.Write([]byte(message.Content))
-		conns.Write([]byte("\n"))
-	}
-	return message, " func "
+	TCPHandler{}.Connection.AddTCPConn(conn,message.UserName,&message)
+	return TCPHandler{}.Connection.OutChan
 }

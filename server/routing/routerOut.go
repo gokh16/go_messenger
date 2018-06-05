@@ -10,32 +10,32 @@ var message userConnections.Message
 
 func RouterOut(msg userConnections.Message) {
 	message = msg
-	if listOfTCPcon := getAllTCPConnections(); listOfTCPcon != nil {
-		//tcp.sendToTCP(listOfTCP, msg)
+	if listOfTCPCon := getAllTCPConnections(); listOfTCPCon != nil {
+		//tcp.WaitJSON(listOfTCPCon, message) //  <- tcp.Message type, need userConnections.Message type in tcp package
 	}
-	if listOfWScon := getAllWSConnections(); listOfWScon != nil {
-		//ws.sendToWS(listOfWS, msg)
+	if listOfWSCon := getAllWSConnections(); listOfWSCon != nil {
+		//ws.sendToWS(listOfWSCon, message)
 	}
 }
 
 func getAllTCPConnections() []net.Conn {
 	mapTCP := userConnections.TCPConnections
-	sliseTCPCon := []net.Conn{}
+	sliceTCPCon := []net.Conn{}
 	for k, _ := range mapTCP {
-		if mapTCP[k] == message.UserName /* depend on the Message structure on service level*/ {
-			sliseTCPCon = append(sliseTCPCon, k)
+		if mapTCP[k] == message.UserName {
+			sliceTCPCon = append(sliceTCPCon, k)
 		}
 	}
-	return sliseTCPCon
+	return sliceTCPCon
 }
 
 func getAllWSConnections() []*websocket.Conn {
 	mapWS := userConnections.WSConnections
-	sliseWSCon := []*websocket.Conn{}
+	sliceWSCon := []*websocket.Conn{}
 	for k, _ := range mapWS {
 		if mapWS[k] == message.UserName {
-			sliseWSCon = append(sliseWSCon, k)
+			sliceWSCon = append(sliceWSCon, k)
 		}
 	}
-	return sliseWSCon
+	return sliceWSCon
 }

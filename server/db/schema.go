@@ -1,16 +1,17 @@
 package db
 
 import (
-	"log"
 	"fmt"
+	"log"
 
-	"../models"
+	"go_messenger/server/models"
+
 	"github.com/go-gormigrate/gormigrate"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-
 )
 
+//CreateDatabase creates tables and relations in DB
 func CreateDatabase() {
 	dbinfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASSWORD, DB_SSLMODE)
 	db, err := gorm.Open("postgres", dbinfo)

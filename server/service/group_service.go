@@ -28,7 +28,7 @@ func CreateGroup(groupName, groupOwner string, groupMember []string, groupType u
 	case groupType == 2:
 		ok := gi.CreateGroup(groupName, groupOwner, groupType)
 		if ok {
-			lastMessage := ""
+			//lastMessage := ""
 			gmi.AddGroupMember(groupOwner, groupName, "")
 			msg = userConnections.Message{Status: ok}
 		}

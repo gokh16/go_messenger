@@ -4,9 +4,10 @@ import (
 	"./handlers/ws"
 	"flag"
 	"fmt"
-	"go_messenger/server/handlers/tcp"
 	"log"
 	"net/http"
+	"go_messenger/server/handlers/tcp"
+	"go_messenger/server/userConnections"
 )
 
 func wsHandler() {
@@ -28,9 +29,10 @@ func wsHandler() {
 }
 
 func main() {
+	connectionList := userConnections.Connections{}
 	go wsHandler()
 	fmt.Println("good")
-	tcp.Handler()
+	tcp.TCPHandler{}.NewTCPHandler(&connectionList)
 	fmt.Println("good")
 
 }

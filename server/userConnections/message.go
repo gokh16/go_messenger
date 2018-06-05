@@ -9,7 +9,7 @@ type Message struct {
 	GroupType    uint
 	GroupOwner   string
 	GroupMember  []string
-	ContentType  uint
+	ContentType  string
 	Content      string
 	LastMessage  string
 	Login        string

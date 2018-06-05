@@ -14,7 +14,7 @@ func AddGroupMember(userName, groupName, lastMessage string, groupMember []strin
 	for _, user := range groupMember {
 		gmi.AddGroupMember(user, groupName, lastMessage)
 	}
-	msg = userConnections.Message{UserName: user, GroupName: groupName, Status: true}
+	msg = userConnections.Message{UserName: userName, GroupName: groupName, Status: true}
 	routing.RouterOut(msg)
 
 }

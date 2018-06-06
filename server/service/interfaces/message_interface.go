@@ -2,7 +2,7 @@ package interfaces
 
 //messageInterface interface
 type messageInterface interface {
-	AddMessage(content, username, groupName string, contentType uint) bool
+	AddMessage(content, username, groupName, contentType string) bool
 }
 
 //MI is the type of messageInterface

@@ -8,7 +8,7 @@ import (
 )
 
 //SendMessageTo ...
-func SendMessageTo(content, userName, groupName string, contentType uint) {
+func SendMessageTo(content, userName, groupName, contentType string) {
 	var mi interfaces.MI = dbservice.Message{}
 	var gmi interfaces.GMI = dbservice.GroupMember{}
 	mi.AddMessage(content, userName, groupName, contentType)

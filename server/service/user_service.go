@@ -1,20 +1,14 @@
 package service
 
 import (
-<<<<<<< HEAD
-=======
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/models"
 	"go_messenger/server/service/interfaces"
->>>>>>> group-chat
 	"go_messenger/server/userConnections"
 )
 
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func CreateUser(chanOut chan *userConnections.Message) {
-<<<<<<< HEAD
-
-=======
 	var ui interfaces.UI = dbservice.User{}
 	message := <-chanOut
 	//message := userConnections.Message{UserName: userName, Login: login, Password: password, Email: email, UserIcon: userIcon}
@@ -28,5 +22,4 @@ func CreateUser(chanOut chan *userConnections.Message) {
 	message.Status = ok
 
 	chanOut <- message
->>>>>>> group-chat
 }

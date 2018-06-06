@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net"
 
+	"github.com/gokh16/go_messenger/server/handlers/tcp"
 	"github.com/gokh16/go_messenger/server/handlers/ws"
 	"github.com/gokh16/go_messenger/server/userConnections"
 	"github.com/gorilla/websocket"
@@ -14,8 +16,8 @@ func main() {
 	connectionList.WSConnections = make(map[*websocket.Conn]string, 0)
 	wsStr := &ws.WSHandler{}
 	wsStr.NewWSHandler(&connectionList)
-	// fmt.Println("good")
-	// tcpStr := &tcp.TCPHandler{}
-	// tcpStr.NewTCPHandler(&connectionList)
-	// fmt.Println("good")
+	fmt.Println("good")
+	tcpStr := &tcp.TCPHandler{}
+	tcpStr.NewTCPHandler(&connectionList)
+	fmt.Println("good")
 }

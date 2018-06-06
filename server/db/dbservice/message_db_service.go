@@ -8,7 +8,11 @@ type Message struct {
 }
 
 //AddMessage func
+<<<<<<< HEAD
 func (msg Message) AddMessage(content, username, groupName, contentType string) bool {
+=======
+func (msg Message) AddMessage(content, username, groupName string, contentType string) bool {
+>>>>>>> group-chat
 	sender := models.User{}
 	recipient := models.Group{}
 	dbConn.Where("username = ?", username).First(&sender)

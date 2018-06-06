@@ -33,15 +33,6 @@ func CreateDatabase() {
 		{
 			ID: "1",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.AutoMigrate(&models.MessageContentType{}).Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.DropTable("message_content_types").Error
-			},
-		},
-		{
-			ID: "2",
-			Migrate: func(tx *gorm.DB) error {
 				return tx.AutoMigrate(&models.RelationType{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
@@ -49,7 +40,7 @@ func CreateDatabase() {
 			},
 		},
 		{
-			ID: "3",
+			ID: "2",
 			Migrate: func(tx *gorm.DB) error {
 				return tx.AutoMigrate(&models.User{}).Error
 			},
@@ -58,7 +49,7 @@ func CreateDatabase() {
 			},
 		},
 		{
-			ID: "4",
+			ID: "3",
 			Migrate: func(tx *gorm.DB) error {
 				db.CreateTable(&models.Message{})
 				db.Model(&models.Message{}).AddForeignKey("message_sender_id", "users(id)", "RESTRICT", "RESTRICT")
@@ -71,7 +62,7 @@ func CreateDatabase() {
 			},
 		},
 		{
-			ID: "5",
+			ID: "4",
 			Migrate: func(tx *gorm.DB) error {
 				db.CreateTable(&models.Group{})
 				db.Model(&models.Group{}).AddForeignKey("group_owner_id", "users(id)", "RESTRICT", "RESTRICT")
@@ -83,12 +74,11 @@ func CreateDatabase() {
 			},
 		},
 		{
-			ID: "6",
+			ID: "5",
 			Migrate: func(tx *gorm.DB) error {
 				db.CreateTable(&models.GroupMember{})
 				db.Model(&models.GroupMember{}).AddForeignKey("user_id", "users(id)", "RESTRICT", "RESTRICT")
 				db.Model(&models.GroupMember{}).AddForeignKey("group_id", "groups(id)", "RESTRICT", "RESTRICT")
-				db.Model(&models.GroupMember{}).AddForeignKey("last_read_message_id", "messages(id)", "RESTRICT", "RESTRICT")
 				return tx.AutoMigrate(&models.GroupMember{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
@@ -96,7 +86,7 @@ func CreateDatabase() {
 			},
 		},
 		{
-			ID: "7",
+			ID: "6",
 			Migrate: func(tx *gorm.DB) error {
 				db.CreateTable(&models.UserRelation{})
 				db.Model(&models.UserRelation{}).AddForeignKey("relation_type_id", "relation_types(id)", "RESTRICT", "RESTRICT")

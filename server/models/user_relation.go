@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+//UserRelation is a model to Database table
 type UserRelation struct {
 	gorm.Model
 

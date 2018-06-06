@@ -1,8 +1,10 @@
 package interfaces
 
+import "go_messenger/server/models"
+
 //userInterface as contract between ORM level and Service Level
 type userInterface interface {
-	CreateUser(login, password, username, email string, status bool, usericon string) bool
+	CreateUser(user *models.User) bool
 	//Delete(user *models.User)
 }
 

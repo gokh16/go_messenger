@@ -3,7 +3,7 @@ package userConnections
 import (
 	"net"
 	"sync"
-
+  
 	"github.com/gorilla/websocket"
 )
 
@@ -28,7 +28,6 @@ func (c *Connections) AddWSConn(conn *websocket.Conn, userName string, outChan *
 	str.OutChan <- outChan
 	return str
 }
-
 func (c *Connections) GetAllTCPConnections() map[net.Conn]string {
 	c.TCPConnectionsMutex.Lock()
 	defer c.TCPConnectionsMutex.Unlock()

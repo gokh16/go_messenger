@@ -5,6 +5,7 @@ import (
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/userConnections"
 	"net"
+	"go_messenger/server/handlers/ws"
 )
 
 type RouterOut struct {
@@ -12,12 +13,11 @@ type RouterOut struct {
 	ChOut      chan *userConnections.Message
 }
 
-func NewRouterOut(conn *userConnections.Connections, chOut chan *userConnections.Message) *RouterOut {
+func NewRouterOut(conn *userConnections.Connections, chOut chan *userConnections.Message) {
 	newRout := RouterOut{}
 	newRout.Connection = conn
 	newRout.ChOut = chOut
 	go newRout.HandleOut()
-	return &newRout
 }
 
 func (r *RouterOut) HandleOut() {
@@ -26,10 +26,10 @@ func (r *RouterOut) HandleOut() {
 
 	for msg := range r.ChOut {
 		if sliceTCP != nil {
-			tcp.WaitJSON(sliceTCP, *msg)
+			tcp.WaitJSON(sliceTCP, msg)
 		}
 		if sliceWS != nil {
-			/*...*/
+			ws.SendJSON(sliceWS, msg)
 		}
 	}
 }

@@ -3,7 +3,7 @@ package userConnections
 import (
 	"net"
 	"sync"
-  
+
 	"github.com/gorilla/websocket"
 )
 

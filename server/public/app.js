@@ -1,4 +1,3 @@
-
 new Vue({
     el: '#app',
 
@@ -8,20 +7,22 @@ new Vue({
         chatContent: '', // A running list of chat messages displayed on the screen
         email: null,
         username: null,
-        joined: false // True if email and username have been filled in
+        joined: false, // True if email and username have been filled in
+        action: ''
     },
 
-    created: function() {
+    created: function () {
         var self = this;
         this.ws = new WebSocket('ws://' + window.location.host + '/ws');
-        this.ws.addEventListener('message', function(e) {
+        this.ws.addEventListener('message', function (e) {
             var msg = JSON.parse(e.data);
-            self.chatContent += '<div class="chip">'
-                    + '<img src="' + self.gravatarURL(msg.User.email) + '">' // Avatar
-                    + msg.User.username
-                + '</div>' 
-                + '<div class="white-text">' + msg.message_content + '</div>' 
-                + '<br/>';
+            self.chatContent += '<div class="chip">' +
+                '<img src="' + self.gravatarURL(msg.email) + '">' // Avatar
+                +
+                msg.username +
+                '</div>' +
+                '<div class="white-text">' + msg.content + '</div>' +
+                '<br/>';
 
             var element = document.getElementById('chat-messages');
             element.scrollTop = element.scrollHeight; // Auto scroll to the bottom
@@ -33,13 +34,11 @@ new Vue({
             if (this.newMsg != '') {
                 this.ws.send(
                     JSON.stringify({
-                        user: {
-                            email: this.email,
-                            username: this.username
-                        },
-                        message_content: $('<p>').html(this.newMsg).text() // Strip out html
-                    }
-                ));
+                        email: this.email,
+                        username: this.username,
+                        content: $('<p>').html(this.newMsg).text(), // Strip out html
+                        action: "SendMessageTo"
+                    }));
                 this.newMsg = ''; // Reset newMsg
             }
         },
@@ -58,7 +57,7 @@ new Vue({
             this.joined = true;
         },
 
-        gravatarURL: function(email) {
+        gravatarURL: function (email) {
             return 'http://www.gravatar.com/avatar/' + CryptoJS.MD5(email);
         }
     }

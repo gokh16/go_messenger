@@ -78,7 +78,6 @@ func CreateDatabase() {
 				db.CreateTable(&models.GroupMember{})
 				db.Model(&models.GroupMember{}).AddForeignKey("user_id", "users(id)", "RESTRICT", "RESTRICT")
 				db.Model(&models.GroupMember{}).AddForeignKey("group_id", "groups(id)", "RESTRICT", "RESTRICT")
-				db.Model(&models.GroupMember{}).AddForeignKey("last_read_message_id", "messages(id)", "RESTRICT", "RESTRICT")
 				return tx.AutoMigrate(&models.GroupMember{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {

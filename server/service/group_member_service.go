@@ -8,7 +8,7 @@ import (
 )
 
 //AddGroupMember add new members in spesific Group.
-func AddGroupMember(userName, groupName, lastMessage string, groupMember []string, groupType uint) {
+func AddGroupMember(userName, groupName, lastMessage string, groupMember []string) {
 	var msg = userConnections.Message{}
 	var gmi interfaces.GMI = dbservice.GroupMember{}
 	for _, user := range groupMember {

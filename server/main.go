@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/gokh16/go_messenger/server/handlers/tcp"
-	"github.com/gokh16/go_messenger/server/handlers/ws"
-	"github.com/gokh16/go_messenger/server/userConnections"
+	"go_messenger/server/handlers/tcp"
+	"go_messenger/server/handlers/ws"
+	"go_messenger/server/userConnections"
 	"github.com/gorilla/websocket"
 )
 

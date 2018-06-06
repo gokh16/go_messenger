@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+//User is a model to Database table
 type User struct {
 	gorm.Model
 

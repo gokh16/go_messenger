@@ -13,6 +13,7 @@ type TCPHandler struct {
 	Connection *userConnections.Connections
 }
 
+
 func (c *TCPHandler) NewTCPHandler (conns *userConnections.Connections) {
 	tcp := TCPHandler{conns}
 	Handler(tcp)
@@ -47,6 +48,7 @@ func HandleJSON(conn net.Conn, str TCPHandler) {
 		ParseJSON([]byte(data), conn, str)
 	}
 }
+
 
 func ParseJSON(bytes []byte, conn net.Conn, str TCPHandler) chan *userConnections.Message{
 	message := userConnections.Message{}

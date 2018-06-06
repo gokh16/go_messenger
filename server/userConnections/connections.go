@@ -17,5 +17,4 @@ func (c *Connections) AddTCPConn(conn net.Conn, userName string, outChan *Messag
 	str.TCPConnections[conn] = userName
 	str.OutChan <- outChan
 	return str
-
 }

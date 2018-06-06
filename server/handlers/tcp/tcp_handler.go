@@ -15,7 +15,7 @@ type TCPHandler struct {
 
 func (c *TCPHandler) NewTCPHandler (conns *userConnections.Connections) *TCPHandler{
 	tcp := TCPHandler{conns}
-	go Handler()
+	Handler()
 	return &tcp
 }
 

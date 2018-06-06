@@ -5,6 +5,7 @@ import (
 	"net"
 )
 
+
 type Connections struct{
 	WSConnections map[*websocket.Conn]string // connection:login
 	TCPConnections map[net.Conn]string // connection:login

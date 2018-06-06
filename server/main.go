@@ -32,7 +32,8 @@ func main() {
 	connectionList := userConnections.Connections{}
 	go wsHandler()
 	fmt.Println("good")
-	tcp.TCPHandler{}.NewTCPHandler(&connectionList)
+	tcpStr := &tcp.TCPHandler{}
+	tcpStr.NewTCPHandler(&connectionList)
 	fmt.Println("good")
 
 }

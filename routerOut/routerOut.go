@@ -2,7 +2,7 @@ package routerOut
 
 import (
 	"github.com/gorilla/websocket"
-	tcp2 "go_messenger/server/handlers/tcp"
+	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/userConnections"
 	"net"
 )
@@ -21,14 +21,14 @@ func NewRouterOut(conn *userConnections.Connections, chOut chan *userConnections
 }
 
 func (r *RouterOut) HandleOut() {
-	tcp := r.getSliceOfTCP(r.ChOut)
-	ws := r.getSliceOfWS(r.ChOut)
+	sliceTCP := r.getSliceOfTCP(r.ChOut)
+	sliceWS := r.getSliceOfWS(r.ChOut)
 
 	for msg := range r.ChOut {
-		if tcp != nil {
-			tcp2.WaitJSON(tcp, *msg)
+		if sliceTCP != nil {
+			tcp.WaitJSON(sliceTCP, *msg)
 		}
-		if ws != nil {
+		if sliceWS != nil {
 			/*...*/
 		}
 	}
@@ -57,7 +57,5 @@ func (r *RouterOut) getSliceOfWS(c chan *userConnections.Message) []*websocket.C
 			}
 		}
 	}
-
-
 	return sliceWS
 }

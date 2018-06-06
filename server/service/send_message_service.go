@@ -7,16 +7,17 @@ import (
 )
 
 //SendMessageTo ...
-func SendMessageTo(content, userName, groupName string, contentType string, chanOut chan *userConnections.Message) {
+func SendMessageTo(chanOut chan *userConnections.Message) {
+	message := <-chanOut
 	var mi interfaces.MI = dbservice.Message{}
 	var gmi interfaces.GMI = dbservice.GroupMember{}
-	mi.AddMessage(content, userName, groupName, contentType)
+	mi.AddMessage(message.Content, message.UserName, message.GroupName, message.ContentType)
 	var groupMember = []string{}
-	userList := gmi.GetGroupUserList(groupName)
+	userList := gmi.GetGroupUserList(message.GroupName)
 	for _, value := range userList {
-		groupMember = append(groupMember, value.Username)
+		groupMember = append(message.GroupMember, value.Username)
 	}
 
-	message := userConnections.Message{Content: content, UserName: userName, GroupName: groupName, GroupMember: groupMember}
-	chanOut <- &message
+	message.GroupMember = groupMember
+	chanOut <- message
 }

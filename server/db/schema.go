@@ -54,7 +54,6 @@ func CreateDatabase() {
 				db.CreateTable(&models.Message{})
 				db.Model(&models.Message{}).AddForeignKey("message_sender_id", "users(id)", "RESTRICT", "RESTRICT")
 				db.Model(&models.Message{}).AddForeignKey("message_recipient_id", "groups(id)", "RESTRICT", "RESTRICT")
-				db.Model(&models.Message{}).AddForeignKey("message_content_type_id", "message_content_types(id)", "RESTRICT", "RESTRICT")
 				return tx.AutoMigrate(&models.Message{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {

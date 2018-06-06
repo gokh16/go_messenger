@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gokh16/go_messenger/server/userConnections"
+	"go_messenger/server/userConnections"
 	"github.com/gorilla/websocket"
 )
 
@@ -66,7 +66,7 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) chan *userConnec
 	return str.Connection.OutChan
 }
 
-func SendJSON(conns []*websocket.Conn, str userConnections.Message) {
+func SendJSON(conns []*websocket.Conn, str *userConnections.Message) {
 	outcomingData, err := json.Marshal(&str)
 	if err != nil {
 		log.Println(err)

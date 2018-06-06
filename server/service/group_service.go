@@ -1,19 +1,13 @@
 package service
 
 import (
-<<<<<<< HEAD
-=======
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/service/interfaces"
->>>>>>> group-chat
 	"go_messenger/server/userConnections"
 )
 
 //CreateGroup function creats a special User and makes a record in DB. It returns bool value
 func CreateGroup(chanOut chan *userConnections.Message) {
-<<<<<<< HEAD
-
-=======
 	//var message = userConnections.Message{UserName: groupOwner, GroupName: groupName}
 	var gmi interfaces.GMI = dbservice.GroupMember{}
 	var gi interfaces.GI = dbservice.Group{}
@@ -40,7 +34,6 @@ func CreateGroup(chanOut chan *userConnections.Message) {
 
 	}
 	chanOut <- message
->>>>>>> group-chat
 }
 
 // func GetGroupList(userName string, chanOut chan *userConnections.Message) {

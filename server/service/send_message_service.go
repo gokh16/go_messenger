@@ -1,19 +1,13 @@
 package service
 
 import (
-<<<<<<< HEAD
-=======
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/service/interfaces"
->>>>>>> group-chat
 	"go_messenger/server/userConnections"
 )
 
 //SendMessageTo ...
 func SendMessageTo(chanOut chan *userConnections.Message) {
-<<<<<<< HEAD
-
-=======
 	message := <-chanOut
 	var mi interfaces.MI = dbservice.Message{}
 	var gmi interfaces.GMI = dbservice.GroupMember{}
@@ -26,5 +20,4 @@ func SendMessageTo(chanOut chan *userConnections.Message) {
 
 	message.GroupMember = groupMember
 	chanOut <- message
->>>>>>> group-chat
 }

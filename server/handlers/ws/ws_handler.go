@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gokh16/go_messenger/server/userConnections"
+	"go_messenger/server/userConnections"
 	"github.com/gorilla/websocket"
 )
 

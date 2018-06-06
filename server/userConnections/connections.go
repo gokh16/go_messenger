@@ -1,9 +1,10 @@
 package userConnections
 
 import (
-	"github.com/gorilla/websocket"
 	"net"
 	"sync"
+  
+	"github.com/gorilla/websocket"
 )
 
 type Connections struct {
@@ -14,7 +15,6 @@ type Connections struct {
 	OutChan             chan *Message
 }
 
-
 func (c *Connections) AddTCPConn(conn net.Conn, userName string, outChan *Message) *Connections {
 	str := c
 	str.TCPConnections[conn] = userName
@@ -22,6 +22,12 @@ func (c *Connections) AddTCPConn(conn net.Conn, userName string, outChan *Messag
 	return str
 }
 
+func (c *Connections) AddWSConn(conn *websocket.Conn, userName string, outChan *Message) *Connections {
+	str := c
+	str.WSConnections[conn] = userName
+	str.OutChan <- outChan
+	return str
+}
 func (c *Connections) GetAllTCPConnections() map[net.Conn]string {
 	c.TCPConnectionsMutex.Lock()
 	defer c.TCPConnectionsMutex.Unlock()

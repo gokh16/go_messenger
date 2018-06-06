@@ -7,31 +7,35 @@ import (
 )
 
 //CreateGroup function creats a special User and makes a record in DB. It returns bool value
-func CreateGroup(groupName, groupOwner string, groupMember []string, groupType uint, chanOut chan *userConnections.Message) {
-	var message = userConnections.Message{UserName: groupOwner, GroupName: groupName}
+func CreateGroup(chanOut chan *userConnections.Message) {
+	//var message = userConnections.Message{UserName: groupOwner, GroupName: groupName}
 	var gmi interfaces.GMI = dbservice.GroupMember{}
 	var gi interfaces.GI = dbservice.Group{}
+	message := <-chanOut
 	switch {
 	// groupType == 0 means privat message
-	case groupType == 0:
-		ok := gi.CreateGroup(groupName, groupOwner, groupType)
+	case message.GroupType == 0:
+		ok := gi.CreateGroup(message.GroupName, message.GroupOwner, message.GroupType)
 		if ok {
-			//lastMessage := ""
-			for _, user := range groupMember {
-				gmi.AddGroupMember(user, groupName, "")
+			for _, user := range message.GroupMember {
+				gmi.AddGroupMember(user, message.GroupName, "")
 			}
-			message = userConnections.Message{Status: ok}
+			message.Status = ok
 		}
-		message = userConnections.Message{Status: ok}
+		message.Status = ok
 	// groupType == 1 means group chat
-	case groupType == 1 || groupType == 2:
-		ok := gi.CreateGroup(groupName, groupOwner, groupType)
+	case message.GroupType == 1 || message.GroupType == 2:
+		ok := gi.CreateGroup(message.GroupName, message.GroupOwner, message.GroupType)
 		if ok {
-			gmi.AddGroupMember(groupOwner, groupName, "")
-			message = userConnections.Message{Status: ok}
+			gmi.AddGroupMember(message.GroupOwner, message.GroupName, "")
+			message.Status = ok
 		}
-		message = userConnections.Message{Status: ok}
+		message.Status = ok
 
 	}
-	chanOut <- &message
+	chanOut <- message
 }
+
+// func GetGroupList(userName string, chanOut chan *userConnections.Message) {
+
+// }

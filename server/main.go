@@ -31,14 +31,12 @@ func wsHandler() {
 }
 
 func main() {
-	connectionList := userConnections.Connections{}
+  connectionList := userConnections.Connections{}
 	connectionList.TCPConnections = make(map[net.Conn]string, 0)
 	connectionList.WSConnections = make(map[*websocket.Conn]string, 0)
-
 	go wsHandler()
 	fmt.Println("good")
 	tcpStr := &tcp.TCPHandler{}
 	tcpStr.NewTCPHandler(&connectionList)
 	fmt.Println("good")
-
 }

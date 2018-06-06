@@ -20,3 +20,11 @@ func (g Group) CreateGroup(groupName, groupOwner string, groupType uint) bool {
 	}
 	return false
 }
+
+func (g Group) GetGroupList(userName string) []models.Group {
+	user := models.User{}
+	groups := []models.Group{}
+	dbConn.Where("username = ?", userName).First(&user)
+	dbConn.Joins("join group_members on groups.id=group_members.group_id").Where("user_id = ?", user.ID).Find(&groups)
+	return groups
+}

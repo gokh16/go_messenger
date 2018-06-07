@@ -15,11 +15,11 @@ func main() {
 	connectionList.OutChan = make(chan *userConnections.Message, 1024)
 	connectionList.TCPConnections = make(map[net.Conn]string, 0)
 	connectionList.WSConnections = make(map[*websocket.Conn]string, 0)
-	routerOut.NewRouterOut(&connectionList)
 	wsStr := &ws.WSHandler{}
 	go wsStr.NewWSHandler(&connectionList)
 	fmt.Println("good")
 	tcpStr := &tcp.TCPHandler{}
 	tcpStr.NewTCPHandler(&connectionList)
 	fmt.Println("good")
+	go routerOut.NewRouterOut(&connectionList)
 }

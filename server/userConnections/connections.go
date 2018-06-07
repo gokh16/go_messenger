@@ -20,7 +20,6 @@ func (c *Connections) AddTCPConn(conn net.Conn, userName string, structureChan *
 	c.OutChan <- structureChan
 	msg := <-c.OutChan
 	fmt.Println(msg.Content)
-	fmt.Println(c.TCPConnections)
 	return c
 }
 

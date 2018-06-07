@@ -2,8 +2,8 @@ package routerIn
 
 import (
 	"go_messenger/server/userConnections"
-	"log"
 	"go_messenger/server/service"
+	"fmt"
 )
 
 func RouterIn(c chan *userConnections.Message) {
@@ -24,6 +24,6 @@ func RouterIn(c chan *userConnections.Message) {
 		go service.AddGroupMember(c)
 
 	default:
-		log.Fatal("Unknown format of data")
+		fmt.Println("Unknown format of data from server")
 	}
 }

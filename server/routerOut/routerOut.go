@@ -5,32 +5,41 @@ import (
 	"go_messenger/server/userConnections"
 	"net"
 	"fmt"
+	"go_messenger/server/handlers/tcp"
 )
 
 type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
-func NewRouterOut(conn *userConnections.Connections) *RouterOut{
+func NewRouterOut(conn *userConnections.Connections) *RouterOut {
 	newRout := RouterOut{conn}
 	go newRout.HandleOut()
 	return &newRout
 }
 
 func (r *RouterOut) HandleOut() {
+	//for {
+	//	sliceTCP := r.getSliceOfTCP(r.Connection.OutChan)
+	//	sliceWS := r.getSliceOfWS(r.Connection.OutChan)
+	//	fmt.Println(sliceTCP)
+	//	fmt.Println(sliceWS)
+	//if sliceTCP != nil {
+	//	msg := <-r.Connection.OutChan
+	//	tcp.WaitJSON(sliceTCP, msg)
+	//}
+	//if sliceWS != nil {
+	//	msg := <-r.Connection.OutChan
+	//	ws.SendJSON(sliceWS, msg)
+	//}
+	//}
 	for {
-		sliceTCP := r.getSliceOfTCP(r.Connection.OutChan)
-		sliceWS := r.getSliceOfWS(r.Connection.OutChan)
-		fmt.Println(sliceTCP)
-		fmt.Println(sliceWS)
-		//if sliceTCP != nil {
-		//	msg := <-r.Connection.OutChan
-		//	tcp.WaitJSON(sliceTCP, msg)
-		//}
-		//if sliceWS != nil {
-		//	msg := <-r.Connection.OutChan
-		//	ws.SendJSON(sliceWS, msg)
-		//}
+		if msg := <-r.Connection.OutChan; msg != nil {
+			if sliceTCPCon := r.getSliceOfTCP(r.Connection.OutChan); sliceTCPCon != nil {
+				tcp.WaitJSON(sliceTCPCon, msg)
+			}
+		}
+
 	}
 }
 

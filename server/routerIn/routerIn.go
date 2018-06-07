@@ -2,16 +2,17 @@ package routerIn
 
 import (
 	"go_messenger/server/userConnections"
-	"log"
+	"fmt"
 	"go_messenger/server/service"
+	"log"
 )
 
 func RouterIn(c chan *userConnections.Message) {
 
 	// variable "action" is a command what to do with the structure
 	msg := <- c
+	fmt.Println(msg.Content)
 	action := msg.Action
-
 	switch action {
 
 	case "SendMessageTo":

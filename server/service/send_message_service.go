@@ -1,9 +1,9 @@
 package service
 
 import (
-	"go_messenger/server/db/dbservice"
-	"go_messenger/server/service/interfaces"
 	"go_messenger/server/userConnections"
+	"go_messenger/server/service/interfaces"
+	"go_messenger/server/db/dbservice"
 )
 
 //SendMessageTo ...

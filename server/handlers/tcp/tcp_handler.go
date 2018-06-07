@@ -7,6 +7,7 @@ import (
 	"go_messenger/server/userConnections"
 	"log"
 	"net"
+	"go_messenger/server/routerIn"
 )
 
 type TCPHandler struct {
@@ -50,15 +51,13 @@ func HandleJSON(conn net.Conn, str TCPHandler) {
 }
 
 
-func ParseJSON(bytes []byte, conn net.Conn, str TCPHandler) chan *userConnections.Message{
+func ParseJSON(bytes []byte, conn net.Conn, str TCPHandler) {
 	message := userConnections.Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	fmt.Println(message.UserName)
-	fmt.Println(message.Content)
 	str.Connection.AddTCPConn(conn, message.UserName, &message)
-	return str.Connection.OutChan
+	routerIn.RouterIn(str.Connection.OutChan)
 }

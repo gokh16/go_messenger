@@ -11,8 +11,8 @@ import (
 func CreateUser(chanOut chan *userConnections.Message) {
 	var ui interfaces.UI = dbservice.User{}
 	message := <-chanOut
-	//message := userConnections.Message{UserName: userName, Login: login, Password: password, Email: email, UserIcon: userIcon}
-	user := models.User{Login: message.Login, Password: message.Password, Username: message.UserName, Email: message.Email,
+	user := models.User{Login: message.Login, Password: message.Password,
+		Username: message.UserName, Email: message.Email,
 		Status: message.Status, UserIcon: message.UserIcon}
 	ok := ui.CreateUser(&user)
 	if ok {
@@ -22,4 +22,37 @@ func CreateUser(chanOut chan *userConnections.Message) {
 	message.Status = ok
 
 	chanOut <- message
+}
+
+func LoginUser(chanOut chan *userConnections.Message) {
+	var ui interfaces.UI = dbservice.User{}
+	var gi interfaces.GI = dbservice.Group{}
+	message := <-chanOut
+	user := models.User{Login: message.Login, Password: message.Password}
+	ok := ui.LoginUser(&user)
+	if ok {
+		ui.GetUser(&user)
+		ui.GetContactList()
+
+	}
+}
+
+func EditUser() {
+
+}
+
+func DeleteUser() {
+
+}
+
+func GetContactList() {
+
+}
+
+func AddContact() {
+
+}
+
+func DeleteContact() {
+
 }

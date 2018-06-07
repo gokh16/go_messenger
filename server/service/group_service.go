@@ -36,6 +36,18 @@ func CreateGroup(chanOut chan *userConnections.Message) {
 	chanOut <- message
 }
 
-// func GetGroupList(userName string, chanOut chan *userConnections.Message) {
+func GetGroup() {
 
-// }
+}
+
+func GetGroupList(userName string, chanOut chan *userConnections.Message) {
+
+}
+
+func EditGroup() {
+
+}
+
+func DeleteGroup() {
+
+}

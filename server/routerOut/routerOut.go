@@ -11,9 +11,10 @@ type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
-func NewRouterOut(conn *userConnections.Connections) {
+func NewRouterOut(conn *userConnections.Connections) *RouterOut{
 	newRout := RouterOut{conn}
 	go newRout.HandleOut()
+	return &newRout
 }
 
 func (r *RouterOut) HandleOut() {

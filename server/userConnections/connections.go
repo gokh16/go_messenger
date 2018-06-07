@@ -4,6 +4,7 @@ import (
 	"net"
 
 	"github.com/gorilla/websocket"
+	"fmt"
 )
 
 type Connections struct {
@@ -14,11 +15,12 @@ type Connections struct {
 	OutChan             chan *Message
 }
 
-func (c *Connections) AddTCPConn(conn net.Conn, userName string, outChan *Message) *Connections {
-	str := c
-	str.TCPConnections[conn] = userName
-	str.OutChan <- outChan
-	return str
+func (c *Connections) AddTCPConn(conn net.Conn, userName string, structureChan *Message) *Connections {
+	c.TCPConnections[conn] = userName
+	c.OutChan <- structureChan
+	msg := <-c.OutChan
+	fmt.Println(msg.Content)
+	return c
 }
 
 func (c *Connections) AddWSConn(conn *websocket.Conn, userName string, outChan *Message) *Connections {

@@ -3,23 +3,44 @@ package main
 import (
 	"fmt"
 	"net"
+
 	"go_messenger/server/userConnections"
 	"github.com/gorilla/websocket"
-	"go_messenger/server/handlers/tcp"
-	"go_messenger/server/handlers/ws"
 	"go_messenger/server/routerOut"
+	"go_messenger/server/handlers/ws"
+	"sync"
+	"go_messenger/server/handlers/tcp"
+	"go_messenger/server/db/dbservice"
+	"go_messenger/server/db"
 )
 
+func init(){
+	db.CreateDatabase()
+}
 func main() {
+	chOut := make(chan *userConnections.Message, 1024)
+
 	connectionList := userConnections.Connections{}
-	connectionList.OutChan = make(chan *userConnections.Message, 1024)
-	connectionList.TCPConnections = make(map[net.Conn]string, 0)
+
+	connectionList.OutChan = chOut
+	connectionList.WSConnectionsMutex = new(sync.Mutex)
 	connectionList.WSConnections = make(map[*websocket.Conn]string, 0)
-	wsStr := &ws.WSHandler{}
-	go wsStr.NewWSHandler(&connectionList)
+	connectionList.TCPConnectionsMutex = new(sync.Mutex)
+	connectionList.TCPConnections = make(map[net.Conn]string, 0)
+
+	routerOut.NewRouterOut(&connectionList)
+
+	ws.NewWSHandler(&connectionList)
 	fmt.Println("good")
-	tcpStr := &tcp.TCPHandler{}
-	tcpStr.NewTCPHandler(&connectionList)
-	fmt.Println("good")
-	go routerOut.NewRouterOut(&connectionList)
+
+	tcp.NewTCPHandler(&connectionList)
+	fmt.Println("good2")
+
+	db := dbservice.OpenConnDB()
+	defer db.Close()
+
+	fmt.Println("good3")
+
+	stop := make(chan bool)
+	<-stop
 }

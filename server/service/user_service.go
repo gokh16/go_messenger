@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/models"
 	"go_messenger/server/service/interfaces"
@@ -8,9 +9,10 @@ import (
 )
 
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
-func CreateUser(chanOut chan *userConnections.Message) {
+func CreateUser(message *userConnections.Message, chanOut chan *userConnections.Message) {
+	fmt.Println("Service Ok")
 	var ui interfaces.UI = dbservice.User{}
-	message := <-chanOut
+	//message := <-chanOut
 	user := models.User{Login: message.Login, Password: message.Password,
 		Username: message.UserName, Email: message.Email,
 		Status: message.Status, UserIcon: message.UserIcon}
@@ -20,7 +22,7 @@ func CreateUser(chanOut chan *userConnections.Message) {
 	}
 
 	message.Status = ok
-
+	fmt.Println("write in channel")
 	chanOut <- message
 }
 
@@ -33,6 +35,7 @@ func LoginUser(chanOut chan *userConnections.Message) {
 	if ok {
 		ui.GetUser(&user)
 		ui.GetContactList()
+		gi.GetGroupList(message.UserName)
 
 	}
 }

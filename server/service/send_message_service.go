@@ -7,8 +7,8 @@ import (
 )
 
 //SendMessageTo ...
-func SendMessageTo(chanOut chan *userConnections.Message) {
-	message := <-chanOut
+func SendMessageTo(message *userConnections.Message, chanOut chan *userConnections.Message) {
+	//message := <-chanOut
 	var mi interfaces.MI = dbservice.Message{}
 	var gmi interfaces.GMI = dbservice.GroupMember{}
 	mi.AddMessage(message.Content, message.UserName, message.GroupName, message.ContentType)

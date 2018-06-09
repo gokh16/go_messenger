@@ -2,11 +2,15 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"sync"
 
 	"go_messenger/server/db"
 	"go_messenger/server/db/dbservice"
-	"go_messenger/server/routerIn"
+	"go_messenger/server/routerOut"
 	"go_messenger/server/userConnections"
+
+	"github.com/gorilla/websocket"
 )
 
 func init() {
@@ -17,16 +21,28 @@ func init() {
 
 func main() {
 	chOut := make(chan *userConnections.Message, 1024)
-	dbservice.OpenConnDB()
+
 	connectionList := userConnections.Connections{}
+
 	connectionList.OutChan = chOut
-	connectionList.TCPConnections = make(map[net.Conn]string, 0)
+	connectionList.WSConnectionsMutex = new(sync.Mutex)
 	connectionList.WSConnections = make(map[*websocket.Conn]string, 0)
-	routerOut.NewRouterOut(&connectionList, chOut)
-	wsStr := &ws.WSHandler{}
-	go wsStr.NewWSHandler(&connectionList)
+	connectionList.TCPConnectionsMutex = new(sync.Mutex)
+	connectionList.TCPConnections = make(map[net.Conn]string, 0)
+
+	routerOut.NewRouterOut(&connectionList)
+
+	ws.NewWSHandler(&connectionList)
 	fmt.Println("good")
-	tcpStr := &tcp.TCPHandler{}
-	tcpStr.NewTCPHandler(&connectionList)
-	fmt.Println("good")
+
+	tcp.NewTCPHandler(&connectionList)
+	fmt.Println("good2")
+
+	db := dbservice.OpenConnDB()
+	defer db.Close()
+
+	fmt.Println("good3")
+
+	stop := make(chan bool)
+	<-stop
 }

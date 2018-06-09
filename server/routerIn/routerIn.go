@@ -1,13 +1,12 @@
 package routerIn
 
 import (
-	"go_messenger/server/service"
 	"fmt"
+	"go_messenger/server/service"
 	"go_messenger/server/userConnections"
 )
 
-//func RouterIn(c chan *userConnections.Message) {
-func RouterIn(msg *userConnections.Message, str chan *userConnections.Message) {
+func RouterIn(msg *userConnections.Message, c chan *userConnections.Message) {
 
 	// variable "action" is a command what to do with the structure
 	//msg := <- c

@@ -3,20 +3,24 @@ package main
 import (
 	"fmt"
 	"net"
-
-	"go_messenger/server/userConnections"
-	"github.com/gorilla/websocket"
-	"go_messenger/server/routerOut"
-	"go_messenger/server/handlers/ws"
 	"sync"
-	"go_messenger/server/handlers/tcp"
-	"go_messenger/server/db/dbservice"
+
 	"go_messenger/server/db"
+	"go_messenger/server/db/dbservice"
+	"go_messenger/server/handlers/tcp"
+	"go_messenger/server/handlers/ws"
+	"go_messenger/server/routerOut"
+	"go_messenger/server/userConnections"
+
+	"github.com/gorilla/websocket"
 )
 
-func init(){
+func init() {
 	db.CreateDatabase()
+	db.InitDatabase()
+
 }
+
 func main() {
 	chOut := make(chan *userConnections.Message, 1024)
 

@@ -5,6 +5,7 @@ import (
 	"go_messenger/server/db"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 var dbConn *gorm.DB
@@ -17,5 +18,6 @@ func OpenConnDB() *gorm.DB {
 	if err != nil {
 		fmt.Println("gorm Open connection error: ", err)
 	}
+	fmt.Println("db open ok")
 	return dbConn
 }

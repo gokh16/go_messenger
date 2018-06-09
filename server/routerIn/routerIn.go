@@ -1,27 +1,30 @@
 package routerIn
 
 import (
+	"fmt"
+	"go_messenger/server/service"
 	"go_messenger/server/userConnections"
 	"log"
-	"go_messenger/server/service"
 )
 
-func RouterIn(c chan *userConnections.Message) {
+func RouterIn(msg *userConnections.Message, c chan *userConnections.Message) {
 
 	// variable "action" is a command what to do with the structure
-	msg := <- c
+	//msg := <- c
 	action := msg.Action
 
 	switch action {
 
 	case "SendMessageTo":
-		go service.SendMessageTo(c)
+		service.SendMessageTo(msg, c)
 	case "CreateUser":
-		go service.CreateUser(c)
+		fmt.Println("RouterIn Ok")
+		service.CreateUser(msg, c)
 	case "CreateGroup":
-		go service.CreateGroup(c)
+		fmt.Println("RouterIn Ok")
+		service.CreateGroup(msg, c)
 	case "AddGroupMember":
-		go service.AddGroupMember(c)
+		service.AddGroupMember(msg, c)
 
 	default:
 		log.Fatal("Unknown format of data")

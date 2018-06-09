@@ -104,3 +104,26 @@ func CreateDatabase() {
 		log.Printf("Could not migrate: %v", err)
 	}
 }
+
+func InitDatabase() {
+	//for testing
+	db, err := gorm.Open("postgres", "user=postgres password=1111 dbname=12 sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	type1 := models.GroupType{Type: "Private"}
+	db.Create(&type1)
+	user1 := models.User{Login: "User1", Password: "", Username: "User1", Status: false, UserIcon: ""}
+	user2 := models.User{Login: "User2", Password: "", Username: "User2", Status: false, UserIcon: ""}
+	group := models.Group{GroupName: "User1User2", GroupOwnerID: 1, GroupTypeID: 1}
+	db.Create(&user1)
+	db.Create(&user2)
+	db.Create(&group)
+	msg := models.Message{Content: "Hello", MessageContentType: "Text", MessageRecipientID: 1, MessageSenderID: 2}
+	db.Create(&msg)
+	groupmember1 := models.GroupMember{GroupID: 1, UserID: 1, LastReadMessageID: 1}
+	groupmember2 := models.GroupMember{GroupID: 1, UserID: 2, LastReadMessageID: 1}
+	db.Create(&groupmember1)
+	db.Create(&groupmember2)
+}

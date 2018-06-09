@@ -7,14 +7,12 @@ import (
 )
 
 //CreateGroup function creats a special User and makes a record in DB. It returns bool value
-func CreateGroup(chanOut chan *userConnections.Message) {
-	//var message = userConnections.Message{UserName: groupOwner, GroupName: groupName}
+func CreateGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	var gmi interfaces.GMI = dbservice.GroupMember{}
 	var gi interfaces.GI = dbservice.Group{}
-	message := <-chanOut
-	switch {
+	switch message.GroupType {
 	// groupType == 0 means privat message
-	case message.GroupType == 0:
+	case 0:
 		ok := gi.CreateGroup(message.GroupName, message.GroupOwner, message.GroupType)
 		if ok {
 			for _, user := range message.GroupMember {
@@ -24,7 +22,7 @@ func CreateGroup(chanOut chan *userConnections.Message) {
 		}
 		message.Status = ok
 	// groupType == 1 means group chat
-	case message.GroupType == 1 || message.GroupType == 2:
+	case 1:
 		ok := gi.CreateGroup(message.GroupName, message.GroupOwner, message.GroupType)
 		if ok {
 			gmi.AddGroupMember(message.GroupOwner, message.GroupName, "")
@@ -36,6 +34,18 @@ func CreateGroup(chanOut chan *userConnections.Message) {
 	chanOut <- message
 }
 
-// func GetGroupList(userName string, chanOut chan *userConnections.Message) {
+func GetGroup() {
 
-// }
+}
+
+func GetGroupList(message *userConnections.Message, chanOut chan *userConnections.Message) {
+
+}
+
+func EditGroup() {
+
+}
+
+func DeleteGroup() {
+
+}

@@ -5,7 +5,6 @@ import (
 	"net"
 	"sync"
 
-	"go_messenger/server/db"
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
@@ -15,11 +14,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func init() {
-	db.CreateDatabase()
-	db.InitDatabase()
-
-}
+//func init() {
+//	db.CreateDatabase()
+//	db.InitDatabase()
+//
+//}
 
 func main() {
 	chOut := make(chan *userConnections.Message, 1024)

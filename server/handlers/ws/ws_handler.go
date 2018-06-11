@@ -8,6 +8,7 @@ import (
 
 	"go_messenger/server/userConnections"
 	"github.com/gorilla/websocket"
+	"go_messenger/server/routerIn"
 )
 
 var upgrader = websocket.Upgrader{
@@ -22,9 +23,9 @@ type WSHandler struct {
 	Connection *userConnections.Connections
 }
 
-func (c *WSHandler) NewWSHandler(conns *userConnections.Connections) {
+func NewWSHandler(conns *userConnections.Connections) {
 	ws := WSHandler{conns}
-	Handler(ws)
+	go Handler(ws)
 }
 
 func Handler(str WSHandler) {
@@ -50,11 +51,11 @@ func ReadMessage(conn *websocket.Conn, str WSHandler) {
 		if err != nil {
 			log.Println("Cannot read message")
 		}
-		GetJSON([]byte(data), conn, str)
+		GetJSON(data, conn, str)
 	}
 }
 
-func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) chan *userConnections.Message {
+func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) {
 	message := userConnections.Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
@@ -62,11 +63,16 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) chan *userConnec
 	}
 	fmt.Println(message.UserName)
 	fmt.Println(message.Content)
-	str.Connection.AddWSConn(conn, message.UserName, &message)
-	return str.Connection.OutChan
+	str.Connection.AddWSConn(conn, message.UserName)
+	routerIn.RouterIn(&message, str.Connection.OutChan)
+	//return str.Connection.OutChan
 }
 
 func SendJSON(conns []*websocket.Conn, str *userConnections.Message) {
+	//for k,v := range conns {
+	//	fmt.Println("WS connect: ", k, v)
+	//	fmt.Println(*str)
+	//}
 	outcomingData, err := json.Marshal(&str)
 	if err != nil {
 		log.Println(err)

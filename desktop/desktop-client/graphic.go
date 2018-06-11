@@ -1,7 +1,6 @@
 package desktop_client
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/ProtonMail/ui"
 	"log"
@@ -84,11 +83,10 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	mainBox.Append(messageBox, true)
 
 	go func() {
-		scanner := bufio.NewScanner(conn)
-		for scanner.Scan() {
-			fmt.Println("here")
-			fmt.Println(scanner.Text())
-			output.Append(scanner.Text() + "\n")
+		for  {
+			msg := JSONdecode(conn)
+
+			output.Append(msg.Content + "\n")
 
 		}
 	}()

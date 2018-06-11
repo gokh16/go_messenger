@@ -15,7 +15,7 @@ func RouterIn(msg *userConnections.Message, c chan *userConnections.Message) {
 	switch action {
 
 	case "SendMessageTo":
-		go service.SendMessageTo(msg, str)
+		go service.SendMessageTo(msg, c)
 	//case "CreateUser":
 	//	go service.CreateUser(c)
 	//case "CreateGroup":

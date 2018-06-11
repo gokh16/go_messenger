@@ -1,7 +1,6 @@
 package desktop_client
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/ProtonMail/ui"
 	"log"
@@ -59,6 +58,9 @@ func drawAuthWindow(conn net.Conn){
 func drawChatWindow(conn net.Conn) *ui.Window {
 	window := ui.NewWindow("Chat", 500, 500, false)
 	input := ui.NewEntry()
+	input.SetText("message")
+	user := ui.NewEntry()
+	user.SetText("user")
 	send := ui.NewButton("Send")
 	output := ui.NewMultilineNonWrappingEntry()
 	output.SetReadOnly(true)
@@ -74,17 +76,17 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	usersBox.Append(userExample4, false)
 	messageBox := ui.NewVerticalBox()
 	messageBox.Append(output, true)
+	messageBox.Append(user, false)
 	messageBox.Append(input, false)
 	messageBox.Append(send, false)
 	mainBox.Append(usersBox, false)
 	mainBox.Append(messageBox, true)
 
 	go func() {
-		scanner := bufio.NewScanner(conn)
-		for scanner.Scan() {
-			fmt.Println("here")
-			fmt.Println(scanner.Text())
-			output.Append(scanner.Text() + "\n")
+		for  {
+			msg := JSONdecode(conn)
+
+			output.Append(msg.Content + "\n")
 
 		}
 	}()

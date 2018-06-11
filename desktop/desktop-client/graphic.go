@@ -59,6 +59,9 @@ func drawAuthWindow(conn net.Conn){
 func drawChatWindow(conn net.Conn) *ui.Window {
 	window := ui.NewWindow("Chat", 500, 500, false)
 	input := ui.NewEntry()
+	input.SetText("message")
+	user := ui.NewEntry()
+	user.SetText("user")
 	send := ui.NewButton("Send")
 	output := ui.NewMultilineNonWrappingEntry()
 	output.SetReadOnly(true)
@@ -74,6 +77,7 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	usersBox.Append(userExample4, false)
 	messageBox := ui.NewVerticalBox()
 	messageBox.Append(output, true)
+	messageBox.Append(user, false)
 	messageBox.Append(input, false)
 	messageBox.Append(send, false)
 	mainBox.Append(usersBox, false)

@@ -15,12 +15,12 @@ type TCPHandler struct {
 }
 
 
-func (c *TCPHandler) NewTCPHandler (conns *userConnections.Connections) {
+func NewTCPHandler (conns *userConnections.Connections) {
 	tcp := TCPHandler{conns}
-	Handler(tcp)
+	go tcp.Handler()
 }
 
-func Handler(str TCPHandler) {
+func (t *TCPHandler) Handler() {
 	ln, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatal(err)
@@ -33,11 +33,11 @@ func Handler(str TCPHandler) {
 			log.Fatal(err)
 		}
 
-		go HandleJSON(conn, str)
+		go HandleJSON(conn, t)
 	}
 }
 
-func HandleJSON(conn net.Conn, str TCPHandler) {
+func HandleJSON(conn net.Conn, str *TCPHandler) {
 	remoteAddr := conn.RemoteAddr().String()
 	fmt.Println("Client connected from " + remoteAddr)
 	for {
@@ -51,13 +51,15 @@ func HandleJSON(conn net.Conn, str TCPHandler) {
 }
 
 
-func ParseJSON(bytes []byte, conn net.Conn, str TCPHandler) {
+func ParseJSON(bytes []byte, conn net.Conn, str *TCPHandler) {
 	message := userConnections.Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	str.Connection.AddTCPConn(conn, message.UserName, &message)
-	routerIn.RouterIn(str.Connection.OutChan)
+	//str.Connection.AddTCPConn(conn, message.UserName, &message)
+	str.Connection.AddTCPConn(conn, message.UserName)
+	//routerIn.RouterIn(str.Connection.OutChan)
+	routerIn.RouterIn(&message, str.Connection.OutChan)
 }

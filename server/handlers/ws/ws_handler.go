@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"go_messenger/server/userConnections"
 	"github.com/gorilla/websocket"
 	"go_messenger/server/routerIn"
+	"go_messenger/server/userConnections"
 )
 
 var upgrader = websocket.Upgrader{
@@ -65,14 +65,10 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) {
 	fmt.Println(message.Content)
 	str.Connection.AddWSConn(conn, message.UserName)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
-	//return str.Connection.OutChan
 }
 
 func SendJSON(conns []*websocket.Conn, str *userConnections.Message) {
-	//for k,v := range conns {
-	//	fmt.Println("WS connect: ", k, v)
-	//	fmt.Println(*str)
-	//}
+
 	outcomingData, err := json.Marshal(&str)
 	if err != nil {
 		log.Println(err)

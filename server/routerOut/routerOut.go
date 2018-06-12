@@ -36,24 +36,56 @@ func (r *RouterOut) HandleOut() {
 }
 
 func (r *RouterOut) getSliceOfTCP(ms *userConnections.Message) []net.Conn {
+
+	//get current TCP connections
 	mapTCP := r.Connection.GetAllTCPConnections()
 	fmt.Println("ONLINE TCP connects -> ", len(mapTCP))
 	var sliceTCP = []net.Conn{}
-	for k, _ := range mapTCP {
-		if mapTCP[k] == ms.UserName {
-			sliceTCP = append(sliceTCP, k)
+
+	//send message to the client
+	if len(ms.GroupMember) == 0 {
+		for k, _ := range mapTCP {
+			if mapTCP[k] == ms.GroupName {
+				sliceTCP = append(sliceTCP, k)
+			}
+		}
+
+		//send message to the group
+	} else if len(ms.GroupMember) > 0 {
+		for _, groupMember := range ms.GroupMember {
+			for conn, onlineUserName := range mapTCP {
+				if onlineUserName == groupMember {
+					sliceTCP = append(sliceTCP, conn)
+				}
+			}
 		}
 	}
 	return sliceTCP
 }
 
 func (r *RouterOut) getSliceOfWS(ms *userConnections.Message) []*websocket.Conn {
+
+	//get current WS connections
 	mapWS := r.Connection.GetAllWSConnections()
 	fmt.Println("ONLINE WS connects -> ", len(mapWS))
 	var sliceWS = []*websocket.Conn{}
-	for k, _ := range mapWS {
-		if mapWS[k] == ms.UserName {
-			sliceWS = append(sliceWS, k)
+
+	//send message to the client
+	if len(ms.GroupMember) == 0 {
+		for k, _ := range mapWS {
+			if mapWS[k] == ms.GroupName {
+				sliceWS = append(sliceWS, k)
+			}
+		}
+
+		//send message to the group
+	} else if len(ms.GroupMember) > 0 {
+		for _, groupMember := range ms.GroupMember {
+			for conn, onlineUserName := range mapWS {
+				if onlineUserName == groupMember {
+					sliceWS = append(sliceWS, conn)
+				}
+			}
 		}
 	}
 	return sliceWS

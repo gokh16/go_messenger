@@ -16,7 +16,7 @@ type Connections struct {
 	OutChan             chan *Message
 }
 
-func NewConnections() *Connections {
+func InitConnections() *Connections {
 	instance := Connections{}
 	instance.WSConnectionsMutex = new(sync.Mutex)
 	instance.WSConnections = make(map[*websocket.Conn]string, 0)

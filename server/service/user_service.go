@@ -39,6 +39,16 @@ func LoginUser(chanOut chan *userConnections.Message) {
 	}
 }
 
+func GetUsers(message *userConnections.Message, chanOut chan *userConnections.Message){
+	var ui interfaces.UI = dbservice.User{}
+	user := []models.User{}
+	ui.GetUsers(&user)
+	for _,val := range user{
+		message.GroupMember = append(message.GroupMember, val.Username)
+	}
+	chanOut <- message
+}
+
 func EditUser() {
 
 }

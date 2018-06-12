@@ -19,6 +19,11 @@ func (u User) CreateUser(user *models.User) bool {
 	return false
 }
 
+//CreateUser method creates record in DB with using the gorm framework. It returns bool value.
+func (u User) GetUsers(users *[]models.User) {
+	dbConn.Find(&users)
+}
+
 //LoginUser method get record from DB with using the gorm framework. It returns bool value.
 func (u User) LoginUser(user *models.User) bool {
 	dbConn.Where("login = ?", user.Login).Where("password = ?", user.Password).First(&user)

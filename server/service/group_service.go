@@ -4,15 +4,17 @@ import (
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/userConnections"
+	"fmt"
 )
 
 //CreateGroup function creats a special User and makes a record in DB. It returns bool value
 func CreateGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
+	fmt.Println(message.GroupName)
 	var gmi interfaces.GMI = dbservice.GroupMember{}
 	var gi interfaces.GI = dbservice.Group{}
 	switch message.GroupType {
 	// groupType == 0 means privat message
-	case 0:
+	case 1:
 		ok := gi.CreateGroup(message.GroupName, message.GroupOwner, message.GroupType)
 		if ok {
 			for _, user := range message.GroupMember {
@@ -22,7 +24,7 @@ func CreateGroup(message *userConnections.Message, chanOut chan *userConnections
 		}
 		message.Status = ok
 	// groupType == 1 means group chat
-	case 1:
+	case 2:
 		ok := gi.CreateGroup(message.GroupName, message.GroupOwner, message.GroupType)
 		if ok {
 			gmi.AddGroupMember(message.GroupOwner, message.GroupName, "")

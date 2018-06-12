@@ -35,17 +35,17 @@ func LoginUser(chanOut chan *userConnections.Message) {
 	ok := ui.LoginUser(&user)
 	if ok {
 		ui.GetUser(&user)
-		ui.GetContactList()
+		ui.GetContactList(message.UserName)
 		gi.GetGroupList(message.UserName)
 
 	}
 }
 
-func GetUsers(message *userConnections.Message, chanOut chan *userConnections.Message){
+func GetUsers(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	var ui interfaces.UI = dbservice.User{}
 	user := []models.User{}
 	ui.GetUsers(&user)
-	for _,val := range user{
+	for _, val := range user {
 		message.GroupMember = append(message.GroupMember, val.Username)
 	}
 	chanOut <- message

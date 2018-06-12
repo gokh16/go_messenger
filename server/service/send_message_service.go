@@ -9,10 +9,10 @@ import (
 //SendMessageTo ...
 func SendMessageTo(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	var mi interfaces.MI = dbservice.Message{}
-	var gmi interfaces.GMI = dbservice.GroupMember{}
+	var gi interfaces.GI = dbservice.Group{}
 	mi.AddMessage(message.Content, message.UserName, message.GroupName, message.ContentType)
 	groupMember := []string{}
-	userList := gmi.GetGroupUserList(message.GroupName)
+	userList := gi.GetGroupUserList(message.GroupName)
 	for _, value := range userList {
 		groupMember = append(message.GroupMember, value.Username)
 	}

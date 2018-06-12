@@ -111,8 +111,8 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	usersBox := ui.NewVerticalBox()
 	buttonUser := ui.NewButton("")
 	buttonUserSlice := make([]*ui.Button, 0)
-	for _, user := range users{
-		if user != "" && user != login{
+	for _, user := range users {
+		if user != "" && user != login {
 			buttonUser = ui.NewButton(user)
 			usersBox.Append(buttonUser, false)
 			buttonUserSlice = append(buttonUserSlice, buttonUser)
@@ -120,11 +120,11 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	}
 	groupName := ""
 	sliceMembers := make([]string, 0)
-	for _, buttons := range buttonUserSlice{
+	for _, buttons := range buttonUserSlice {
 		buttons.OnClicked(func(*ui.Button) {
 			sliceMembers = []string{login, buttons.Text()}
 			conn.Write([]byte(JSONencode(login, "", "",
-				0, login + buttons.Text(), 1,
+				0, login+buttons.Text(), 1,
 				login, sliceMembers, " ", " ", "",
 				" ", " ", " ", true, " ", "CreateGroup")))
 			groupName = buttons.Text()
@@ -142,14 +142,14 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 		for {
 			msg := JSONdecode(conn)
 			if msg.Content != "" {
-				output.Append(msg.UserName+ " "+msg.Content + "\n")
+				output.Append(msg.UserName + " " + msg.Content + "\n")
 			}
 			fmt.Println(msg.Status)
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {
 		fmt.Println(sliceMembers)
-		fmt.Println(login+groupName)
+		fmt.Println(login + groupName)
 		_, err := conn.Write([]byte(JSONencode(login, "", "",
 			0, login+groupName, 1,
 			" ", sliceMembers, " ", input.Text(), "",

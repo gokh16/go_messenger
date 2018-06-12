@@ -107,7 +107,7 @@ func CreateDatabase() {
 
 func InitDatabase() {
 	//for testing
-	db, err := gorm.Open("postgres", "user=postgres password=admin dbname=golangDB sslmode=disable")
+	db, err := gorm.Open("postgres", "user=root password=root dbname=golangDB sslmode=disable")
 	if err != nil {
 		panic(err)
 	}

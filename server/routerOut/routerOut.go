@@ -15,8 +15,6 @@ type RouterOut struct {
 
 var msg *userConnections.Message
 
-//var sliceTCPCon []net.Conn
-
 func NewRouterOut(conn *userConnections.Connections) {
 	newRout := RouterOut{}
 	newRout.Connection = conn
@@ -24,25 +22,14 @@ func NewRouterOut(conn *userConnections.Connections) {
 }
 
 func (r *RouterOut) HandleOut() {
-	//sliceTCP := r.getSliceOfTCP(r.Connection.OutChan)
-	//sliceWS := r.getSliceOfWS(r.Connection.OutChan)
-	//
-	//for msg := range r.ChOut {
-	//	if sliceTCP != nil {
-	//		tcp.WaitJSON(sliceTCP, msg)
-	//	}
-	//	if sliceWS != nil {
-	//		ws.SendJSON(sliceWS, msg)
-	//	}
-	//}
 
 	for {
 		if msg = <-r.Connection.OutChan; msg != nil {
 			if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 				tcp.WaitJSON(sliceTCPCon, msg)
 			}
-			if sliceWScon := r.getSliceOfWS(msg); sliceWScon != nil {
-				ws.SendJSON(sliceWScon, msg)
+			if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
+				ws.SendJSON(sliceWSCon, msg)
 			}
 		}
 	}
@@ -50,7 +37,7 @@ func (r *RouterOut) HandleOut() {
 
 func (r *RouterOut) getSliceOfTCP(ms *userConnections.Message) []net.Conn {
 	mapTCP := r.Connection.GetAllTCPConnections()
-	fmt.Println("OLINE TCP connects -> ", len(mapTCP))
+	fmt.Println("ONLINE TCP connects -> ", len(mapTCP))
 	var sliceTCP = []net.Conn{}
 	for k, _ := range mapTCP {
 		if mapTCP[k] == ms.UserName {
@@ -62,7 +49,7 @@ func (r *RouterOut) getSliceOfTCP(ms *userConnections.Message) []net.Conn {
 
 func (r *RouterOut) getSliceOfWS(ms *userConnections.Message) []*websocket.Conn {
 	mapWS := r.Connection.GetAllWSConnections()
-	fmt.Println("OLINE WS connects -> ", len(mapWS))
+	fmt.Println("ONLINE WS connects -> ", len(mapWS))
 	var sliceWS = []*websocket.Conn{}
 	for k, _ := range mapWS {
 		if mapWS[k] == ms.UserName {

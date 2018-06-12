@@ -16,34 +16,31 @@ type Connections struct {
 	OutChan             chan *Message
 }
 
-//func (c *Connections) AddTCPConn(conn net.Conn, userName string, outChan *Message) *Connections {
+func NewConnections() *Connections {
+	instance := Connections{}
+	instance.WSConnectionsMutex = new(sync.Mutex)
+	instance.WSConnections = make(map[*websocket.Conn]string, 0)
+	instance.TCPConnectionsMutex = new(sync.Mutex)
+	instance.TCPConnections = make(map[net.Conn]string, 0)
+	instance.OutChan = make(chan *Message, 1024)
+	return &instance
+}
+
 func (c *Connections) AddTCPConn(conn net.Conn, userName string) {
-	//str := c
-	//str.TCPConnections[conn] = userName
-	//str.OutChan <- outChan
-	//return str
 	c.TCPConnectionsMutex.Lock()
 	c.TCPConnections[conn] = userName
 	c.TCPConnectionsMutex.Unlock()
 }
 
 func (c *Connections) AddWSConn(conn *websocket.Conn, userName string) {
-	//str := c
-	//str.WSConnections[conn] = userName
-	//str.OutChan <- outChan
-	//return str
 	c.WSConnectionsMutex.Lock()
-	defer c.WSConnectionsMutex.Unlock()
 	c.WSConnections[conn] = userName
+	c.WSConnectionsMutex.Unlock()
 }
 func (c *Connections) GetAllTCPConnections() map[net.Conn]string {
-	c.TCPConnectionsMutex.Lock()
-	defer c.TCPConnectionsMutex.Unlock()
 	return c.TCPConnections
 }
 
 func (c *Connections) GetAllWSConnections() map[*websocket.Conn]string {
-	c.WSConnectionsMutex.Lock()
-	defer c.WSConnectionsMutex.Unlock()
 	return c.WSConnections
 }

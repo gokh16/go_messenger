@@ -34,18 +34,24 @@ func CreateGroup(message *userConnections.Message, chanOut chan *userConnections
 	chanOut <- message
 }
 
-func GetGroup() {
-
+func GetGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
+	var gmi interfaces.GMI = dbservice.GroupMember{}
+	var gi interfaces.GI = dbservice.Group{}
+	var mi interfaces.MI = dbservice.Message{}
+	group := gi.GetGroup(message.GroupName)
+	groupMessages := mi.GetGroupMessages(message.GroupName)
+	groupMembers := gmi.GetGroupUserList(message.GroupName)
+	chanOut <- message
 }
 
 func GetGroupList(message *userConnections.Message, chanOut chan *userConnections.Message) {
-
+	chanOut <- message
 }
 
-func EditGroup() {
-
+func EditGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
+	chanOut <- message
 }
 
 func DeleteGroup() {
-
+	chanOut <- message
 }

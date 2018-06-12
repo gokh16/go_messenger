@@ -8,6 +8,7 @@ import (
 type groupInterface interface {
 	CreateGroup(groupName, groupOwner string, groupType uint) bool
 	GetGroupList(userName string) []models.Group
+	GetGroup(groupName string) models.Group
 	//Delete(group *models.Group)
 }
 

@@ -12,7 +12,6 @@ import (
 func CreateUser(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	fmt.Println("Service Ok")
 	var ui interfaces.UI = dbservice.User{}
-	//message := <-chanOut
 	user := models.User{Login: message.Login, Password: message.Password,
 		Username: message.UserName, Email: message.Email,
 		Status: message.Status, UserIcon: message.UserIcon}

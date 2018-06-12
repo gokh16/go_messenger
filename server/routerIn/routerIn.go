@@ -6,22 +6,21 @@ import (
 	"go_messenger/server/userConnections"
 )
 
-func RouterIn(msg *userConnections.Message, c chan *userConnections.Message) {
+func RouterIn(msg *userConnections.Message, chOut chan *userConnections.Message) {
 
 	// variable "action" is a command what to do with the structure
-	//msg := <- c
 	action := msg.Action
 
 	switch action {
 
 	case "SendMessageTo":
-		go service.SendMessageTo(msg, c)
-	//case "CreateUser":
-	//	go service.CreateUser(c)
-	//case "CreateGroup":
-	//	go service.CreateGroup(c)
-	//case "AddGroupMember":
-	//	go service.AddGroupMember(c)
+		go service.SendMessageTo(msg, chOut)
+	case "CreateUser":
+		go service.CreateUser(msg, chOut)
+	case "CreateGroup":
+		go service.CreateGroup(msg, chOut)
+	case "AddGroupMember":
+		go service.AddGroupMember(msg, chOut)
 
 	default:
 		fmt.Println("Unknown format of data from server")

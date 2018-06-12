@@ -28,3 +28,9 @@ func (g Group) GetGroupList(userName string) []models.Group {
 	dbConn.Joins("join group_members on groups.id=group_members.group_id").Where("user_id = ?", user.ID).Find(&groups)
 	return groups
 }
+
+func (g Group) GetGroup(groupName string) models.Group {
+	group := models.Group{}
+	dbConn.Where("groupname = ?", groupName).First(&group)
+	return group
+}

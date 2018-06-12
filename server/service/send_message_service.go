@@ -14,7 +14,9 @@ func SendMessageTo(message *userConnections.Message, chanOut chan *userConnectio
 	groupMember := []string{}
 	userList := gmi.GetGroupUserList(message.GroupName)
 	for _, value := range userList {
-		groupMember = append(message.GroupMember, value.Username)
+		if value.Username != message.UserName {
+			groupMember = append(groupMember, value.Username)
+		}
 	}
 	message.GroupMember = groupMember
 	chanOut <- message

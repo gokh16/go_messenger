@@ -71,24 +71,33 @@ func (r *RouterOut) getSliceOfWS(ms *userConnections.Message) []*websocket.Conn 
 	fmt.Println("ONLINE WS connects -> ", len(mapWS))
 	var sliceWS = []*websocket.Conn{}
 
-	//send message to the client
-	if len(ms.GroupMember) == 0 {
-		for k, _ := range mapWS {
-			if mapWS[k] == ms.GroupName {
-				sliceWS = append(sliceWS, k)
-			}
-		}
-
-		//send message to the group
-	} else if len(ms.GroupMember) > 0 {
-		for _, groupMember := range ms.GroupMember {
-			for conn, onlineUserName := range mapWS {
-				if onlineUserName == groupMember {
-					sliceWS = append(sliceWS, conn)
-				}
+	for _, groupMember := range ms.GroupMember {
+		for conn, onlineUserName := range mapWS {
+			if onlineUserName == groupMember && onlineUserName != ms.UserName {
+				sliceWS = append(sliceWS, conn)
 			}
 		}
 	}
+
+
+	//send message to the client
+	//if len(ms.GroupMember) == 0 {
+	//	for k, _ := range mapWS {
+	//		if mapWS[k] == ms.GroupName {
+	//			sliceWS = append(sliceWS, k)
+	//		}
+	//	}
+	//
+	//	//send message to the group
+	//} else if len(ms.GroupMember) > 0 {
+	//	for _, groupMember := range ms.GroupMember {
+	//		for conn, onlineUserName := range mapWS {
+	//			if onlineUserName == groupMember {
+	//				sliceWS = append(sliceWS, conn)
+	//			}
+	//		}
+	//	}
+	//}
 	return sliceWS
 }
 

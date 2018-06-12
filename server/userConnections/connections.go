@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"fmt"
 )
 
 type Connections struct {
@@ -22,9 +23,13 @@ func (c *Connections) AddTCPConn(conn net.Conn, userName string) {
 	//str.TCPConnections[conn] = userName
 	//str.OutChan <- outChan
 	//return str
+
+
+
 	c.TCPConnectionsMutex.Lock()
 	c.TCPConnections[conn] = userName
 	c.TCPConnectionsMutex.Unlock()
+	fmt.Println(c.TCPConnections, "ADDTCP")
 }
 
 func (c *Connections) AddWSConn(conn *websocket.Conn, userName string) {

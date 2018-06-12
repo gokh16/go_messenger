@@ -8,10 +8,6 @@ import (
 )
 
 func WaitJSON(conns []net.Conn, str *userConnections.Message) {
-	//for k,v := range conns {
-	//	fmt.Println("TCP connect: ", k, v)
-	//	fmt.Println(str.UserName)
-	//}
 	outcomingData, err := json.Marshal(&str)
 	if err != nil {
 		log.Println(err)

@@ -2,7 +2,6 @@ package ws
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -29,7 +28,7 @@ func NewWSHandler(conns *userConnections.Connections) {
 }
 
 func Handler(str WSHandler) {
-	fs := http.FileServer(http.Dir("./public"))
+	fs := http.FileServer(http.Dir("./web"))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -47,10 +46,20 @@ func Handler(str WSHandler) {
 
 func ReadMessage(conn *websocket.Conn, str WSHandler) {
 	for {
-		_, data, err := conn.ReadMessage()
+		messageType, data, err := conn.ReadMessage()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		if err := conn.WriteMessage(messageType, data); err != nil {
+			log.Println(err)
+			return
+		}
+		GetJSON(data, conn, str)
+		/*_, data, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("Cannot read message")
-		}
+		}*/
 		GetJSON(data, conn, str)
 	}
 }
@@ -61,8 +70,8 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) {
 	if err != nil {
 		log.Println("Unmarshal error")
 	}
-	fmt.Println(message.UserName)
-	fmt.Println(message.Content)
+	//fmt.Println(message.UserName)
+	//fmt.Println(message.Content)
 	str.Connection.AddWSConn(conn, message.UserName)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 	//return str.Connection.OutChan
@@ -73,11 +82,11 @@ func SendJSON(conns []*websocket.Conn, str *userConnections.Message) {
 	//	fmt.Println("WS connect: ", k, v)
 	//	fmt.Println(*str)
 	//}
-	outcomingData, err := json.Marshal(&str)
-	if err != nil {
-		log.Println(err)
-	}
+	//outcomingData, err := json.Marshal(&str)
+	//if err != nil {
+	//	log.Println(err)
+	//}
 	for _, conn := range conns {
-		conn.WriteJSON(outcomingData)
+		conn.WriteJSON(str)
 	}
 }

@@ -7,7 +7,7 @@ type Message struct {
 	models.Message
 }
 
-//AddMessage func
+//AddMessage func.
 func (msg Message) AddMessage(content, username, groupName, contentType string) bool {
 	sender := models.User{}
 	recipient := models.Group{}
@@ -19,4 +19,8 @@ func (msg Message) AddMessage(content, username, groupName, contentType string) 
 		return true
 	}
 	return false
+}
+func (msg Message) GetGroupMessages(groupName string) []models.Message {
+	var messageList = []models.Message{}
+	return messageList
 }

@@ -30,8 +30,8 @@ type Message struct {
 func JSONencode(user string, relatingUser string, relatedUser string, relationType uint, groupName string, groupType uint,
 	groupOwner string, groupMember []string, contentType string, content string, lastMessage string, login string, password string,
 	email string, status bool, userIcon string, action string) string {
-	incomingData := Message{user, relatingUser,relatedUser,relationType,groupName, groupType, groupOwner,
-	groupMember, contentType, content, lastMessage, login, password, email, status, userIcon, action}
+	incomingData := Message{user, relatingUser, relatedUser, relationType, groupName, groupType, groupOwner,
+		groupMember, contentType, content, lastMessage, login, password, email, status, userIcon, action}
 	outcomingData, err := json.Marshal(incomingData)
 	if err != nil {
 		log.Fatal(err)

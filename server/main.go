@@ -19,22 +19,22 @@ func init() {
 func main() {
 
 	// init connections struct
-	connectionList := userConnections.NewConnections()
+	connectionList := userConnections.InitConnections()
 
 	// init routerOut
 	routerOut.NewRouterOut(connectionList)
 
 	// start WS server
 	ws.NewWSHandler(connectionList)
-	fmt.Println("WS server was started!")
+	fmt.Println("good 1")
 
 	// start TCP server
 	tcp.NewTCPHandler(connectionList)
-	fmt.Println("TCP server was started!")
+	fmt.Println("good 2")
 
 	db := dbservice.OpenConnDB()
 	defer db.Close()
-	fmt.Println("DB was connected!")
+	fmt.Println("good 3")
 
 	stop := make(chan bool)
 	<-stop

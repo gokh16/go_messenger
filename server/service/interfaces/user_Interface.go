@@ -8,6 +8,7 @@ type userInterface interface {
 	LoginUser(user *models.User) bool
 	GetUser(user *models.User) models.User
 	GetContactList() []models.User
+	GetUsers(users *[]models.User)
 	//Delete(user *models.User)
 }
 

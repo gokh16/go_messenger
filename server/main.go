@@ -12,13 +12,15 @@ import (
 	"go_messenger/server/userConnections"
 
 	"github.com/gorilla/websocket"
+	"go_messenger/server/db"
 )
 
-//func init() {
-//	db.CreateDatabase()
-//	db.InitDatabase()
-//
-//}
+func init() {
+	db.CreateDatabase()
+	//db.InitDatabase()
+
+}
+
 
 func main() {
 	chOut := make(chan *userConnections.Message, 1024)

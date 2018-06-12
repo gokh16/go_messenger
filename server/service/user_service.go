@@ -13,9 +13,10 @@ func CreateUser(message *userConnections.Message, chanOut chan *userConnections.
 	fmt.Println("Service Ok")
 	var ui interfaces.UI = dbservice.User{}
 	//message := <-chanOut
-	user := models.User{Login: message.Login, Password: message.Password,
-		Username: message.UserName, Email: message.Email,
-		Status: message.Status, UserIcon: message.UserIcon}
+	user := models.User{Username: message.UserName}
+
+	fmt.Println(message.UserName)
+	fmt.Println(user.Username)
 	ok := ui.CreateUser(&user)
 	if ok {
 		message.Status = ok
@@ -38,6 +39,16 @@ func LoginUser(chanOut chan *userConnections.Message) {
 		gi.GetGroupList(message.UserName)
 
 	}
+}
+
+func GetUsers(message *userConnections.Message, chanOut chan *userConnections.Message){
+	var ui interfaces.UI = dbservice.User{}
+	user := []models.User{}
+	ui.GetUsers(&user)
+	for _,val := range user{
+		message.GroupMember = append(message.GroupMember, val.Username)
+	}
+	chanOut <- message
 }
 
 func EditUser() {

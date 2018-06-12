@@ -16,12 +16,12 @@ func RouterIn(msg *userConnections.Message, c chan *userConnections.Message) {
 
 	case "SendMessageTo":
 		go service.SendMessageTo(msg, c)
-	//case "CreateUser":
-	//	go service.CreateUser(c)
-	//case "CreateGroup":
-	//	go service.CreateGroup(c)
-	//case "AddGroupMember":
-	//	go service.AddGroupMember(c)
+	case "CreateUser":
+		go service.CreateUser(c)
+	case "CreateGroup":
+		go service.CreateGroup(c)
+	case "AddGroupMember":
+		go service.AddGroupMember(c)
 
 	default:
 		fmt.Println("Unknown format of data from server")

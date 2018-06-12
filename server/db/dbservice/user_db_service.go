@@ -53,7 +53,17 @@ func (u User) AddContact(userName, contactName string, relationType uint) bool {
 
 }
 
-func (u User) GetContactList() []models.User {
+func (u User) GetContactList(userName string) []models.User {
+	user := models.User{}
 	contactList := []models.User{}
+	temp := []models.UserRelation{}
+	dbConn.Where("username = ?", userName).First(&user)
+	dbConn.Where("relating_user=?", user.ID).Find(&temp)
+	for i, _ := range temp {
+		contact := models.User{}
+		dbConn.Where("id=?", temp[i].RelatedUser).First(&contact)
+		contactList = append(contactList, contact)
+
+	}
 	return contactList
 }

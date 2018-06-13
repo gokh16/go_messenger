@@ -18,7 +18,7 @@ new Vue({
         this.ws.addEventListener('message', function (e) {
             var msg = JSON.parse(e.data);
             self.ReceivedContent +=
-                    '<div class="chip">' + msg.UserName + '</div>' +
+                    '<div class="chip">' + msg.UserName +' from: '+ msg.GroupName+ '</div>' +
                     '<div class="white-text">' + msg.Content + '</div>' +
                     '<br/>';
             var element = document.getElementById('chat-messages');
@@ -46,11 +46,11 @@ new Vue({
                 return
             }
             this.UserName = $('<p>').html(this.UserName).text();
-            this.ws.send(
+           /* this.ws.send(
                 JSON.stringify({
                     UserName: this.UserName,
                     Action: "CreateUser"
-                }));
+                }));*/
             this.joined = true;
         },
     }

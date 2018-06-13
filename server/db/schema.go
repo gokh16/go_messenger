@@ -107,12 +107,19 @@ func CreateDatabase() {
 
 func InitDatabase() {
 	//for testing
-	db, err := gorm.Open("postgres", "user=postgres password=golang dbname=golangDB sslmode=disable")
+	dbinfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASSWORD, DB_SSLMODE)
+	db, err := gorm.Open("postgres", dbinfo)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
-	type1 := models.GroupType{Type: "Private"}
+	group := models.Group{GroupName: "User1User3", GroupOwnerID: 1, GroupTypeID: 1}
+	db.Create(&group)
+	groupmember1 := models.GroupMember{GroupID: 2, UserID: 1, LastReadMessageID: 1}
+	groupmember2 := models.GroupMember{GroupID: 2, UserID: 3, LastReadMessageID: 1}
+	db.Create(&groupmember1)
+	db.Create(&groupmember2)
+	/*type1 := models.GroupType{Type: "Private"}
 	db.Create(&type1)
 	user1 := models.User{Login: "User1", Password: "", Username: "User1", Status: false, UserIcon: ""}
 	user2 := models.User{Login: "User2", Password: "", Username: "User2", Status: false, UserIcon: ""}
@@ -125,5 +132,5 @@ func InitDatabase() {
 	groupmember1 := models.GroupMember{GroupID: 1, UserID: 1, LastReadMessageID: 1}
 	groupmember2 := models.GroupMember{GroupID: 1, UserID: 2, LastReadMessageID: 1}
 	db.Create(&groupmember1)
-	db.Create(&groupmember2)
+	db.Create(&groupmember2)*/
 }

@@ -29,6 +29,7 @@ func (r *RouterOut) HandleOut() {
 				tcp.WaitJSON(sliceTCPCon, msg)
 			}
 			if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
+				fmt.Println("route",msg.GroupMember)
 				ws.SendJSON(sliceWSCon, msg)
 			}
 		}
@@ -43,7 +44,8 @@ func (r *RouterOut) getSliceOfTCP(ms *userConnections.Message) []net.Conn {
 	var sliceTCP = []net.Conn{}
 
 	//send message to the client
-	fmt.Println(ms.GroupMember, "groupmember")
+	//fmt.Println(ms.GroupMember, "groupmember")
+
 	if len(ms.GroupMember) == 0 {
 		for k, _ := range mapTCP {
 			if mapTCP[k] == ms.UserName {
@@ -70,6 +72,15 @@ func (r *RouterOut) getSliceOfWS(ms *userConnections.Message) []*websocket.Conn 
 	mapWS := r.Connection.GetAllWSConnections()
 	fmt.Println("ONLINE WS connects -> ", len(mapWS))
 	var sliceWS = []*websocket.Conn{}
+
+	if(ms.Action == "GetUsers"){
+		for k,n := range mapWS{
+			if(ms.UserName == n) {
+				sliceWS = append(sliceWS, k)
+			}
+		}
+		return sliceWS
+	}
 
 	for _, groupMember := range ms.GroupMember {
 		for conn, onlineUserName := range mapWS {

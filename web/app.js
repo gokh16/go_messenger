@@ -9,7 +9,9 @@ new Vue({
         joined: false, // True if email and username have been filled in
         GroupName: '',
         Status: null,
-        Action: ''
+        Action: '',
+        OnlineUsers: '',
+        GroupMember: [],
     },
 
     created: function () {
@@ -17,10 +19,16 @@ new Vue({
         this.ws = new WebSocket('ws://' + window.location.host + '/ws');
         this.ws.addEventListener('message', function (e) {
             var msg = JSON.parse(e.data);
-            self.ReceivedContent +=
-                    '<div class="chip">' + msg.UserName +' from: '+ msg.GroupName+ '</div>' +
-                    '<div class="white-text">' + msg.Content + '</div>' +
-                    '<br/>';
+                if (msg.Action == "GetUsers") {
+                    for (var i = 0; i < msg.GroupMember.length; i++) {
+                        self.OnlineUsers += '<div class="white-text">' + msg.GroupMember[i] + '</div>' + '<br/>';
+                    }
+                } else if (msg.Action == "SendMessageTo") {
+                    self.ReceivedContent +=
+                        '<div class="chip">' + msg.UserName + ' from: ' + msg.GroupName + '</div>' +
+                        '<div class="white-text">' + msg.Content + '</div>' +
+                        '<br/>';
+                }
             var element = document.getElementById('chat-messages');
             element.scrollTop = element.scrollHeight;// Auto scroll to the bottom
         });
@@ -46,6 +54,12 @@ new Vue({
                 return
             }
             this.UserName = $('<p>').html(this.UserName).text();
+            this.ws.send(
+              JSON.stringify({
+                  UserName: this.UserName,
+                  Action: "GetUsers"
+              })
+            );
            /* this.ws.send(
                 JSON.stringify({
                     UserName: this.UserName,

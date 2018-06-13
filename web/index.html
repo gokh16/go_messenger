@@ -24,7 +24,14 @@
     </header>
     <main id="app">
         <div class="row">
-            <div class="col s12">
+            <div class="col s2">
+                <div class="card horizontal">
+                    <div id="chat-messages" class="card-content blue-grey darken-3" v-html="OnlineUsers">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col s10">
                 <div class="card horizontal">
                     <div id="chat-messages" class="card-content blue-grey darken-3" v-html="ReceivedContent">
                     </div>

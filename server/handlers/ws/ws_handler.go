@@ -28,7 +28,7 @@ func NewWSHandler(conns *userConnections.Connections) {
 }
 
 func Handler(str WSHandler) {
-	fs := http.FileServer(http.Dir("../web"))
+	fs := http.FileServer(http.Dir("./web"))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -38,7 +38,7 @@ func Handler(str WSHandler) {
 		go ReadMessage(conn, str)
 	})
 	log.Println("HTTP server started on :12345")
-	err := http.ListenAndServe("192.168.104.51:12345", nil)
+	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		panic(err)
 	}

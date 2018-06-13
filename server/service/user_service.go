@@ -41,7 +41,9 @@ func GetUsers(message *userConnections.Message, chanOut chan *userConnections.Me
 	user := []models.User{}
 	ui.GetUsers(&user)
 	for _,val := range user{
-		message.GroupMember = append(message.GroupMember, val.Username)
+		if(val.Username != message.UserName){
+			message.GroupMember = append(message.GroupMember, val.Username)
+			}
 	}
 	chanOut <- message
 }

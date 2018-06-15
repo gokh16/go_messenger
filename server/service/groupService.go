@@ -7,10 +7,10 @@ import (
 	"go_messenger/server/userConnections"
 )
 
-//CreateGroup function creats a special Group and makes a record in DB. It returns bool value
+//CreateGroup function creats a special GroupDBService and makes a record in DB. It returns bool value
 func CreateGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	fmt.Println(message.GroupName)
-	var gi interfaces.GI = dbservice.Group{}
+	var gi interfaces.GI = dbservice.GroupDBService{}
 	switch message.GroupType {
 	// groupType == 1 means privat message
 	case 1:
@@ -36,8 +36,8 @@ func CreateGroup(message *userConnections.Message, chanOut chan *userConnections
 }
 
 func GetGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
-	// var gi interfaces.GI = dbservice.Group{}
-	// var mi interfaces.MI = dbservice.Message{}
+	// var gi interfaces.GI = dbservice.GroupDBService{}
+	// var mi interfaces.MI = dbservice.MessageDBService{}
 	// group := gi.GetGroup(message.GroupName)
 	// groupMessages := mi.GetGroupMessages(message.GroupName)
 	// groupMembers := gi.GetGroupUserList(message.GroupName)
@@ -52,9 +52,9 @@ func EditGroup(message *userConnections.Message, chanOut chan *userConnections.M
 	chanOut <- message
 }
 
-//AddGroupMember add new members in spesific Group.
+//AddGroupMember add new members in spesific GroupDBService.
 func AddGroupMember(message *userConnections.Message, chanOut chan *userConnections.Message) {
-	var gi interfaces.GI = dbservice.Group{}
+	var gi interfaces.GI = dbservice.GroupDBService{}
 	for _, user := range message.GroupMember {
 		gi.AddGroupMember(user, message.GroupName, message.LastMessage)
 	}

@@ -5,17 +5,15 @@ import (
 	"net"
 	"encoding/json"
 	"log"
-	"fmt"
 )
 
-func WaitJSON(conns []net.Conn, str *userConnections.Message) {
-	fmt.Println(str)
-	outcomingData, err := json.Marshal(&str)
+func WaitJSON(conns []net.Conn, msg *userConnections.Message) {
+	outComingData, err := json.Marshal(&msg)
 	if err != nil {
 		log.Println(err)
 	}
 	for _, conn := range conns {
-		conn.Write(outcomingData)
+		conn.Write(outComingData)
 	}
 }
 

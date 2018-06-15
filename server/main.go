@@ -7,8 +7,8 @@ import (
 
 	"go_messenger/server/routerOut"
 	"log"
-	"go_messenger/server/db/dbservice"
 	"go_messenger/server/db"
+	"go_messenger/server/db/dbservice"
 )
 
 func init() {

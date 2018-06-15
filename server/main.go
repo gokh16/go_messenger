@@ -1,19 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"go_messenger/server/db/dbservice"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
 	"go_messenger/server/userConnections"
 
-	"go_messenger/server/db"
 	"go_messenger/server/routerOut"
+	"log"
+	"go_messenger/server/db/dbservice"
+	"go_messenger/server/db"
 )
 
 func init() {
 	db.CreateDatabase()
-	db.InitDatabase()
+	//db.InitDatabase()
 }
 
 func main() {
@@ -22,19 +22,19 @@ func main() {
 	connectionList := userConnections.InitConnections()
 
 	// init routerOut
-	routerOut.NewRouterOut(connectionList)
+	routerOut.InitRouterOut(connectionList)
 
 	// start WS server
 	ws.NewWSHandler(connectionList)
-	fmt.Println("good 1")
+	log.Println("WS handler Ok! : main")
 
 	// start TCP server
 	tcp.NewTCPHandler(connectionList)
-	fmt.Println("good 2")
+	log.Println("TCP handler Ok! : main")
 
 	db := dbservice.OpenConnDB()
 	defer db.Close()
-	fmt.Println("good 3")
+	log.Println("DB connection Ok! : main")
 
 	stop := make(chan bool)
 	<-stop

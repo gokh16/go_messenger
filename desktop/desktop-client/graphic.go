@@ -132,7 +132,7 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 			output.SetText("")
 		})
 	}
-	//fmt.Println(buttonUserSlice, "slice buttons", buttonUserSlice[0].Text())
+	fmt.Println(buttonUserSlice, "slice buttons", buttonUserSlice[0].Text())
 	messageBox := ui.NewVerticalBox()
 	messageBox.Append(output, true)
 	//messageBox.Append(user, false)

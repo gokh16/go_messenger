@@ -1,15 +1,14 @@
 package interfaces
 
 import (
-	"go_messenger/server/models"
+	"go_messenger/server/userConnections"
 )
 
 //groupInterface as contract between ORM level and Service Level
-type GroupI interface {
-	CreateGroup(groupName, groupOwner string, groupType uint) bool
-	GetGroupList(userName string) []models.Group
-	GetGroup(groupName string) models.Group
-	AddGroupMember(username, groupName, lastmessage string) bool
-	GetGroupUserList(groupName string) []models.User
-	//Delete(group *models.Group)
+type GroupServiceI interface {
+	CreateGroup(message *userConnections.Message, chanOut chan *userConnections.Message)
+	GetGroup(message *userConnections.Message, chanOut chan *userConnections.Message)
+	GetGroupList(message *userConnections.Message, chanOut chan *userConnections.Message)
+	EditGroup(message *userConnections.Message, chanOut chan *userConnections.Message)
+	AddGroupMember(message *userConnections.Message, chanOut chan *userConnections.Message)
 }

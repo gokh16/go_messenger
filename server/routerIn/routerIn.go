@@ -17,12 +17,12 @@ func RouterIn(msg *userConnections.Message, chanOut chan *userConnections.Messag
 		go service.MessageService{}.SendMessageTo(msg, chanOut)
 	case "CreateUser":
 		go service.UserService{}.CreateUser(msg, chanOut)
-	//case "LoginUser":
-	//	go service.LoginUser(msg, chanOut)
+	case "LoginUser":
+		go service.UserService{}.LoginUser(chanOut)
 	case "CreateGroup":
 		go service.GroupService{}.CreateGroup(msg, chanOut)
-	//case "AddGroupMember":
-	//	go service.AddGroupMember(c)
+	case "AddGroupMember":
+		go service.GroupService{}.AddGroupMember(msg, chanOut)
 	case "GetUsers":
 		go service.UserService{}.GetUsers(msg, chanOut)
 

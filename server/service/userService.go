@@ -16,7 +16,7 @@ func (u *UserService) GetUsers(msg *userConnections.Message, chanOut chan *userC
 	var users []models.User
 	u.UserDBService.GetUsers(&users)
 	for _, user := range users {
-		msg.GroupMember.GroupMember = append(msg.GroupMember.GroupMember, user)
+		msg.Member.GroupMembers = append(msg.Member.GroupMembers, user)
 	}
 	chanOut <- msg
 }

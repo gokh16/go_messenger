@@ -18,20 +18,20 @@ func (g *GroupService) CreateGroup(msg *userConnections.Message, chanOut chan *u
 	case 1:
 		ok := g.groupDBService.CreateGroup(msg.Group.GroupName, msg.Group.GroupOwnerID, msg.Group.GroupType.Type)
 		if ok {
-			for _, user := range msg.GroupMember.GroupMember {
-				g.groupDBService.AddGroupMember(user.Username, msg.Group.GroupName, "")
+			for _, user := range msg.Member.GroupMembers {
+				g.groupDBService.AddGroupMember(user.Username, msg.Group.GroupName, 0)
 			}
-			msg.User.Status = ok
+			msg.Status = ok
 		}
-		msg.User.Status = ok
+		msg.Status = ok
 		// groupType == 2 means group chat
 	case 2:
 		ok := g.groupDBService.CreateGroup(msg.Group.GroupName, msg.Group.GroupOwnerID, msg.Group.GroupType.Type)
 		if ok {
-			g.groupDBService.AddGroupMember(msg.Group.GroupOwnerID, msg.Group.GroupName, "")
+			g.groupDBService.AddGroupMember(msg.User.Username, msg.Group.GroupName, 0)
 			msg.User.Status = ok
 		}
-		msg.Group.GroupStatus = ok
+		msg.Status = ok
 
 	}
 	chanOut <- msg
@@ -57,8 +57,8 @@ func (*GroupService) EditGroup(message *userConnections.Message, chanOut chan *u
 //AddGroupMember add new members in spesific GroupDBService.
 func (g *GroupService) AddGroupMember(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	//var gi interfaces.GI = dbservice.GroupDBService{}
-	for _, user := range message.GroupMember.GroupMember {
-		g.groupDBService.AddGroupMember(user.Username, message.Group.GroupName, message.Message.LastMessage)
+	for _, user := range message.Member.GroupMembers {
+		g.groupDBService.AddGroupMember(user.Username, message.Group.GroupName, message.GroupMember.LastReadMessageID)
 	}
 }
 

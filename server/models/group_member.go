@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-//GroupMember is a model to Database table
+//GroupMembers is a model to Database table
 type GroupMember struct {
 	gorm.Model
 

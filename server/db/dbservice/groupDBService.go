@@ -10,7 +10,7 @@ type GroupDBService struct {
 }
 
 //CreateGroup method creates new record in DB GroupDBService table with using the gorm framework. It returns bool value.
-func (g *GroupDBService) CreateGroup(groupName, groupOwner string, groupType uint) bool {
+func (g *GroupDBService) CreateGroup(groupName string, groupOwner, groupType uint) bool {
 	owner := models.User{}
 	dbConn.Where("username = ?", groupOwner).First(&owner)
 	group := models.Group{GroupName: groupName, GroupOwnerID: owner.ID, GroupTypeID: groupType}
@@ -36,14 +36,14 @@ func (g *GroupDBService) GetGroup(groupName string) models.Group {
 	return group
 }
 
-//AddGroupMember method creates new record in DB GroupMember table with using the gorm framework. It returns bool value.
-func (g *GroupDBService) AddGroupMember(username, groupName, lastmessage string) bool {
+//AddGroupMember method creates new record in DB GroupMembers table with using the gorm framework. It returns bool value.
+func (g *GroupDBService) AddGroupMember(userName, groupName string, lastMessage uint) bool {
 	user := models.User{}
 	group := models.Group{}
 	message := models.Message{}
-	dbConn.Where("username = ?", username).First(&user)
+	dbConn.Where("userName = ?", userName).First(&user)
 	dbConn.Where("group_name = ?", groupName).First(&group)
-	dbConn.Where("content = ?", lastmessage).First(&message)
+	dbConn.Where("content = ?", lastMessage).First(&message)
 	member := models.GroupMember{UserID: user.ID, GroupID: group.ID, LastReadMessageID: message.ID}
 	if dbConn.NewRecord(member) {
 		dbConn.Create(&member)

@@ -13,12 +13,11 @@ type MessageService struct {
 
 func (m *MessageService) SendMessageTo(msg *userConnections.Message, chanOut chan *userConnections.Message) {
 	m.MessageDBService.AddMessage(msg.Message.Content, msg.User.Username, msg.Group.GroupName, msg.Message.MessageContentType)
-	//groupMember := []string{}
 	var groupMembers []models.User
 	userList := m.GroupDBService.GetGroupUserList(msg.Group.GroupName)
 	for _, user := range userList {
-		groupMembers = append(msg.GroupMember.GroupMember, user)
+		groupMembers = append(msg.Member.GroupMembers, user)
 	}
-	msg.GroupMember.GroupMember = groupMembers
+	msg.Member.GroupMembers = groupMembers
 	chanOut <- msg
 }

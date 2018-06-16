@@ -5,11 +5,13 @@ import "go_messenger/server/models"
 type Message struct {
 	User        models.User
 	Group       models.Group
-	GroupMember GroupMember
+	GroupMember models.GroupMember
+	Member      Member
 	Message     models.Message
+	Status      bool
 	Action      string
 }
 
-type GroupMember struct {
-	GroupMember []models.User
+type Member struct {
+	GroupMembers []models.User
 }

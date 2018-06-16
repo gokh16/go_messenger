@@ -41,15 +41,15 @@ func (r *RouterOut) getSliceOfTCP(msg *userConnections.Message) []net.Conn {
 
 	if msg.Action == "GetUsers" {
 		for conn, onlineUser := range mapTCP {
-			if onlineUser == msg.UserName {
+			if onlineUser == msg.User.Username {
 				sliceTCP = append(sliceTCP, conn)
 			}
 		}
 	}
 
 	for conn, onlineUser := range mapTCP {
-		for _, groupMember := range msg.GroupMember {
-			if onlineUser == groupMember && onlineUser != msg.UserName {
+		for _, groupMember := range msg.GroupMember.GroupMember {
+			if onlineUser == groupMember.Username && onlineUser != msg.User.Username {
 				sliceTCP = append(sliceTCP, conn)
 			}
 		}
@@ -66,15 +66,15 @@ func (r *RouterOut) getSliceOfWS(msg *userConnections.Message) []*websocket.Conn
 
 	if msg.Action == "GetUsers" {
 		for conn, onlineUser := range mapWS {
-			if onlineUser == msg.UserName {
+			if onlineUser == msg.User.Username {
 				sliceWS = append(sliceWS, conn)
 			}
 		}
 	}
 
 	for conn, onlineUser := range mapWS {
-		for _, groupMember := range msg.GroupMember {
-			if onlineUser == groupMember && onlineUser != msg.UserName {
+		for _, groupMember := range msg.GroupMember.GroupMember {
+			if onlineUser == groupMember.Username && onlineUser != msg.User.Username {
 				sliceWS = append(sliceWS, conn)
 			}
 		}

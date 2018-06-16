@@ -14,17 +14,17 @@ func RouterIn(msg *userConnections.Message, chanOut chan *userConnections.Messag
 	switch action {
 
 	case "SendMessageTo":
-		go service.SendMessageTo(msg, chanOut)
+		go service.MessageService{}.SendMessageTo(msg, chanOut)
 	case "CreateUser":
-		go service.CreateUser(msg, chanOut)
+		go service.UserService{}.CreateUser(msg, chanOut)
 	//case "LoginUser":
 	//	go service.LoginUser(msg, chanOut)
 	case "CreateGroup":
-		go service.CreateGroup(msg, chanOut)
+		go service.GroupService{}.CreateGroup(msg, chanOut)
 	//case "AddGroupMember":
 	//	go service.AddGroupMember(c)
 	case "GetUsers":
-		go service.GetUsers(msg, chanOut)
+		go service.UserService{}.GetUsers(msg, chanOut)
 
 	default:
 		log.Println("Unknown format of data from server")

@@ -43,43 +43,6 @@ func (u *UserService) LoginUser(chanOut chan *userConnections.Message) {
 	}
 }
 
-////CreateUser function creats a special User and makes a record in DB. It returns bool value
-//func (u *User) CreateUser(message *userConnections.MessageDBService, chanOut chan *userConnections.MessageDBService) {
-//	fmt.Println("Service Ok")
-//	ok := u.CreateUser()
-//	if ok {
-//		message.User.Status = ok
-//	}
-//
-//	message.Status = ok
-//	fmt.Println("write in channel")
-//	chanOut <- message
-//}
-//
-//func LoginUser(chanOut chan *userConnections.MessageDBService) {
-//	var ui interfaces.UI = dbservice.User{}
-//	var gi interfaces.GI = dbservice.GroupDBService{}
-//	message := <-chanOut
-//	user := models.User{Login: message.Login, Password: message.Password}
-//	ok := ui.LoginUser(&user)
-//	if ok {
-//		ui.GetUser(&user)
-//		ui.GetContactList(message.UserName)
-//		gi.GetGroupList(message.UserName)
-//
-//	}
-//}
-//
-//func GetUsers(message *userConnections.MessageDBService, chanOut chan *userConnections.MessageDBService) {
-//	var ui interfaces.UI = dbservice.User{}
-//	user := []models.User{}
-//	ui.GetUsers(&user)
-//	for _, val := range user {
-//		message.GroupMember = append(message.GroupMember, val.Username)
-//	}
-//	chanOut <- message
-//}
-
 //func EditUser() {
 //
 //}

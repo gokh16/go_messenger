@@ -9,10 +9,6 @@ import (
 	"go_messenger/server/routerOut"
 	"go_messenger/server/userConnections"
 	"log"
-	"net"
-	"sync"
-
-	"github.com/gorilla/websocket"
 )
 
 func init() {
@@ -28,11 +24,11 @@ func main() {
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)
 
-	ws.NewHandlerWS(&connectionList)
-	fmt.Println("good")
+	ws.NewHandlerWS(connectionList)
+	fmt.Println("WS started : Ok!")
 
-	tcp.NewHandlerTCP(&connectionList)
-	fmt.Println("good2")
+	tcp.NewHandlerTCP(connectionList)
+	fmt.Println("TCP started : Ok!")
 
 	db := dbservice.OpenConnDB()
 	defer func() {
@@ -42,7 +38,7 @@ func main() {
 		}
 	}()
 
-	fmt.Println("good3")
+	fmt.Println("DB opened : Ok!")
 
 	stop := make(chan bool)
 	<-stop

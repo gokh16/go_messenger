@@ -15,7 +15,7 @@ type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
-//NewRouterOut is an initialization for router out
+//InitRouterOut is an init for router out
 func InitRouterOut(conn *userConnections.Connections) {
 	initRout := RouterOut{}
 	initRout.Connection = conn
@@ -23,7 +23,7 @@ func InitRouterOut(conn *userConnections.Connections) {
 }
 
 // Handler is a main func which is establish connections and call func for reading data from
-////connection
+//connection
 func (r *RouterOut) Handler() {
 
 	//var msg is (*) pointer of userConnections.Message struct

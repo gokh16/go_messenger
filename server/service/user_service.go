@@ -37,7 +37,7 @@ func LoginUser(chanOut chan *userConnections.Message) {
 	ok := ui.LoginUser(&user)
 	if ok {
 		ui.GetUser(&user)
-		ui.GetContactList()
+		ui.GetContactList(message.UserName)
 		gi.GetGroupList(message.UserName)
 
 	}

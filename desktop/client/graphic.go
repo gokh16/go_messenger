@@ -1,4 +1,4 @@
-package desktop_client
+package client
 
 import (
 	"fmt"

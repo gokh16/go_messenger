@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/userConnections"
@@ -9,7 +8,6 @@ import (
 
 //CreateGroup function creats a special Group and makes a record in DB. It returns bool value
 func CreateGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
-	fmt.Println(message.GroupName)
 	var gi interfaces.GI = dbservice.Group{}
 	switch message.GroupType {
 	// groupType == 1 means privat message
@@ -68,6 +66,7 @@ func DeleteGroupMember() {
 
 }
 
-func DeleteGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
+func DeleteGroup(message *userConnections.Message, chanOut chan *userConnections.Message) bool {
 	chanOut <- message
+	return false
 }

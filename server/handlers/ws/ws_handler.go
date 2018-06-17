@@ -56,7 +56,7 @@ func ReadMessage(conn *websocket.Conn, str WSHandler) {
 }
 
 func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) {
-	message := userConnections.Message{}
+	message := userConnections.MessageIn{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Println("Unmarshal error")
@@ -67,7 +67,7 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) {
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 }
 
-func SendJSON(conns []*websocket.Conn, str *userConnections.Message) {
+func SendJSON(conns []*websocket.Conn, str *userConnections.MessageIn) {
 
 	outcomingData, err := json.Marshal(&str)
 	if err != nil {

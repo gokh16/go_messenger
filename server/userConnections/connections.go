@@ -4,6 +4,7 @@ import (
 	"net"
 	"sync"
 	"github.com/gorilla/websocket"
+	"go_messenger/server/service/serviceModels"
 )
 
 type Connections struct {
@@ -11,7 +12,7 @@ type Connections struct {
 	WSConnections       map[*websocket.Conn]string // connection:login
 	TCPConnectionsMutex *sync.Mutex
 	TCPConnections      map[net.Conn]string // connection:login
-	OutChan             chan *Message
+	OutChan             chan *serviceModels.MessageOut
 }
 
 func InitConnections() *Connections {
@@ -20,7 +21,7 @@ func InitConnections() *Connections {
 	instance.WSConnections = make(map[*websocket.Conn]string, 0)
 	instance.TCPConnectionsMutex = new(sync.Mutex)
 	instance.TCPConnections = make(map[net.Conn]string, 0)
-	instance.OutChan = make(chan *Message, 1024)
+	instance.OutChan = make(chan *serviceModels.MessageOut, 1024)
 	return &instance
 }
 

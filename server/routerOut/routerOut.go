@@ -2,11 +2,13 @@ package routerOut
 
 import (
 	"fmt"
-	"github.com/gorilla/websocket"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
+	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 	"net"
+
+	"github.com/gorilla/websocket"
 )
 
 type RouterOut struct {
@@ -21,7 +23,7 @@ func InitRouterOut(conn *userConnections.Connections) {
 
 func (r *RouterOut) HandleOut() {
 
-	//var msg is (*) pointer of userConnections.Message struct
+	//var msg is (*) pointer of userConnections.MessageIn struct
 	for msg := range r.Connection.OutChan {
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 			tcp.WaitJSON(sliceTCPCon, msg)
@@ -32,7 +34,7 @@ func (r *RouterOut) HandleOut() {
 	}
 }
 
-func (r *RouterOut) getSliceOfTCP(msg *userConnections.Message) []net.Conn {
+func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 
 	//get current TCP connections
 	mapTCP := r.Connection.GetAllTCPConnections()
@@ -57,7 +59,7 @@ func (r *RouterOut) getSliceOfTCP(msg *userConnections.Message) []net.Conn {
 	return sliceTCP
 }
 
-func (r *RouterOut) getSliceOfWS(msg *userConnections.Message) []*websocket.Conn {
+func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Conn {
 
 	//get current WS connections
 	mapWS := r.Connection.GetAllWSConnections()

@@ -52,7 +52,7 @@ func HandleJSON(conn net.Conn, str *TCPHandler) {
 
 
 func ParseJSON(bytes []byte, conn net.Conn, str *TCPHandler) {
-	message := userConnections.Message{}
+	message := userConnections.MessageIn{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Print("Unmarshal doesn't work: ")

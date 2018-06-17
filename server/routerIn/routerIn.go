@@ -2,11 +2,12 @@ package routerIn
 
 import (
 	"go_messenger/server/service"
+	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 	"log"
 )
 
-func RouterIn(msg *userConnections.Message, chanOut chan *userConnections.Message) {
+func RouterIn(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 
 	// variable "action" is a command what to do with the structure
 	action := msg.Action

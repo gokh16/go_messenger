@@ -15,150 +15,74 @@ type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
-var msg *userConnections.Message
-
-//NewRouterOut is a constructor for router out
-func NewRouterOut(conn *userConnections.Connections) {
-	newRout := RouterOut{}
-	newRout.Connection = conn
-	go newRout.Handler()
+//InitRouterOut is an init for router out
+func InitRouterOut(conn *userConnections.Connections) {
+	initRout := RouterOut{}
+	initRout.Connection = conn
+	go initRout.Handler()
 }
 
 // Handler is a main func which is establish connections and call func for reading data from
-////connection
+//connection
 func (r *RouterOut) Handler() {
 
-	for {
-		//TODO RANGE, IS OK!
-		if msg = <-r.Connection.OutChan; msg != nil {
-			if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
-				tcp.WaitJSON(sliceTCPCon, msg)
-			}
-			if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
-				ws.SendJSON(sliceWSCon, msg)
-			}
+	//var msg is (*) pointer of userConnections.Message struct
+	for msg := range r.Connection.OutChan {
+		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
+			tcp.WaitJSON(sliceTCPCon, msg)
+		}
+		if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
+			ws.SendJSON(sliceWSCon, msg)
 		}
 	}
 }
 
-func (r *RouterOut) getSliceOfTCP(ms *userConnections.Message) []net.Conn {
+func (r *RouterOut) getSliceOfTCP(msg *userConnections.Message) []net.Conn {
 
 	//get current TCP connections
 	mapTCP := r.Connection.GetAllTCPConnections()
 	fmt.Println("ONLINE TCP connects -> ", len(mapTCP))
-	var sliceTCP = []net.Conn{}
+	var sliceTCP []net.Conn
 
-	//send message to the client
-	fmt.Println(ms.GroupMember, "groupmember")
-	if len(ms.GroupMember) == 0 {
-		for k := range mapTCP {
-			if mapTCP[k] == ms.UserName {
-				sliceTCP = append(sliceTCP, k)
+	if msg.Action == "GetUsers" {
+		for conn, onlineUser := range mapTCP {
+			if onlineUser == msg.UserName {
+				sliceTCP = append(sliceTCP, conn)
 			}
 		}
+	}
 
-		//send message to the group
-	} else if len(ms.GroupMember) > 0 {
-		for _, groupMember := range ms.GroupMember {
-			for conn, onlineUserName := range mapTCP {
-				if onlineUserName == groupMember {
-					sliceTCP = append(sliceTCP, conn)
-				}
+	for conn, onlineUser := range mapTCP {
+		for _, groupMember := range msg.GroupMember {
+			if onlineUser == groupMember && onlineUser != msg.UserName {
+				sliceTCP = append(sliceTCP, conn)
 			}
 		}
 	}
 	return sliceTCP
 }
 
-func (r *RouterOut) getSliceOfWS(ms *userConnections.Message) []*websocket.Conn {
+func (r *RouterOut) getSliceOfWS(msg *userConnections.Message) []*websocket.Conn {
 
 	//get current WS connections
 	mapWS := r.Connection.GetAllWSConnections()
 	fmt.Println("ONLINE WS connects -> ", len(mapWS))
-	var sliceWS = []*websocket.Conn{}
+	var sliceWS []*websocket.Conn
 
-	//send message to the client
-	if len(ms.GroupMember) == 0 {
-		for k := range mapWS {
-			if mapWS[k] == ms.GroupName {
-				sliceWS = append(sliceWS, k)
+	if msg.Action == "GetUsers" {
+		for conn, onlineUser := range mapWS {
+			if onlineUser == msg.UserName {
+				sliceWS = append(sliceWS, conn)
 			}
 		}
+	}
 
-		//send message to the group
-	} else if len(ms.GroupMember) > 0 {
-		for _, groupMember := range ms.GroupMember {
-			for conn, onlineUserName := range mapWS {
-				if onlineUserName == groupMember {
-					sliceWS = append(sliceWS, conn)
-				}
+	for conn, onlineUser := range mapWS {
+		for _, groupMember := range msg.GroupMember {
+			if onlineUser == groupMember && onlineUser != msg.UserName {
+				sliceWS = append(sliceWS, conn)
 			}
 		}
 	}
 	return sliceWS
 }
-
-//type RouterOut struct {
-//	Connection *userConnections.Connections
-//}
-//
-//var msg *userConnections.Message
-//
-////var sliceTCPCon []net.Conn
-//
-//func NewRouterOut(conn *userConnections.Connections) {
-//	newRout := RouterOut{}
-//	newRout.Connection = conn
-//	go newRout.Handler()
-//}
-//
-//func (r *RouterOut) Handler() {
-//	//sliceTCP := r.getSliceOfTCP(r.Connection.OutChan)
-//	//sliceWS := r.getSliceOfWS(r.Connection.OutChan)
-//	//
-//	//for msg := range r.ChOut {
-//	//	if sliceTCP != nil {
-//	//		tcp.WaitJSON(sliceTCP, msg)
-//	//	}
-//	//	if sliceWS != nil {
-//	//		ws.SendJSON(sliceWS, msg)
-//	//	}
-//	//}
-//
-//	for {
-//		if msg = <-r.Connection.OutChan; msg != nil {
-//			if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
-//				tcp.WaitJSON(sliceTCPCon, msg)
-//			}
-//			if sliceWScon := r.getSliceOfWS(msg); sliceWScon != nil {
-//				ws.SendJSON(sliceWScon, msg)
-//			}
-//		}
-//	}
-//}
-
-//func (r *RouterOut) getSliceOfTCP(ms *userConnections.Message) []net.Conn {
-//	mapTCP := r.Connection.GetAllTCPConnections()
-//	fmt.Println("OLINE TCP connects -> ", len(mapTCP))
-//	var sliceTCP = []net.Conn{}
-//	for k, _ := range mapTCP {
-//		//TEMP
-//		if mapTCP[k] == ms.UserName {
-//			sliceTCP = append(sliceTCP, k)
-//		}
-//	}
-//	return sliceTCP
-//}
-//
-//func (r *RouterOut) getSliceOfWS(ms *userConnections.Message) []*websocket.Conn {
-//	mapWS := r.Connection.GetAllWSConnections()
-//	fmt.Println("OLINE WS connects -> ", len(mapWS))
-//	var sliceWS = []*websocket.Conn{}
-//	for k, _ := range mapWS {
-//		//TEMP
-//		if mapWS[k] == ms.UserName {
-//			sliceWS = append(sliceWS, k)
-//		}
-//	}
-//	return sliceWS
-//}

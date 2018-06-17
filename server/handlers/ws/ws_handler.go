@@ -3,12 +3,12 @@ package ws
 import (
 	"encoding/json"
 	"fmt"
+	"go_messenger/server/routerIn"
+	"go_messenger/server/userConnections"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"go_messenger/server/routerIn"
-	"go_messenger/server/userConnections"
 )
 
 var upgrader = websocket.Upgrader{
@@ -19,17 +19,21 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-type WSHandler struct {
+//HandlerWS is a structure which has attribute to connect with source structure in userConnections
+type HandlerWS struct {
 	Connection *userConnections.Connections
 }
 
-func NewWSHandler(conns *userConnections.Connections) {
-	ws := WSHandler{conns}
+//NewHandlerWS is a constructor for WS handler
+func NewHandlerWS(conns *userConnections.Connections) {
+	ws := HandlerWS{conns}
 	go Handler(ws)
 }
 
-func Handler(str WSHandler) {
-	fs := http.FileServer(http.Dir("./public"))
+//Handler is a main func which is establish connections and call func for reading data from
+//connection
+func Handler(str HandlerWS) {
+	fs := http.FileServer(http.Dir("./web"))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -45,7 +49,8 @@ func Handler(str WSHandler) {
 	}
 }
 
-func ReadMessage(conn *websocket.Conn, str WSHandler) {
+//ReadMessage is a func for reading data from ws connection
+func ReadMessage(conn *websocket.Conn, str HandlerWS) {
 	for {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
@@ -55,7 +60,8 @@ func ReadMessage(conn *websocket.Conn, str WSHandler) {
 	}
 }
 
-func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) {
+//GetJSON is
+func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 	message := userConnections.Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
@@ -65,15 +71,19 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) {
 	fmt.Println(message.Content)
 	str.Connection.AddWSConn(conn, message.UserName)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
+	//return str.Connection.OutChan
 }
 
+//SendJSON is waiting for data from route out, parsing data into json format and write to client
 func SendJSON(conns []*websocket.Conn, str *userConnections.Message) {
-
 	outcomingData, err := json.Marshal(&str)
 	if err != nil {
 		log.Println(err)
 	}
 	for _, conn := range conns {
-		conn.WriteJSON(outcomingData)
+		err := conn.WriteJSON(outcomingData)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }

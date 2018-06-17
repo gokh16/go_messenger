@@ -6,10 +6,10 @@ import (
 	"go_messenger/server/userConnections"
 )
 
+//RouterIn method which directs data to next step by action field in message structure
 func RouterIn(msg *userConnections.Message, c chan *userConnections.Message) {
 
-	// variable "action" is a command what to do with the structure
-	//msg := <- c
+	// variable "action" is a command what to do with the structures
 	action := msg.Action
 
 	switch action {

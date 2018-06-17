@@ -1,14 +1,14 @@
 package userConnections
 
 import (
+	"fmt"
 	"net"
-
 	"sync"
 
 	"github.com/gorilla/websocket"
-	"fmt"
 )
 
+//Connections is a structure with connections and channel for write out data
 type Connections struct {
 	WSConnectionsMutex  *sync.Mutex
 	WSConnections       map[*websocket.Conn]string // connection:login
@@ -17,36 +17,29 @@ type Connections struct {
 	OutChan             chan *Message
 }
 
-//func (c *Connections) AddTCPConn(conn net.Conn, userName string, outChan *Message) *Connections {
+//AddTCPConn method is adding incoming connection with login to source structure
 func (c *Connections) AddTCPConn(conn net.Conn, userName string) {
-	//str := c
-	//str.TCPConnections[conn] = userName
-	//str.OutChan <- outChan
-	//return str
-
-
-
 	c.TCPConnectionsMutex.Lock()
 	c.TCPConnections[conn] = userName
 	c.TCPConnectionsMutex.Unlock()
 	fmt.Println(c.TCPConnections, "ADDTCP")
 }
 
+//AddWSConn method is adding incoming connection with login to source structure
 func (c *Connections) AddWSConn(conn *websocket.Conn, userName string) {
-	//str := c
-	//str.WSConnections[conn] = userName
-	//str.OutChan <- outChan
-	//return str
 	c.WSConnectionsMutex.Lock()
 	defer c.WSConnectionsMutex.Unlock()
 	c.WSConnections[conn] = userName
 }
+
+//GetAllTCPConnections method returns slice of tcp connections
 func (c *Connections) GetAllTCPConnections() map[net.Conn]string {
 	c.TCPConnectionsMutex.Lock()
 	defer c.TCPConnectionsMutex.Unlock()
 	return c.TCPConnections
 }
 
+//GetAllWSConnections returns slice of ws connections
 func (c *Connections) GetAllWSConnections() map[*websocket.Conn]string {
 	c.WSConnectionsMutex.Lock()
 	defer c.WSConnectionsMutex.Unlock()

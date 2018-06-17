@@ -1,10 +1,10 @@
 package service
 
 import (
+	"fmt"
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/userConnections"
-	"fmt"
 )
 
 //CreateGroup function creats a special User and makes a record in DB. It returns bool value
@@ -36,18 +36,26 @@ func CreateGroup(message *userConnections.Message, chanOut chan *userConnections
 	chanOut <- message
 }
 
+//GetGroup ...
+//todo comment here
 func GetGroup() {
 
 }
 
+//GetGroupList ...
+//todo comment here
 func GetGroupList(message *userConnections.Message, chanOut chan *userConnections.Message) {
 
 }
 
+//EditGroup ...
+//todo comment here
 func EditGroup() {
 
 }
 
+//DeleteGroup ...
+//todo comment here
 func DeleteGroup() {
 
 }

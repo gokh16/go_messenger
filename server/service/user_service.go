@@ -27,6 +27,8 @@ func CreateUser(message *userConnections.Message, chanOut chan *userConnections.
 	chanOut <- message
 }
 
+//LoginUser ...
+//todo comment here
 func LoginUser(chanOut chan *userConnections.Message) {
 	var ui interfaces.UI = dbservice.User{}
 	var gi interfaces.GI = dbservice.Group{}
@@ -41,32 +43,44 @@ func LoginUser(chanOut chan *userConnections.Message) {
 	}
 }
 
-func GetUsers(message *userConnections.Message, chanOut chan *userConnections.Message){
+//GetUsers ...
+//todo comment here
+func GetUsers(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	var ui interfaces.UI = dbservice.User{}
-	user := []models.User{}
-	ui.GetUsers(&user)
-	for _,val := range user{
+	users := []models.User{}
+	ui.GetUsers(&users)
+	for _, val := range users {
 		message.GroupMember = append(message.GroupMember, val.Username)
 	}
 	chanOut <- message
 }
 
+//EditUser ...
+//todo comment here
 func EditUser() {
 
 }
 
+//DeleteUser ...
+//todo comment here
 func DeleteUser() {
 
 }
 
+//GetContactList ...
+//todo comment here
 func GetContactList() {
 
 }
 
+//AddContact ...
+//todo comment here
 func AddContact() {
 
 }
 
+//DeleteContact ...
+//todo comment here
 func DeleteContact() {
 
 }

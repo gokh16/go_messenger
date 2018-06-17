@@ -1,5 +1,6 @@
 package userConnections
 
+//Message is a main structure which contains fields for interactions client and server
 type Message struct {
 	UserName     string
 	RelatingUser string

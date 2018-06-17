@@ -10,6 +10,7 @@ type GroupMember struct {
 }
 
 //AddGroupMember method creates new record in DB GroupMember table with using the gorm framework. It returns bool value.
+//TODO M
 func (gm GroupMember) AddGroupMember(username, groupName, lastmessage string) bool {
 	user := models.User{}
 	group := models.Group{}

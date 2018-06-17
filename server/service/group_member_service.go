@@ -14,10 +14,14 @@ func AddGroupMember(message *userConnections.Message, chanOut chan *userConnecti
 	}
 }
 
+//GetGroupUserList ...
+//todo comment here
 func GetGroupUserList() {
 
 }
 
+//DeleteGroupMember ...
+//todo and here
 func DeleteGroupMember() {
 
 }

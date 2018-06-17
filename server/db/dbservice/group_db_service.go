@@ -20,8 +20,10 @@ func (g Group) CreateGroup(groupName, groupOwner string, groupType uint) bool {
 		return true
 	}
 	return false
+
 }
 
+//GetGroupList is getting users from DB
 func (g Group) GetGroupList(userName string) []models.Group {
 	user := models.User{}
 	groups := []models.Group{}

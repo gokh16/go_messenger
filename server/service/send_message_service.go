@@ -7,6 +7,7 @@ import (
 )
 
 //SendMessageTo ...
+//todo comment here
 func SendMessageTo(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	var mi interfaces.MI = dbservice.Message{}
 	var gi interfaces.GI = dbservice.Group{}
@@ -14,7 +15,7 @@ func SendMessageTo(message *userConnections.Message, chanOut chan *userConnectio
 	groupMember := []string{}
 	userList := gi.GetGroupUserList(message.GroupName)
 	for _, value := range userList {
-		groupMember = append(message.GroupMember, value.Username)
+		groupMember = append(groupMember, value.Username)
 	}
 	message.GroupMember = groupMember
 	chanOut <- message

@@ -4,28 +4,37 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"go_messenger/server/routerIn"
 	"go_messenger/server/userConnections"
 	"log"
 	"net"
-	"go_messenger/server/routerIn"
 )
 
-type TCPHandler struct {
+//HandlerTCP is a structure which has attribute to connect with source structure in userConnections
+type HandlerTCP struct {
 	Connection *userConnections.Connections
 }
 
-
-func NewTCPHandler (conns *userConnections.Connections) {
-	tcp := TCPHandler{conns}
+//NewHandlerTCP is a constructor for TCP handler
+func NewHandlerTCP(conns *userConnections.Connections) {
+	tcp := HandlerTCP{conns}
 	go tcp.Handler()
 }
 
-func (t *TCPHandler) Handler() {
+//Handler is a main func which is establish connections and call func for reading data from
+//connection
+func (t *HandlerTCP) Handler() {
+	//todo ask about binds!
 	ln, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer ln.Close()
+	defer func() {
+		err := ln.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
@@ -37,7 +46,8 @@ func (t *TCPHandler) Handler() {
 	}
 }
 
-func HandleJSON(conn net.Conn, str *TCPHandler) {
+//HandleJSON method is handling json and call parser
+func HandleJSON(conn net.Conn, str *HandlerTCP) {
 	remoteAddr := conn.RemoteAddr().String()
 	fmt.Println("Client connected from " + remoteAddr)
 	for {
@@ -50,8 +60,8 @@ func HandleJSON(conn net.Conn, str *TCPHandler) {
 	}
 }
 
-
-func ParseJSON(bytes []byte, conn net.Conn, str *TCPHandler) {
+//ParseJSON method which advocates like parser
+func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
 	message := userConnections.Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {

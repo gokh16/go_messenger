@@ -1,14 +1,18 @@
 package main
 
 import (
-	"go_messenger/server/handlers/tcp"
-	"go_messenger/server/handlers/ws"
-	"go_messenger/server/userConnections"
-
-	"go_messenger/server/routerOut"
-	"log"
+	"fmt"
 	"go_messenger/server/db"
 	"go_messenger/server/db/dbservice"
+	"go_messenger/server/handlers/tcp"
+	"go_messenger/server/handlers/ws"
+	"go_messenger/server/routerOut"
+	"go_messenger/server/userConnections"
+	"log"
+	"net"
+	"sync"
+
+	"github.com/gorilla/websocket"
 )
 
 func init() {
@@ -24,18 +28,25 @@ func main() {
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)
 
-	// start WS server
-	ws.NewWSHandler(connectionList)
-	log.Println("WS handler Ok! : main")
+	ws.NewHandlerWS(&connectionList)
+	fmt.Println("good")
 
-	// start TCP server
-	tcp.NewTCPHandler(connectionList)
-	log.Println("TCP handler Ok! : main")
+	tcp.NewHandlerTCP(&connectionList)
+	fmt.Println("good2")
 
 	db := dbservice.OpenConnDB()
-	defer db.Close()
-	log.Println("DB connection Ok! : main")
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+
+	fmt.Println("good3")
 
 	stop := make(chan bool)
 	<-stop
 }
+
+//TODO GOLINTERS
+//TODO waitgroups

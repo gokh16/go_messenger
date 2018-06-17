@@ -2,24 +2,29 @@ package routerOut
 
 import (
 	"fmt"
-	"github.com/gorilla/websocket"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
 	"go_messenger/server/userConnections"
 	"net"
+
+	"github.com/gorilla/websocket"
 )
 
+//RouterOut is a structure which has attribute to connect with source structure in userConnections
 type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
+//NewRouterOut is an initialization for router out
 func InitRouterOut(conn *userConnections.Connections) {
 	initRout := RouterOut{}
 	initRout.Connection = conn
-	go initRout.HandleOut()
+	go initRout.Handler()
 }
 
-func (r *RouterOut) HandleOut() {
+// Handler is a main func which is establish connections and call func for reading data from
+////connection
+func (r *RouterOut) Handler() {
 
 	//var msg is (*) pointer of userConnections.Message struct
 	for msg := range r.Connection.OutChan {

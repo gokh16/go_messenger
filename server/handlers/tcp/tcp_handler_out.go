@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func WaitJSON(conns []net.Conn, msg *userConnections.Message) {
+func WaitJSON(conns []net.Conn, msg *userConnections.MessageIn) {
 	outComingData, err := json.Marshal(&msg)
 	if err != nil {
 		log.Println(err)

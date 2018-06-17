@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"go_messenger/server/db/dbservice"
+	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 )
 
@@ -10,7 +11,7 @@ type GroupService struct {
 	groupDBService dbservice.GroupDBService
 }
 
-func (g *GroupService) CreateGroup(msg *userConnections.Message, chanOut chan *userConnections.Message) {
+func (g *GroupService) CreateGroup(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 	fmt.Println(msg.Group.GroupName)
 
 	switch msg.Group.GroupType.Type {
@@ -37,7 +38,7 @@ func (g *GroupService) CreateGroup(msg *userConnections.Message, chanOut chan *u
 	chanOut <- msg
 }
 
-func (g *GroupService) GetGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
+func (g *GroupService) GetGroup(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 	// var gi interfaces.GI = dbservice.GroupDBService{}
 	// var mi interfaces.MI = dbservice.MessageDBService{}
 	// group := gi.GetGroup(message.GroupName)
@@ -46,19 +47,18 @@ func (g *GroupService) GetGroup(message *userConnections.Message, chanOut chan *
 	chanOut <- message
 }
 
-func (g *GroupService) GetGroupList(message *userConnections.Message, chanOut chan *userConnections.Message) {
+func (g *GroupService) GetGroupList(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 	chanOut <- message
 }
 
-func (*GroupService) EditGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
+func (*GroupService) EditGroup(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 	chanOut <- message
 }
 
 //AddGroupMember add new members in spesific GroupDBService.
-func (g *GroupService) AddGroupMember(message *userConnections.Message, chanOut chan *userConnections.Message) {
+func (g *GroupService) AddGroupMember(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOutF) {
 	//var gi interfaces.GI = dbservice.GroupDBService{}
 	for _, user := range message.Member.GroupMembers {
 		g.groupDBService.AddGroupMember(user.Username, message.Group.GroupName, message.GroupMember.LastReadMessageID)
 	}
 }
-

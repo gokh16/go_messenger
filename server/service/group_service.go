@@ -35,6 +35,7 @@ func CreateGroup(message *userConnections.Message, chanOut chan *userConnections
 	chanOut <- message
 }
 
+//GetGroup ...
 func GetGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	// var gi interfaces.GI = dbservice.Group{}
 	// var mi interfaces.MI = dbservice.Message{}
@@ -44,10 +45,14 @@ func GetGroup(message *userConnections.Message, chanOut chan *userConnections.Me
 	chanOut <- message
 }
 
+//GetGroupList ...
+//todo comment here
 func GetGroupList(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	chanOut <- message
 }
 
+//EditGroup ...
+//todo comment here
 func EditGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	chanOut <- message
 }
@@ -60,14 +65,19 @@ func AddGroupMember(message *userConnections.Message, chanOut chan *userConnecti
 	}
 }
 
+//GetGroupUserList ...
+//todo comment here
 func GetGroupUserList() {
-
 }
 
+//DeleteGroupMember ...
+//todo comment here
 func DeleteGroupMember() {
 
 }
 
+//DeleteGroup ...
+//todo comment here
 func DeleteGroup(message *userConnections.Message, chanOut chan *userConnections.Message) {
 	chanOut <- message
 }

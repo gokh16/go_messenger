@@ -1,29 +1,35 @@
 package routerOut
 
 import (
-	"github.com/gorilla/websocket"
 	"fmt"
-	"net"
-	"go_messenger/server/userConnections"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
+	"go_messenger/server/userConnections"
+	"net"
+
+	"github.com/gorilla/websocket"
 )
 
+//RouterOut is a structure which has attribute to connect with source structure in userConnections
 type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
 var msg *userConnections.Message
 
+//NewRouterOut is a constructor for router out
 func NewRouterOut(conn *userConnections.Connections) {
 	newRout := RouterOut{}
 	newRout.Connection = conn
-	go newRout.HandleOut()
+	go newRout.Handler()
 }
 
-func (r *RouterOut) HandleOut() {
+// Handler is a main func which is establish connections and call func for reading data from
+////connection
+func (r *RouterOut) Handler() {
 
 	for {
+		//TODO RANGE, IS OK!
 		if msg = <-r.Connection.OutChan; msg != nil {
 			if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 				tcp.WaitJSON(sliceTCPCon, msg)
@@ -45,7 +51,7 @@ func (r *RouterOut) getSliceOfTCP(ms *userConnections.Message) []net.Conn {
 	//send message to the client
 	fmt.Println(ms.GroupMember, "groupmember")
 	if len(ms.GroupMember) == 0 {
-		for k, _ := range mapTCP {
+		for k := range mapTCP {
 			if mapTCP[k] == ms.UserName {
 				sliceTCP = append(sliceTCP, k)
 			}
@@ -73,7 +79,7 @@ func (r *RouterOut) getSliceOfWS(ms *userConnections.Message) []*websocket.Conn 
 
 	//send message to the client
 	if len(ms.GroupMember) == 0 {
-		for k, _ := range mapWS {
+		for k := range mapWS {
 			if mapWS[k] == ms.GroupName {
 				sliceWS = append(sliceWS, k)
 			}
@@ -103,10 +109,10 @@ func (r *RouterOut) getSliceOfWS(ms *userConnections.Message) []*websocket.Conn 
 //func NewRouterOut(conn *userConnections.Connections) {
 //	newRout := RouterOut{}
 //	newRout.Connection = conn
-//	go newRout.HandleOut()
+//	go newRout.Handler()
 //}
 //
-//func (r *RouterOut) HandleOut() {
+//func (r *RouterOut) Handler() {
 //	//sliceTCP := r.getSliceOfTCP(r.Connection.OutChan)
 //	//sliceWS := r.getSliceOfWS(r.Connection.OutChan)
 //	//

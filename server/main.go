@@ -17,7 +17,7 @@ import (
 
 func init() {
 	db.CreateDatabase()
-	//db.InitDatabase()
+	db.InitDatabase()
 
 }
 

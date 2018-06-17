@@ -14,7 +14,7 @@ func (g Group) CreateGroup(groupName, groupOwner string, groupType uint) bool {
 	owner := models.User{}
 	dbConn.Where("username = ?", groupOwner).First(&owner)
 	group := models.Group{GroupName: groupName, GroupOwnerID: owner.ID, GroupTypeID: groupType}
-	dbConn.Where("groupname = ?", groupName).First(&group)
+	dbConn.Where("group_name = ?", groupName).First(&group)
 	if dbConn.NewRecord(group) {
 		dbConn.Create(&group)
 		return true
@@ -30,9 +30,11 @@ func (g Group) GetGroupList(userName string) []models.Group {
 	return groups
 }
 
-func (g Group) GetGroup(groupName string) models.Group {
+func (g Group) GetGroup(userName, groupName string) models.Group {
+	user := models.User{}
 	group := models.Group{}
-	dbConn.Where("groupname = ?", groupName).First(&group)
+	dbConn.Where("username = ?", userName).First(&user)
+	dbConn.Where("group_name = ?", groupName).Where("user_id = ?", user.ID).Find(&group)
 	return group
 }
 

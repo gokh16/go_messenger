@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"go_messenger/server/service/serviceModels"
 )
 
 var upgrader = websocket.Upgrader{
@@ -63,7 +62,7 @@ func ReadMessage(conn *websocket.Conn, str HandlerWS) {
 
 //GetJSON is
 func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
-	message := userConnections.MessageIn{}
+	message := userConnections.Message{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Println("Unmarshal error")

@@ -4,8 +4,8 @@ import (
 	"go_messenger/server/models"
 )
 
-//GroupDBService type with build-in model of GroupDBService.
-type GroupDBService struct {
+//Group type with build-in model of Group.
+type Group struct {
 	models.Group
 }
 
@@ -20,8 +20,10 @@ func (g *GroupDBService) CreateGroup(groupName string, groupOwner, groupType uin
 		return true
 	}
 	return false
+
 }
 
+//GetGroupList is getting users from DB
 func (g *GroupDBService) GetGroupList(userName string) []models.Group {
 	user := models.User{}
 	groups := []models.Group{}

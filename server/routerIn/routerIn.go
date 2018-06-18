@@ -1,15 +1,15 @@
 package routerIn
 
 import (
+	"fmt"
 	"go_messenger/server/service"
-	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	"log"
 )
 
+//RouterIn method which directs data to next step by action field in message structure
 func RouterIn(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 
-	// variable "action" is a command what to do with the structure
+	// variable "action" is a command what to do with the structures
 	action := msg.Action
 
 	switch action {
@@ -28,6 +28,6 @@ func RouterIn(msg *userConnections.MessageIn, chanOut chan *serviceModels.Messag
 		go service.UserService{}.GetUsers(msg, chanOut)
 
 	default:
-		log.Println("Unknown format of data from server")
+		fmt.Println("Unknown format of data from server")
 	}
 }

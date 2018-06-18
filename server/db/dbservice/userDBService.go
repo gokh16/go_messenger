@@ -27,10 +27,7 @@ func (u *UserDBService) GetUsers(users *[]models.User) {
 //LoginUser method get record from DB with using the gorm framework. It returns bool value.
 func (u *UserDBService) LoginUser(user *models.User) bool {
 	dbConn.Where("login = ?", user.Login).Where("password = ?", user.Password).First(&user)
-	if dbConn.NewRecord(user) {
-		return false
-	}
-	return true
+	return dbConn.NewRecord(user)
 }
 
 //GetUser method get record from DB with using the gorm framework. It returns User object.
@@ -39,6 +36,7 @@ func (u *UserDBService) GetUser(user *models.User) models.User {
 	return *user
 }
 
+//AddContact method writes user's contact to database
 func (u *UserDBService) AddContact(userName, contactName string, relationType uint) bool {
 	user := models.User{}
 	contact := models.User{}
@@ -53,6 +51,7 @@ func (u *UserDBService) AddContact(userName, contactName string, relationType ui
 
 }
 
+//GetContactList method returns User structure
 func (u *UserDBService) GetContactList(userName string) []models.User {
 	user := models.User{}
 	contactList := []models.User{}

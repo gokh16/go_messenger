@@ -8,7 +8,7 @@ type MessageDBService struct {
 }
 
 //AddMessage func.
-func (msg MessageDBService) AddMessage(content, username, groupName, contentType string) bool {
+func (msg *MessageDBService) AddMessage(content, username, groupName, contentType string) bool {
 	sender := models.User{}
 	recipient := models.Group{}
 	dbConn.Where("username = ?", username).First(&sender)
@@ -20,7 +20,7 @@ func (msg MessageDBService) AddMessage(content, username, groupName, contentType
 	}
 	return false
 }
-func (msg MessageDBService) GetGroupMessages(groupName string) []models.Message {
+func (msg *MessageDBService) GetGroupMessages(groupName string) []models.Message {
 	var messageList = []models.Message{}
 	return messageList
 }

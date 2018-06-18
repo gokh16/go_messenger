@@ -56,7 +56,7 @@ func (*GroupService) EditGroup(message *userConnections.MessageIn, chanOut chan 
 }
 
 //AddGroupMember add new members in spesific GroupDBService.
-func (g *GroupService) AddGroupMember(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOutF) {
+func (g *GroupService) AddGroupMember(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 	//var gi interfaces.GI = dbservice.GroupDBService{}
 	for _, user := range message.Member.GroupMembers {
 		g.groupDBService.AddGroupMember(user.Username, message.Group.GroupName, message.GroupMember.LastReadMessageID)

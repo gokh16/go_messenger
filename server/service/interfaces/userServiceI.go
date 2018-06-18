@@ -8,7 +8,7 @@ import (
 //userInterface as contract between ORM level and Service Level
 type UserServiceI interface {
 	CreateUser(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut)
-	LoginUser(chanOut chan *serviceModels.MessageOut)
+	LoginUser(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut)
 	GetUsers(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut)
 }
 

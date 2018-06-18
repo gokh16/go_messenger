@@ -34,7 +34,7 @@ func (u *UserService) CreateUser(msg *userConnections.MessageIn, chanOut chan *s
 	chanOut <- msg
 }
 
-func (u *UserService) LoginUser(chanOut chan *serviceModels.MessageOut) {
+func (u *UserService) LoginUser(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 	msg := <-chanOut
 	ok := u.UserDBService.LoginUser(&msg.User)
 	if ok {

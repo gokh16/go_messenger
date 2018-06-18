@@ -8,9 +8,8 @@ import (
 	"log"
 	"net/http"
 
-	"go_messenger/server/service/serviceModels"
-
 	"github.com/gorilla/websocket"
+	"go_messenger/server/service/serviceModels"
 )
 
 var upgrader = websocket.Upgrader{
@@ -78,12 +77,12 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to client
 func SendJSON(conns []*websocket.Conn, str *serviceModels.MessageOut) {
-	outcomingData, err := json.Marshal(&str)
+	outComingData, err := json.Marshal(str)
 	if err != nil {
 		log.Println(err)
 	}
 	for _, conn := range conns {
-		err := conn.WriteJSON(outcomingData)
+		err := conn.WriteJSON(outComingData)
 		if err != nil {
 			log.Println(err)
 		}

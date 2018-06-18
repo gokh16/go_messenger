@@ -1,9 +1,9 @@
 package main
 
 import (
-	"go_messenger/desktop/desktop-client"
+	"go_messenger/desktop/client"
 )
 
 func main() {
-		desktop_client.Draw()
+		client.Draw()
 }

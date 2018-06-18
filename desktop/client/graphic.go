@@ -1,20 +1,31 @@
-package desktop_client
+
+package client
 
 import (
 	"fmt"
-	"github.com/ProtonMail/ui"
 	"log"
 	"net"
-	"time"
+
+	"github.com/ProtonMail/ui"
 )
 
 var users = []string{}
 var login string
 
+//Draw func which must configure connection and draw window
+//with further hierarchy
 func Draw() {
-	conn, _ := net.Dial("tcp", ":8080")
-	defer conn.Close()
-	err := ui.Main(func() {
+	conn, err := net.Dial("tcp", ":8080")
+	if err != nil {
+		log.Println(err)
+	}
+	defer func() {
+		err := conn.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+	err = ui.Main(func() {
 		drawAuthWindow(conn)
 	})
 	if err != nil {
@@ -62,10 +73,13 @@ func drawAuthWindow(conn net.Conn) {
 	//для вывода и создание кнопок с ними
 	signIn.OnClicked(func(*ui.Button) {
 		userName = loginInput.Text()
-		conn.Write([]byte(JSONencode(userName, "", "",
+		_, err := conn.Write([]byte(JSONencode(userName, "", "",
 			0, " ", 1,
 			" ", nil, " ", "", "",
 			userName, " ", " ", true, " ", "GetUsers")))
+		if err != nil {
+			log.Println(err)
+		}
 		login = loginInput.Text()
 		window.Hide()
 		drawChatWindow(conn)
@@ -73,10 +87,13 @@ func drawAuthWindow(conn net.Conn) {
 	})
 	signUp.OnClicked(func(*ui.Button) {
 		userName = loginInput.Text()
-		conn.Write([]byte(JSONencode(userName, "", "",
+		_, err := conn.Write([]byte(JSONencode(userName, "", "",
 			0, " ", 1,
 			" ", nil, " ", " ", "",
 			userName, " ", " ", true, " ", "CreateUser")))
+		if err != nil {
+			log.Println(err)
+		}
 		window.Hide()
 		drawChatWindow(conn)
 	})
@@ -94,10 +111,13 @@ func drawAuthWindow(conn net.Conn) {
 			if !msg.Status {
 				channel <- false
 			}
+			//!!!
 		}
 	}()
 
 }
+
+var groupName string
 
 func drawChatWindow(conn net.Conn) *ui.Window {
 	fmt.Println(users, "chat window", login)
@@ -109,30 +129,34 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	output.SetReadOnly(true)
 	mainBox := ui.NewHorizontalBox()
 	usersBox := ui.NewVerticalBox()
-	buttonUser := ui.NewButton("")
 	buttonUserSlice := make([]*ui.Button, 0)
-	for _, user := range users{
-		if user != "" && user != login{
-			buttonUser = ui.NewButton(user)
-			usersBox.Append(buttonUser, false)
-			buttonUserSlice = append(buttonUserSlice, buttonUser)
+	for _, user := range users {
+		if user != "" && user != login {
+			buttonWithUser := ui.NewButton(user)
+			usersBox.Append(buttonWithUser, false)
+			buttonUserSlice = append(buttonUserSlice, buttonWithUser)
 		}
 	}
-	groupName := ""
+
 	sliceMembers := make([]string, 0)
-	for num, buttons := range buttonUserSlice{
-		buttons.OnClicked(func(*ui.Button) {
-			sliceMembers = []string{login, buttons.Text()}
-			groupName = login + buttons.Text()
-			conn.Write([]byte(JSONencode(login, "", "",
-				0, groupName, 1,
-				login, sliceMembers, " ", " ", "",
-				" ", " ", " ", true, " ", "CreateGroup")))
-			fmt.Println(login, groupName, num,"graphic 131")
-			output.SetText("")
-		})
+	//for num, buttons := range buttonUserSlice{
+	//	buttons.OnClicked(func(*ui.Button) {
+	//		sliceMembers = []string{login, buttons.Text()}
+	//		groupName = login + buttons.Text()
+	//		conn.Write([]byte(JSONencode(login, "", "",
+	//			0, groupName, 1,
+	//			login, sliceMembers, " ", " ", "",
+	//			" ", " ", " ", true, " ", "CreateGroup")))
+	//		fmt.Println(login, groupName, num,"graphic 131")
+	//		output.SetText("")
+	//	})
+	//}
+	fmt.Println(buttonUserSlice)
+	for i := 0; i < len(buttonUserSlice)-1; i++ {
+		ListenerButton(i, buttonUserSlice[i], conn)
+		output.SetText("")
 	}
-	fmt.Println(buttonUserSlice, "slice buttons", buttonUserSlice[0].Text())
+	//fmt.Println(buttonUserSlice, "slice buttons", buttonUserSlice[0].Text())
 	messageBox := ui.NewVerticalBox()
 	messageBox.Append(output, true)
 	//messageBox.Append(user, false)
@@ -144,14 +168,16 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 		for {
 			msg := JSONdecode(conn)
 			if msg.Content != "" {
-				output.Append(msg.UserName+ ": "+msg.Content + "\n")
+				output.Append(msg.UserName + ": " + msg.Content + "\n")
 			}
 			fmt.Println(msg.Status)
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {
+		//FIX SLICEMEMBER
 		fmt.Println(sliceMembers)
-		fmt.Println(login+groupName)
+		fmt.Println(groupName, 159)
+		output.Append(login + ": " + input.Text())
 		_, err := conn.Write([]byte(JSONencode(login, "", "",
 			0, groupName, 1,
 			" ", sliceMembers, " ", input.Text(), "",
@@ -171,27 +197,44 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	return window
 }
 
-func drawSignInErrorWindow(conn net.Conn) {
-	window := ui.NewWindow("Chat", 100, 100, false)
-	back := ui.NewButton("Back")
-	error := ui.NewLabel("Wrong login or password!")
-	box := ui.NewVerticalBox()
-	box.Append(back, false)
-	box.Append(error, false)
-	window.SetChild(box)
-	back.OnClicked(func(*ui.Button) {
-		drawAuthWindow(conn)
-		window.Hide()
-	})
-	window.Show()
-}
+//func drawSignInErrorWindow(conn net.Conn) {
+//	window := ui.NewWindow("Chat", 100, 100, false)
+//	back := ui.NewButton("Back")
+//	error := ui.NewLabel("Wrong login or password!")
+//	box := ui.NewVerticalBox()
+//	box.Append(back, false)
+//	box.Append(error, false)
+//	window.SetChild(box)
+//	back.OnClicked(func(*ui.Button) {
+//		drawAuthWindow(conn)
+//		window.Hide()
+//	})
+//	window.Show()
+//}
 
-func GetUser(conn net.Conn) []string {
-	conn.Write([]byte(JSONencode("", "", "",
-		0, " ", 1,
-		" ", nil, " ", "", "",
-		" ", " ", " ", true, " ", "GetUsers")))
-	time.Sleep(2 * time.Second)
-	msg := JSONdecode(conn)
-	return msg.GroupMember
+//func GetUser(conn net.Conn) []string {
+//	conn.Write([]byte(JSONencode("", "", "",
+//		0, " ", 1,
+//		" ", nil, " ", "", "",
+//		" ", " ", " ", true, " ", "GetUsers")))
+//	time.Sleep(2 * time.Second)
+//	msg := JSONdecode(conn)
+//	return msg.GroupMember
+//}
+
+//ListenerButton is hanging listeners for contact button
+func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
+	button.OnClicked(func(*ui.Button) {
+		sliceMembers := []string{login, button.Text()}
+		groupName = login + button.Text()
+		_, err := conn.Write([]byte(JSONencode(login, "", "",
+			0, groupName, 1,
+			login, sliceMembers, " ", " ", "",
+			" ", " ", " ", true, " ", "CreateGroup")))
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println(login, groupName, number, "graphic 131")
+	})
+	return groupName
 }

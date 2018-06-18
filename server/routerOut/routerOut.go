@@ -28,7 +28,7 @@ func InitRouterOut(conn *userConnections.Connections) {
 //connection
 func (r *RouterOut) Handler() {
 
-	//var msg is (*) pointer of userConnections.MessageIn struct
+	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 			tcp.WaitJSON(sliceTCPCon, msg)

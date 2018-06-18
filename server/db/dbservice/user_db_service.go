@@ -19,24 +19,24 @@ func (u User) CreateUser(user *models.User) bool {
 	return false
 }
 
-//CreateUser method creates record in DB with using the gorm framework. It returns bool value.
+//GetUsers method creates record in DB with using the gorm framework.
 func (u User) GetUsers(users *[]models.User) {
 	dbConn.Find(&users)
 }
 
 //LoginUser method get record from DB with using the gorm framework. It returns bool value.
 func (u User) LoginUser(user *models.User) bool {
-	dbConn.Where("login = ?", user.Login).Where("password = ?", user.Password).First(&user)
-	if dbConn.NewRecord(user) {
-		return false
+	dbConn.Where("login = ?", user.Login).Where("password = ?", user.Password).Take(&user)
+	if dbConn != nil {
+		return true
 	}
-	return true
+	return false
 }
 
 //GetUser method get record from DB with using the gorm framework. It returns User object.
-func (u User) GetUser(user *models.User) models.User {
-	dbConn.Where("username = ?", user.Username).First(&user)
-	return *user
+func (u User) GetUser(user *models.User) *models.User {
+	dbConn.Where("login = ?", user.Username).Take(&user)
+	return user
 }
 
 func (u User) AddContact(userName, contactName string, relationType uint) bool {
@@ -53,11 +53,10 @@ func (u User) AddContact(userName, contactName string, relationType uint) bool {
 
 }
 
-func (u User) GetContactList(userName string) []models.User {
-	user := models.User{}
+func (u *User) GetContactList(user *models.User) []models.User {
 	contactList := []models.User{}
 	temp := []models.UserRelation{}
-	dbConn.Where("username = ?", userName).First(&user)
+	dbConn.Where("login = ?", user.Login).First(&user)
 	dbConn.Where("relating_user=?", user.ID).Find(&temp)
 	for i, _ := range temp {
 		contact := models.User{}

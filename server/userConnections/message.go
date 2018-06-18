@@ -1,5 +1,7 @@
 package userConnections
 
+import "go_messenger/server/models"
+
 type Message struct {
 	UserName     string
 	RelatingUser string
@@ -18,4 +20,11 @@ type Message struct {
 	Status       bool
 	UserIcon     string
 	Action       string
+}
+type MessageIn struct {
+	User      models.User
+	Group     models.Group
+	GroupType models.GroupType
+	Message   models.Message
+	Action    string
 }

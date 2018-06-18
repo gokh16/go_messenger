@@ -10,8 +10,9 @@ type Group struct {
 }
 
 //CreateGroup method creates new record in DB Group table with using the gorm framework. It returns bool value.
-func (g Group) CreateGroup(groupName, groupOwner string, groupType uint) bool {
+func (g *Group) CreateGroup(groupName, groupOwner string, groupType uint) bool {
 	owner := models.User{}
+
 	dbConn.Where("username = ?", groupOwner).First(&owner)
 	group := models.Group{GroupName: groupName, GroupOwnerID: owner.ID, GroupTypeID: groupType}
 	dbConn.Where("group_name = ?", groupName).First(&group)
@@ -22,10 +23,9 @@ func (g Group) CreateGroup(groupName, groupOwner string, groupType uint) bool {
 	return false
 }
 
-func (g Group) GetGroupList(userName string) []models.Group {
-	user := models.User{}
-	groups := []models.Group{}
-	dbConn.Where("username = ?", userName).First(&user)
+func (g Group) GetGroupList(user *models.User) []models.Group {
+	var groups []models.Group
+	dbConn.Where("login = ?", user.Login).First(&user)
 	dbConn.Joins("join group_members on groups.id=group_members.group_id").Where("user_id = ?", user.ID).Find(&groups)
 	return groups
 }
@@ -39,7 +39,7 @@ func (g Group) GetGroup(userName, groupName string) models.Group {
 }
 
 //AddGroupMember method creates new record in DB GroupMember table with using the gorm framework. It returns bool value.
-func (gm Group) AddGroupMember(username, groupName, lastmessage string) bool {
+func (g Group) AddGroupMember(username, groupName, lastmessage string) bool {
 	user := models.User{}
 	group := models.Group{}
 	message := models.Message{}

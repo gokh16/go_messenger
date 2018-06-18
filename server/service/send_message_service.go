@@ -1,16 +1,16 @@
 package service
 
 import (
+	"go_messenger/server/db/dbinterfaces"
 	"go_messenger/server/db/dbservice"
-	"go_messenger/server/service/interfaces"
 	"go_messenger/server/userConnections"
 )
 
 //SendMessageTo ...
 func SendMessageTo(message *userConnections.Message, chanOut chan *userConnections.Message) {
-	var mi interfaces.MI = dbservice.Message{}
-	var gi interfaces.GI = dbservice.Group{}
-	mi.AddMessage(message.Content, message.UserName, message.GroupName, message.ContentType)
+	var sendMessage dbinterfaces.MessageManager = dbservice.Message{}
+
+	sendMessage.CreateMessage(message.Content, message.UserName, message.GroupName, message.ContentType)
 	groupMember := []string{}
 	userList := gi.GetGroupUserList(message.GroupName)
 	for _, value := range userList {

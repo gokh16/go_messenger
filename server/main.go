@@ -1,14 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
-	"go_messenger/server/userConnections"
-
 	"go_messenger/server/routerOut"
-	"log"
+	"go_messenger/server/userConnections"
 	"go_messenger/server/db"
 	"go_messenger/server/db/dbservice"
+	"log"
 )
 
 func init() {
@@ -24,18 +24,25 @@ func main() {
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)
 
-	// start WS server
-	ws.NewWSHandler(connectionList)
-	log.Println("WS handler Ok! : main")
+	ws.NewHandlerWS(connectionList)
+	fmt.Println("WS started : Ok!")
 
-	// start TCP server
-	tcp.NewTCPHandler(connectionList)
-	log.Println("TCP handler Ok! : main")
+	tcp.NewHandlerTCP(connectionList)
+	fmt.Println("TCP started : Ok!")
 
 	db := dbservice.OpenConnDB()
-	defer db.Close()
-	log.Println("DB connection Ok! : main")
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+
+	fmt.Println("DB opened : Ok!")
 
 	stop := make(chan bool)
 	<-stop
 }
+
+//TODO GOLINTERS
+//TODO waitgroups

@@ -7,6 +7,8 @@ import (
 	"go_messenger/server/userConnections"
 	"net"
 
+	"go_messenger/server/service/serviceModels"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -55,7 +57,7 @@ func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 	for conn, onlineUser := range mapTCP {
 		for _, group := range msg.GroupList {
 			for _, groupMember := range group.Members {
-				if onlineUser == groupMember.Username && onlineUser != msg.User.Username{
+				if onlineUser == groupMember.Username && onlineUser != msg.User.Username {
 					sliceTCP = append(sliceTCP, conn)
 				}
 			}

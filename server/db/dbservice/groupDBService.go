@@ -5,9 +5,13 @@ import (
 )
 
 //Group type with build-in model of Group.
-type Group struct {
+type GroupDBService struct {
 	models.Group
 }
+
+//func (g *GroupDBService) AddGroupMember(username, groupName, lastMessage uint) bool {
+//	panic("implement me")
+//}
 
 //CreateGroup method creates new record in DB GroupDBService table with using the gorm framework. It returns bool value.
 func (g *GroupDBService) CreateGroup(groupName string, groupOwner, groupType uint) bool {

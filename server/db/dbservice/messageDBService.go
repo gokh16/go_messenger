@@ -2,13 +2,13 @@ package dbservice
 
 import "go_messenger/server/models"
 
-//Message struct
-type Message struct {
+//MessageDBService struct
+type MessageDBService struct {
 	models.Message
 }
 
 //AddMessage func.
-func (msg Message) AddMessage(content, username, groupName, contentType string) bool {
+func (msg *MessageDBService) AddMessage(content, username, groupName, contentType string) bool {
 	sender := models.User{}
 	recipient := models.Group{}
 	dbConn.Where("username = ?", username).First(&sender)
@@ -20,7 +20,7 @@ func (msg Message) AddMessage(content, username, groupName, contentType string) 
 	}
 	return false
 }
-func (msg Message) GetGroupMessages(groupName string) []models.Message {
+func (msg *MessageDBService) GetGroupMessages(groupName string) []models.Message {
 	var messageList = []models.Message{}
 	return messageList
 }

@@ -5,13 +5,13 @@ import (
 )
 
 //GroupMember type with build-in model of Group.
-type GroupMember struct {
+type GroupMemberDBService struct {
 	models.GroupMember
 }
 
 //AddGroupMember method creates new record in DB GroupMember table with using the gorm framework. It returns bool value.
 //TODO M
-func (gm GroupMember) AddGroupMember(username, groupName, lastmessage string) bool {
+func (gm *GroupMemberDBService) AddGroupMember(username, groupName, lastmessage string) bool {
 	user := models.User{}
 	group := models.Group{}
 	message := models.Message{}
@@ -27,7 +27,7 @@ func (gm GroupMember) AddGroupMember(username, groupName, lastmessage string) bo
 }
 
 //GetGroupUserList gets all users of specific group and returns slice.
-func (gm GroupMember) GetGroupUserList(groupName string) []models.User {
+func (gm *GroupMemberDBService) GetGroupUserList(groupName string) []models.User {
 	group := models.Group{}
 	users := []models.User{}
 	dbConn.Where("group_name = ?", groupName).First(&group)

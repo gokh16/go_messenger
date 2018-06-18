@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"go_messenger/server/service"
 	"go_messenger/server/userConnections"
+	"go_messenger/server/service/serviceModels"
 )
 
 //RouterIn method which directs data to next step by action field in message structure
-func RouterIn(msg *userConnections.Message, chanOut chan *userConnections.Message) {
+func RouterIn(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 
 	// variable "action" is a command what to do with the structures
 	action := msg.Action
@@ -15,17 +16,17 @@ func RouterIn(msg *userConnections.Message, chanOut chan *userConnections.Messag
 	switch action {
 
 	case "SendMessageTo":
-		go service.SendMessageTo(msg, chanOut)
+		go service.MessageService{}.SendMessageTo(msg, chanOut)
 	case "CreateUser":
-		go service.CreateUser(msg, chanOut)
+		go service.UserService{}.CreateUser(msg, chanOut)
 	//case "LoginUser":
-	//	go service.LoginUser(msg, chanOut)
+	//	go service.UserService{}.LoginUser(chanOut)
 	case "CreateGroup":
-		go service.CreateGroup(msg, chanOut)
+		go service.GroupService{}.CreateGroup(msg, chanOut)
 	//case "AddGroupMember":
-	//	go service.AddGroupMember(c)
+	//	go service.GroupService{}.AddGroupMember(msg, chanOut)
 	case "GetUsers":
-		go service.GetUsers(msg, chanOut)
+		go service.UserService{}.GetUsers(msg, chanOut)
 
 	default:
 		fmt.Println("Unknown format of data from server")

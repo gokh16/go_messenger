@@ -3,9 +3,9 @@ package tcp
 import (
 	"encoding/json"
 	"fmt"
-	"go_messenger/server/userConnections"
 	"log"
 	"net"
+	"go_messenger/server/service/serviceModels"
 )
 
 //WaitJSON is waiting for data from route out, parsing data into json format and write to client

@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 
+	"go_messenger/server/service/serviceModels"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -62,7 +64,7 @@ func ReadMessage(conn *websocket.Conn, str HandlerWS) {
 
 //GetJSON is
 func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
-	message := userConnections.Message{}
+	message := userConnections.MessageIn{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Println("Unmarshal error")

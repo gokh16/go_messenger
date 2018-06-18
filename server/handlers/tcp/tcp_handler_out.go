@@ -1,13 +1,13 @@
 package tcp
 
 import (
-	"go_messenger/server/userConnections"
 	"net"
 	"encoding/json"
 	"log"
+	"go_messenger/server/service/serviceModels"
 )
 
-func WaitJSON(conns []net.Conn, msg *userConnections.MessageIn) {
+func WaitJSON(conns []net.Conn, msg *serviceModels.MessageOut) {
 	outComingData, err := json.Marshal(&msg)
 	if err != nil {
 		log.Println(err)

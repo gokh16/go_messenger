@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 	"go_messenger/server/routerIn"
 	"go_messenger/server/userConnections"
+	"go_messenger/server/service/serviceModels"
 )
 
 var upgrader = websocket.Upgrader{
@@ -61,19 +62,19 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str WSHandler) {
 	if err != nil {
 		log.Println("Unmarshal error")
 	}
-	fmt.Println(message.UserName)
-	fmt.Println(message.Content)
-	str.Connection.AddWSConn(conn, message.UserName)
+	fmt.Println(message.User.Username)
+	fmt.Println(message.Message.Content)
+	str.Connection.AddWSConn(conn, message.User.Username)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 }
 
-func SendJSON(conns []*websocket.Conn, str *userConnections.MessageIn) {
+func SendJSON(conns []*websocket.Conn, str *serviceModels.MessageOut) {
 
-	outcomingData, err := json.Marshal(&str)
+	outComingData, err := json.Marshal(&str)
 	if err != nil {
 		log.Println(err)
 	}
 	for _, conn := range conns {
-		conn.WriteJSON(outcomingData)
+		conn.WriteJSON(outComingData)
 	}
 }

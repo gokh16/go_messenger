@@ -2,23 +2,28 @@ package db
 
 import (
 	"fmt"
-	"log"
-
 	"go_messenger/server/models"
+	"log"
 
 	"github.com/go-gormigrate/gormigrate"
 	"github.com/jinzhu/gorm"
+	//ignoring init from package below
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 //CreateDatabase creates tables and relations in DB
 func CreateDatabase() {
-	dbinfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASSWORD, DB_SSLMODE)
+	dbinfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", HostDB, PortDB, UserDB, NameDB, PasswordDB, SSLModeDB)
 	db, err := gorm.Open("postgres", dbinfo)
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
-	defer db.Close()
+	defer func() {
+		err = db.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
 	m := gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{
 		{
@@ -105,14 +110,20 @@ func CreateDatabase() {
 	}
 }
 
+//InitDatabase creates database when it dropped or launch on a new computer
 func InitDatabase() {
 	//for testing
 	db, err := gorm.Open("postgres", "user=root password=root dbname=golangDB sslmode=disable")
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
-	defer db.Close()
-	type1 := models.GroupType{Type: 1}
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+	type1 := models.GroupType{Type: "Private"}
 	db.Create(&type1)
 	user1 := models.User{Login: "User1", Password: "", Username: "User1", Status: false, UserIcon: ""}
 	user2 := models.User{Login: "User2", Password: "", Username: "User2", Status: false, UserIcon: ""}

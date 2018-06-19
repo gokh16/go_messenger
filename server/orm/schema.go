@@ -5,11 +5,13 @@ import (
 
 	"github.com/go-gormigrate/gormigrate"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	//ignoring init from package below
+	"go_messenger/server/models"
 
-	"github.com/gokh16/go_messenger/server/models"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
+//CreateDatabase method which establish connections to database
 func CreateDatabase() {
 	db, err := gorm.Open("postgres", "host=0.0.0.0 port=5432 user=postgres "+
 		"dbname=golangDB password=root sslmode=disable")
@@ -22,7 +24,12 @@ func CreateDatabase() {
 
 	db.LogMode(true)
 
-	defer db.Close()
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
 	m := gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{
 		{
@@ -33,11 +40,13 @@ func CreateDatabase() {
 			Rollback: func(tx *gorm.DB) error {
 				return tx.DropTable("group_types").Error
 			},
+			//todo missing return, ask to Max
 		},
 		{
 			ID: "1",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.AutoMigrate(&models.MessageContentType{}).Error
+				//todo resolve this problem, ask to Max
+				//return tx.AutoMigrate(&models.MessageContentType{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.DropTable("message_content_types").Error

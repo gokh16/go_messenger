@@ -1,29 +1,12 @@
 package serviceModels
 
-type Group struct {
-	GroupName string
-	GroupType uint
-	Members   []User
-	Messages  []Message
-}
+import "go_messenger/server/models"
 
-//User for MessageOut
-type User struct {
-	Login    string
-	Username string
-	Email    string
-	UserIcon string
-}
-
-//Message for MessageOut
-type Message struct {
-	Content string
-}
-
-//MessageOut ...
+//MessageOut responce struct
 type MessageOut struct {
-	User        User
-	ContactList []User
+	User        models.User
+	Members     []models.User
+	ContactList []models.User
 	GroupList   []Group
 	Status      bool
 	Action      string

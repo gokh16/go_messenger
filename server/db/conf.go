@@ -1,10 +1,11 @@
 package db
 
+//block with configuration constants for connecting to database
 const (
-	DB_HOST     = "0.0.0.0"
-	DB_PORT     = "5432"
-	DB_USER     = "postgres"
-	DB_PASSWORD = "1111"
-	DB_NAME     = "golangDB"
-	DB_SSLMODE  = "disable"
+	HostDB     = "0.0.0.0"
+	PortDB     = "5432"
+	UserDB     = "postgres" // postgres
+	PasswordDB = "admin"    // admin
+	NameDB     = "golangDB"
+	SSLModeDB  = "disable"
 )

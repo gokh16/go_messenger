@@ -8,5 +8,6 @@ type MessageIn struct {
 	Group   models.Group
 	Message models.Message
 	Members []models.User
+	Status  bool
 	Action  string
 }

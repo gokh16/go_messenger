@@ -12,12 +12,9 @@ type MessageService struct {
 }
 
 func (m *MessageService) SendMessageTo(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
+	//msgOut := serviceModels.MessageOut{}
 	//m.MessageDBService.AddMessage(msg.Message.Content, msg.User.Username, msg.Group.GroupName, msg.Message.MessageContentType)
-	//var groupMembers []models.User
-	//userList := m.GroupDBService.GetGroupUserList(msg.Group.GroupName)
-	//for _, user := range userList {
-	//	groupMembers = append(msg.Member.GroupMembers, user)
-	//}
-	//msg.Member.GroupMembers = groupMembers
-	//chanOut <- msg
+	//msgOut.Members = m.GroupDBService.GetGroupUserList(msg.Group.GroupName)
+	//msgOut.Action = msg.Action
+	//chanOut <- &msgOut
 }

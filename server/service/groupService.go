@@ -13,28 +13,30 @@ type GroupService struct {
 func (g *GroupService) CreateGroup(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 	//fmt.Println(msg.Group.GroupName)
 	//
-	//switch msg.Group.GroupType.Type {
+	//switch msg.Group.GroupTypeID {
 	//// groupType == 1 means privat msg
 	//case 1:
-	//	ok := g.groupDBService.CreateGroup(msg.Group.GroupName, msg.Group.GroupOwnerID, msg.Group.GroupType.Type)
+	//	ok := g.groupDBService.CreateGroup(msg.Group.GroupName, msg.User.Username, 1)
 	//	if ok {
-	//		for _, user := range msg.Member.GroupMembers {
-	//			g.groupDBService.AddGroupMember(user.Username, msg.Group.GroupName, 0)
+	//		for _, member := range msg.Members {
+	//			g.groupDBService.AddGroupMember(member.Username, msg.Group.GroupName, 0)
 	//		}
 	//		msg.Status = ok
 	//	}
 	//	msg.Status = ok
 	//	// groupType == 2 means group chat
 	//case 2:
-	//	ok := g.groupDBService.CreateGroup(msg.Group.GroupName, msg.Group.GroupOwnerID, msg.Group.GroupType.Type)
+	//	ok := g.groupDBService.CreateGroup(msg.Group.GroupName, msg.User.Username, 2)
 	//	if ok {
 	//		g.groupDBService.AddGroupMember(msg.User.Username, msg.Group.GroupName, 0)
-	//		msg.User.Status = ok
+	//		msg.Status = ok
 	//	}
 	//	msg.Status = ok
 	//
 	//}
-	//chanOut <- msg
+	//msgOut := serviceModels.MessageOut{}
+	//msgOut.Action = msg.Action
+	//chanOut <- &msgOut
 }
 
 func (g *GroupService) GetGroup(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {

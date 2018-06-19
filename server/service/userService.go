@@ -12,24 +12,24 @@ type UserService struct {
 }
 
 func (u *UserService) GetUsers(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
-	//var users []models.User
-	//u.UserDBService.GetUsers(&users)
-	//for _, user := range users {
-	//	msg.Member.GroupMembers = append(msg.Member.GroupMembers, user)
-	//}
-	//chanOut <- msg
+	msgOut := serviceModels.MessageOut{}
+	u.UserDBService.GetUsers(&msgOut.Members)
+	msgOut.Action = msg.Action
+	chanOut <- &msgOut
+
 }
 
 func (u *UserService) CreateUser(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 	//fmt.Println("Service Ok")
-	//ok := u.UserDBService.CreateUser(&msg.User)
-	//if ok {
-	//	msg.User.Status = ok
+	//var ok bool
+	//msgOut := serviceModels.MessageOut{}
+	//if ok := u.UserDBService.CreateUser(&msg.User); !ok {
+	//	msgOut.Status = ok
 	//}
-	//
-	//msg.User.Status = ok
+	//msgOut.Status = ok
+	//msgOut.Action = msg.Action
 	//fmt.Println("write in channel")
-	//chanOut <- msg
+	//chanOut <- &msgOut
 }
 
 func (u *UserService) LoginUser(message *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {

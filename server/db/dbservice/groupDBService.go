@@ -10,7 +10,7 @@ type GroupDBService struct {
 }
 
 //CreateGroup method creates new record in DB GroupDBService table with using the gorm framework. It returns bool value.
-func (g *GroupDBService) CreateGroup(groupName string, groupOwner, groupType uint) bool {
+func (g *GroupDBService) CreateGroup(groupName, groupOwner string, groupType uint) bool {
 	owner := models.User{}
 	dbConn.Where("username = ?", groupOwner).First(&owner)
 	group := models.Group{GroupName: groupName, GroupOwnerID: owner.ID, GroupTypeID: groupType}

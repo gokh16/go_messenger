@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"go_messenger/server/service/serviceModels"
 )
 
 var upgrader = websocket.Upgrader{
@@ -62,26 +63,26 @@ func ReadMessage(conn *websocket.Conn, str HandlerWS) {
 
 //GetJSON is
 func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
-	message := userConnections.Message{}
+	message := userConnections.MessageIn{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Println("Unmarshal error")
 	}
-	fmt.Println(message.UserName)
-	fmt.Println(message.Content)
-	str.Connection.AddWSConn(conn, message.UserName)
+	fmt.Println(message.User.Username)
+	fmt.Println(message.Message.Content)
+	str.Connection.AddWSConn(conn, message.User.Username)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 	//return str.Connection.OutChan
 }
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to client
-func SendJSON(conns []*websocket.Conn, str *userConnections.Message) {
-	outcomingData, err := json.Marshal(&str)
+func SendJSON(conns []*websocket.Conn, str *serviceModels.MessageOut) {
+	outComingData, err := json.Marshal(str)
 	if err != nil {
 		log.Println(err)
 	}
 	for _, conn := range conns {
-		err := conn.WriteJSON(outcomingData)
+		err := conn.WriteJSON(outComingData)
 		if err != nil {
 			log.Println(err)
 		}

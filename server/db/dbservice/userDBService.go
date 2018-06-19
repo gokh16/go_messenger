@@ -5,12 +5,12 @@ import (
 )
 
 //User type with build-in model of User.
-type User struct {
+type UserDBService struct {
 	models.User
 }
 
 //CreateUser method creates record in DB with using the gorm framework. It returns bool value.
-func (u User) CreateUser(user *models.User) bool {
+func (u *UserDBService) CreateUser(user *models.User) bool {
 	dbConn.Where("username = ?", user.Username).First(&user)
 	if dbConn.NewRecord(user) {
 		dbConn.Create(&user)
@@ -20,24 +20,24 @@ func (u User) CreateUser(user *models.User) bool {
 }
 
 //CreateUser method creates record in DB with using the gorm framework. It returns bool value.
-func (u User) GetUsers(users *[]models.User) {
+func (u *UserDBService) GetUsers(users *[]models.User) {
 	dbConn.Find(&users)
 }
 
 //LoginUser method get record from DB with using the gorm framework. It returns bool value.
-func (u User) LoginUser(user *models.User) bool {
+func (u *UserDBService) LoginUser(user *models.User) bool {
 	dbConn.Where("login = ?", user.Login).Where("password = ?", user.Password).First(&user)
 	return dbConn.NewRecord(user)
 }
 
 //GetUser method get record from DB with using the gorm framework. It returns User object.
-func (u User) GetUser(user *models.User) models.User {
+func (u *UserDBService) GetUser(user *models.User) models.User {
 	dbConn.Where("username = ?", user.Username).First(&user)
 	return *user
 }
 
 //AddContact method writes user's contact to database
-func (u User) AddContact(userName, contactName string, relationType uint) bool {
+func (u *UserDBService) AddContact(userName, contactName string, relationType uint) bool {
 	user := models.User{}
 	contact := models.User{}
 	dbConn.Where("username = ?", userName).First(&user)
@@ -52,7 +52,7 @@ func (u User) AddContact(userName, contactName string, relationType uint) bool {
 }
 
 //GetContactList method returns User structure
-func (u User) GetContactList(userName string) []models.User {
+func (u *UserDBService) GetContactList(userName string) []models.User {
 	user := models.User{}
 	contactList := []models.User{}
 	temp := []models.UserRelation{}

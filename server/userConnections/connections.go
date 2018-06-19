@@ -5,6 +5,8 @@ import (
 	"net"
 	"sync"
 
+	"go_messenger/server/service/serviceModels"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -14,7 +16,17 @@ type Connections struct {
 	WSConnections       map[*websocket.Conn]string // connection:login
 	TCPConnectionsMutex *sync.Mutex
 	TCPConnections      map[net.Conn]string // connection:login
-	OutChan             chan *Message
+	OutChan             chan *serviceModels.MessageOut
+}
+
+func InitConnections() *Connections {
+	instance := Connections{}
+	instance.WSConnectionsMutex = new(sync.Mutex)
+	instance.WSConnections = make(map[*websocket.Conn]string, 0)
+	instance.TCPConnectionsMutex = new(sync.Mutex)
+	instance.TCPConnections = make(map[net.Conn]string, 0)
+	instance.OutChan = make(chan *serviceModels.MessageOut, 1024)
+	return &instance
 }
 
 //AddTCPConn method is adding incoming connection with login to source structure
@@ -28,20 +40,16 @@ func (c *Connections) AddTCPConn(conn net.Conn, userName string) {
 //AddWSConn method is adding incoming connection with login to source structure
 func (c *Connections) AddWSConn(conn *websocket.Conn, userName string) {
 	c.WSConnectionsMutex.Lock()
-	defer c.WSConnectionsMutex.Unlock()
 	c.WSConnections[conn] = userName
+	c.WSConnectionsMutex.Unlock()
 }
 
 //GetAllTCPConnections method returns slice of tcp connections
 func (c *Connections) GetAllTCPConnections() map[net.Conn]string {
-	c.TCPConnectionsMutex.Lock()
-	defer c.TCPConnectionsMutex.Unlock()
 	return c.TCPConnections
 }
 
 //GetAllWSConnections returns slice of ws connections
 func (c *Connections) GetAllWSConnections() map[*websocket.Conn]string {
-	c.WSConnectionsMutex.Lock()
-	defer c.WSConnectionsMutex.Unlock()
 	return c.WSConnections
 }

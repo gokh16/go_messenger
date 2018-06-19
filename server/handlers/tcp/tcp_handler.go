@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"go_messenger/server/routerIn"
 	"go_messenger/server/userConnections"
 	"log"
 	"net"
+	"go_messenger/server/routerIn"
 )
 
 //HandlerTCP is a structure which has attribute to connect with source structure in userConnections
@@ -62,14 +62,12 @@ func HandleJSON(conn net.Conn, str *HandlerTCP) {
 
 //ParseJSON method which advocates like parser
 func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
-	message := userConnections.Message{}
+	message := userConnections.MessageIn{}
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	//str.Connection.AddTCPConn(conn, message.UserName, &message)
-	str.Connection.AddTCPConn(conn, message.UserName)
-	//routerIn.RouterIn(str.Connection.OutChan)
+	str.Connection.AddTCPConn(conn, message.User.Username)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 }

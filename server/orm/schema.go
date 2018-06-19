@@ -46,7 +46,7 @@ func CreateDatabase() {
 			ID: "1",
 			Migrate: func(tx *gorm.DB) error {
 				//todo resolve this problem, ask to Max
-				//return tx.AutoMigrate(&models.MessageContentType{}).Error
+				//return tx.AutoMigrate(&structure.MessageContentType{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.DropTable("message_content_types").Error

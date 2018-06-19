@@ -2,12 +2,13 @@ package service
 
 import (
 	"go_messenger/server/db/dbservice"
+	"go_messenger/server/db/dbservice/dbInterfaces"
 	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 )
 
-//UserService struct
+//UserService ...
 type UserService struct {
 	userManager    dbInterfaces.UserManager
 	groupManager   dbInterfaces.GroupManager

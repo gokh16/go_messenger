@@ -17,7 +17,7 @@ type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
-//InitRouterOut is an init for router out
+//Function InitRouterOut is an init for routerOut struct
 func InitRouterOut(conn *userConnections.Connections) {
 	initRout := RouterOut{}
 	initRout.Connection = conn

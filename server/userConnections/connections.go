@@ -19,6 +19,7 @@ type Connections struct {
 	OutChan             chan *serviceModels.MessageOut
 }
 
+//Function InitConnections is init for Connections struct
 func InitConnections() *Connections {
 	instance := Connections{}
 	instance.WSConnectionsMutex = new(sync.Mutex)

@@ -122,7 +122,7 @@ func InitDatabase() {
 			log.Println(err)
 		}
 	}()
-	type1 := models.GroupType{Type: 1} //1 is private
+	type1 := models.GroupType{Type: "private"} //1 is private
 	db.Create(&type1)
 	user1 := models.User{Login: "User1", Password: "", Username: "User1", Status: false, UserIcon: ""}
 	user2 := models.User{Login: "User2", Password: "", Username: "User2", Status: false, UserIcon: ""}

@@ -8,5 +8,5 @@ import (
 type GroupType struct {
 	gorm.Model
 
-	Type uint `json:"group_type"`
+	Type string `json:"group_type"`
 }

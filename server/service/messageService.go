@@ -15,8 +15,8 @@ type MessageService struct {
 
 //SendMessageTo method add message to DB and gets list of group members.
 func (s MessageService) SendMessageTo(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	s.messageManager = dbservice.Message{}
-	s.groupManager = dbservice.Group{}
+	s.messageManager = dbservice.MessageDBService{}
+	s.groupManager = dbservice.GroupDBService{}
 	s.messageManager.AddMessage(&messageIn.Message)
 	groupOut := serviceModels.Group{}
 	groupOut.Members = s.groupManager.GetMemberList(&messageIn.Group)

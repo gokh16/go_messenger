@@ -16,7 +16,7 @@ type GroupService struct {
 
 //CreateGroup function creats a special Group and makes a record in DB. It returns bool value
 func (g GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.Group{}
+	g.groupManager = dbservice.GroupDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	switch messageIn.Group.GroupTypeID {
 	// groupTypeID == 1 means privat message
@@ -41,8 +41,8 @@ func (g GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut 
 
 //GetGroup gets special group fo user from DB
 func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.Group{}
-	g.messageManager = dbservice.Message{}
+	g.groupManager = dbservice.GroupDBService{}
+	g.messageManager = dbservice.MessageDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	groupModel := g.groupManager.GetGroup(&messageIn.Group)
 	group := serviceModels.Group{GroupName: groupModel.GroupName, GroupType: groupModel.GroupType,
@@ -53,8 +53,8 @@ func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut cha
 
 //GetGroupList gets all groups of special user from DB
 func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.Group{}
-	g.messageManager = dbservice.Message{}
+	g.groupManager = dbservice.GroupDBService{}
+	g.messageManager = dbservice.MessageDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
 	for _, gr := range groupModelList {
@@ -67,7 +67,7 @@ func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut
 
 //AddGroupMember add new members in spesific Group.
 func (g GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.Group{}
+	g.groupManager = dbservice.GroupDBService{}
 	for _, member := range messageIn.Members {
 		g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
 	}
@@ -75,7 +75,7 @@ func (g GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanO
 
 //GetMemberList method gets all users of special group.
 func (g GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.Group{}
+	g.groupManager = dbservice.GroupDBService{}
 	messageOut := serviceModels.MessageOut{Members: g.groupManager.GetMemberList(&messageIn.Group),
 		Action: messageIn.Action}
 	chanOut <- &messageOut

@@ -17,7 +17,7 @@ type UserService struct {
 
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	u.userManager = dbservice.User{}
+	u.userManager = dbservice.UserDBService{}
 	ok := u.userManager.CreateUser(&messageIn.User)
 	messageOut := serviceModels.MessageOut{Status: ok, Action: messageIn.Action}
 	chanOut <- &messageOut
@@ -25,9 +25,9 @@ func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut ch
 
 //LoginUser - user's auth.
 func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	u.userManager = dbservice.User{}
-	u.groupManager = dbservice.Group{}
-	u.messageManager = dbservice.Message{}
+	u.userManager = dbservice.UserDBService{}
+	u.groupManager = dbservice.GroupDBService{}
+	u.messageManager = dbservice.MessageDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	ok := u.userManager.LoginUser(&messageIn.User)
 	if ok {
@@ -37,7 +37,7 @@ func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut cha
 		for _, group := range groupList {
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
 				Members:  u.groupManager.GetMemberList(&group),
-				Messages: u.messageManager.GetGroupMessages(&group),
+				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
@@ -48,7 +48,7 @@ func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut cha
 
 //AddContact add spesial user to contact list of special User
 func (u UserService) AddContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	u.userManager = dbservice.User{}
+	u.userManager = dbservice.UserDBService{}
 	ok := u.userManager.AddContact(&messageIn.User, &messageIn.Contact, messageIn.RelationType)
 	messageOut := serviceModels.MessageOut{Status: ok, Action: messageIn.Action}
 	chanOut <- &messageOut
@@ -56,7 +56,7 @@ func (u UserService) AddContact(messageIn *userConnections.MessageIn, chanOut ch
 
 //GetUsers method gets all users from DB.
 func (u UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	u.userManager = dbservice.User{}
+	u.userManager = dbservice.UserDBService{}
 	userList := []models.User{}
 	u.userManager.GetUsers(&userList)
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
@@ -68,7 +68,7 @@ func (u UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan
 
 //GetUser method get special user from DB.
 func (u UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	u.userManager = dbservice.User{}
+	u.userManager = dbservice.UserDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	messageOut.ContactList = append(messageOut.ContactList, *u.userManager.GetUser(&messageIn.User))
 	chanOut <- &messageOut
@@ -76,7 +76,7 @@ func (u UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<
 
 //GetContactList gets contact list of special user from DB.
 func (u UserService) GetContactList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	u.userManager = dbservice.User{}
+	u.userManager = dbservice.UserDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 	chanOut <- &messageOut

@@ -8,8 +8,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/websocket"
 	"go_messenger/server/service/serviceModels"
+
+	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{

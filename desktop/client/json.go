@@ -27,6 +27,7 @@ type MessageIn struct {
 	Members     []structure.User
 	ContactList []structure.User
 	GroupList   []Group
+	Message     structure.Message
 	Status      bool
 	Action      string
 	Err         error
@@ -38,7 +39,6 @@ type Group struct {
 	Members   []structure.User
 	Messages  []structure.Message
 }
-
 
 //JSONencode is encoding source data to json
 func JSONencode(message MessageOut) string {

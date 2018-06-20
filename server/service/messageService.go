@@ -3,7 +3,6 @@ package service
 import (
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/db/dbservice/dbInterfaces"
-	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 )
@@ -21,7 +20,7 @@ func (s *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, cha
 	s.messageManager.AddMessage(&messageIn.Message)
 	members := s.groupManager.GetMemberList(&messageIn.Group)
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
-		Members: members,Message:messageIn.Message Action: messageIn.Action}
+		Members: members, Message: messageIn.Message, Action: messageIn.Action}
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	chanOut <- &messageOut
 }

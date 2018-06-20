@@ -4,8 +4,8 @@ package db
 const (
 	HostDB     = "0.0.0.0"
 	PortDB     = "5432"
-	UserDB     = "root" // postgres
-	PasswordDB = "root"    // admin
+	UserDB     = "postgres" // postgres
+	PasswordDB = "admin"    // admin
 	NameDB     = "golangDB"
 	SSLModeDB  = "disable"
 )

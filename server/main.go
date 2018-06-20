@@ -7,6 +7,8 @@ import (
 	"go_messenger/server/routerOut"
 	"go_messenger/server/userConnections"
 	"go_messenger/server/db"
+	"go_messenger/server/db/dbservice"
+	"log"
 )
 
 func init() {
@@ -29,13 +31,13 @@ func main() {
 	tcp.NewHandlerTCP(connectionList)
 	fmt.Println("TCP started : Ok!")
 
-	//db := dbservice.OpenConnDB()
-	//defer func() {
-	//	err := db.Close()
-	//	if err != nil {
-	//		log.Println(err)
-	//	}
-	//}()
+	db := dbservice.OpenConnDB()
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
 	fmt.Println("DB opened : Ok!")
 

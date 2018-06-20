@@ -46,7 +46,8 @@ func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut cha
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	groupModel := g.groupManager.GetGroup(&messageIn.Group)
 	group := serviceModels.Group{GroupName: groupModel.GroupName, GroupType: groupModel.GroupType,
-		Members: g.groupManager.GetMemberList(&messageIn.Group), Messages: g.messageManager.GetGroupMessages(&messageIn.Group)}
+		Members:  g.groupManager.GetMemberList(&messageIn.Group),
+		Messages: g.messageManager.GetGroupMessages(&messageIn.Group, messageIn.MessageLimit)}
 	messageOut.GroupList = append(messageOut.GroupList, group)
 	chanOut <- &messageOut
 }
@@ -59,7 +60,8 @@ func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
 	for _, gr := range groupModelList {
 		group := serviceModels.Group{GroupName: gr.GroupName, GroupType: gr.GroupType,
-			Members: g.groupManager.GetMemberList(&gr), Messages: g.messageManager.GetGroupMessages(&gr)}
+			Members:  g.groupManager.GetMemberList(&gr),
+			Messages: g.messageManager.GetGroupMessages(&gr, messageIn.MessageLimit)}
 		messageOut.GroupList = append(messageOut.GroupList, group)
 	}
 	chanOut <- &messageOut

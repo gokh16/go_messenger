@@ -73,11 +73,3 @@ func (u UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<
 	messageOut.ContactList = append(messageOut.ContactList, *u.userManager.GetUser(&messageIn.User))
 	chanOut <- &messageOut
 }
-
-//GetContactList gets contact list of special user from DB.
-func (u UserService) GetContactList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	u.userManager = dbservice.UserDBService{}
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
-	messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
-	chanOut <- &messageOut
-}

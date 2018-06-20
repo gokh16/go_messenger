@@ -8,7 +8,6 @@ type MessageOut struct {
 	Members     []models.User
 	ContactList []models.User
 	GroupList   []Group
-	Message     models.Message
 	Status      bool
 	Action      string
 	Err         error

@@ -8,3 +8,17 @@ type Group struct {
 	Members   []models.User
 	Messages  []models.Message
 }
+
+func NewGroup(group models.Group, members []models.User, messages []models.Message) *Group {
+	GroupName := group.GroupName
+	GroupType := group.GroupType
+	Members := members
+	Messages := messages
+	return &Group{
+		GroupName,
+		GroupType,
+		Members,
+		Messages,
+	}
+
+}

@@ -40,7 +40,6 @@ func CreateDatabase() {
 			Rollback: func(tx *gorm.DB) error {
 				return tx.DropTable("group_types").Error
 			},
-			//todo missing return, ask to Max
 		},
 		{
 			ID: "1",

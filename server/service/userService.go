@@ -7,15 +7,15 @@ import (
 )
 
 type UserService struct {
-	UserDBService  dbservice.UserDBService
+	UserDBService dbservice.UserDBService
 	GroupDBService dbservice.GroupDBService
 }
 
 func (u *UserService) GetUsers(msg *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
-	msgOut := serviceModels.MessageOut{}
-	u.UserDBService.GetUsers(&msgOut.Members)
-	msgOut.Action = msg.Action
-	chanOut <- &msgOut
+	//msgOut := serviceModels.MessageOut{}
+	//u.UserDBService.GetUsers(&msgOut.Members)
+	//msgOut.Action = msg.Action
+	//chanOut <- &msgOut
 
 }
 

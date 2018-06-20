@@ -15,6 +15,15 @@ type UserService struct {
 	messageManager dbInterfaces.MessageManager
 }
 
+//Init for GroupService struct
+func (u UserService) initUserService(messageIn *userConnections.MessageIn) *serviceModels.MessageOut {
+	u.userManager = dbservice.UserDBService{}
+	u.groupManager = dbservice.GroupDBService{}
+	u.messageManager = dbservice.MessageDBService{}
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	return &messageOut
+}
+
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	u.userManager = dbservice.UserDBService{}
@@ -25,14 +34,12 @@ func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut ch
 
 //LoginUser - user's auth.
 func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	u.userManager = dbservice.UserDBService{}
-	u.groupManager = dbservice.GroupDBService{}
-	u.messageManager = dbservice.MessageDBService{}
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	//variable messageOut is pointer type
+	messageOut := u.initUserService(messageIn)
 	ok := u.userManager.LoginUser(&messageIn.User)
 	if ok {
-		messageOut = serviceModels.MessageOut{User: *u.userManager.GetUser(&messageIn.User),
-			ContactList: u.userManager.GetContactList(&messageIn.User)}
+		messageOut.User = *u.userManager.GetUser(&messageIn.User)
+		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 		groupList := u.groupManager.GetGroupList(&messageIn.User)
 		for _, group := range groupList {
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
@@ -43,7 +50,7 @@ func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut cha
 		}
 	}
 	messageOut.Status = ok
-	chanOut <- &messageOut
+	chanOut <- messageOut
 }
 
 //AddContact add spesial user to contact list of special User

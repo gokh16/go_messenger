@@ -186,8 +186,8 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	go func() {
 		for {
 			msg := JSONdecode(conn)
-			if msg.Content != "" {
-				output.Append(msg.UserName + ": " + msg.Content + "\n")
+			if msg.Message.Content != "" {
+				output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
 			}
 			fmt.Println(msg.Status)
 		}
@@ -301,12 +301,88 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 //ListenerButton is hanging listeners for contact button
 func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
 	button.OnClicked(func(*ui.Button) {
-		sliceMembers := []string{login, button.Text()}
+
+		var members []structure.User
+		members = append(members, structure.User{
+				Login:login,
+				Password:"testPassword",
+				Username:login,
+				Email:"test@test.com",
+				Status:true,
+				UserIcon:"testUserIcon",
+		})
+		members = append(members, structure.User{
+			Login: button.Text(),
+			Password:"testPassword",
+			Username:button.Text(),
+			Email:"test@test.com",
+			Status:true,
+			UserIcon:"testUserIcon",
+		})
+
 		groupName = login + button.Text()
-		_, err := conn.Write([]byte(JSONencode(login, "", "",
-			0, groupName, 1,
-			login, sliceMembers, " ", " ", "",
-			" ", " ", " ", true, " ", "CreateGroup")))
+
+		//формирование новой структуры на отправку на сервер,
+		//заполнение текущего экземпляра требуемыми полями.
+
+		message := MessageOut{
+			User:structure.User{
+				Login:login,
+				Password:"testPassword",
+				Username:login,
+				Email:"test@test.com",
+				Status:true,
+				UserIcon:"testUserIcon",
+			},
+			Contact:nil,
+			Group:structure.Group{
+				User:structure.User{
+					Login:login,
+					Password:"testPassword",
+					Username:login,
+					Email:"test@test.com",
+					Status:true,
+					UserIcon:"testUserIcon",
+				},
+				GroupType:structure.GroupType{
+					Type:1,
+				},
+				GroupName:groupName,
+				GroupOwnerID:123,
+				GroupTypeID:1,
+			},
+			Message:structure.Message{
+				User:structure.User{
+					Login:login,
+					Password:"testPassword",
+					Username:login,
+					Email:"test@test.com",
+					Status:true,
+					UserIcon:"testUserIcon",
+				},
+				Group:structure.Group{
+					User:structure.User{
+						Login:login,
+						Password:"testPassword",
+						Username:login,
+						Email:"test@test.com",
+						Status:true,
+						UserIcon:"testUserIcon",
+					},
+					GroupType:structure.GroupType{
+						Type:1,
+					},
+					GroupName:groupName,
+					GroupOwnerID:123,
+					GroupTypeID:1,
+				},
+			},
+			Members:members,
+			RelationType:1,
+			MessageLimit:1,
+			Action:"SendMessageTo",
+		}
+		_, err := conn.Write([]byte(JSONencode(message)))
 		if err != nil {
 			log.Println(err)
 		}

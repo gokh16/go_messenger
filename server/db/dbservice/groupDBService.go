@@ -9,43 +9,25 @@ type GroupDBService struct {
 	models.Group
 }
 
-//CreateGroup method creates new record in DB GroupDBService table with using the gorm framework. It returns bool value.
-func (g *GroupDBService) CreateGroup(groupName, groupOwner string, groupType uint) bool {
-	owner := models.User{}
-	dbConn.Where("username = ?", groupOwner).First(&owner)
-	group := models.Group{GroupName: groupName, GroupOwnerID: owner.ID, GroupTypeID: groupType}
-	dbConn.Where("groupname = ?", groupName).First(&group)
+//CreateGroup method creates new record in DB Group table.
+// It returns bool value.
+func (g GroupDBService) CreateGroup(group *models.Group) bool {
+	dbConn.Where("username = ?", group.User.Username).First(&group.User)
+	dbConn.Where("group_name = ?", group.GroupName).First(&group)
+	//group.GroupOwnerID = group.User.ID   ?????
 	if dbConn.NewRecord(group) {
 		dbConn.Create(&group)
 		return true
 	}
 	return false
-
 }
 
-//GetGroupList is getting users from DB
-func (g *GroupDBService) GetGroupList(userName string) []models.Group {
-	user := models.User{}
-	groups := []models.Group{}
-	dbConn.Where("username = ?", userName).First(&user)
-	dbConn.Joins("join group_members on groups.id=group_members.group_id").Where("user_id = ?", user.ID).Find(&groups)
-	return groups
-}
-
-func (g *GroupDBService) GetGroup(groupName string) models.Group {
-	group := models.Group{}
-	dbConn.Where("groupname = ?", groupName).First(&group)
-	return group
-}
-
-//AddGroupMember method creates new record in DB GroupMembers table with using the gorm framework. It returns bool value.
-func (g *GroupDBService) AddGroupMember(userName, groupName string, lastMessage uint) bool {
-	user := models.User{}
-	group := models.Group{}
-	message := models.Message{}
-	dbConn.Where("userName = ?", userName).First(&user)
-	dbConn.Where("group_name = ?", groupName).First(&group)
-	dbConn.Where("content = ?", lastMessage).First(&message)
+//AddGroupMember method creates new record in DB GroupMember table.
+// It returns bool value.
+func (g GroupDBService) AddGroupMember(user *models.User, group *models.Group, message *models.Message) bool {
+	dbConn.Where("username = ?", user.Username).First(&user)
+	dbConn.Where("group_name = ?", group.GroupName).First(&group)
+	dbConn.Where("content = ?", message.Content).First(&message)
 	member := models.GroupMember{UserID: user.ID, GroupID: group.ID, LastReadMessageID: message.ID}
 	if dbConn.NewRecord(member) {
 		dbConn.Create(&member)
@@ -54,11 +36,28 @@ func (g *GroupDBService) AddGroupMember(userName, groupName string, lastMessage 
 	return false
 }
 
-//GetGroupUserList gets all users of specific group and returns slice.
-func (g *GroupDBService) GetGroupUserList(groupName string) []models.User {
-	group := models.Group{}
-	users := []models.User{}
-	dbConn.Where("group_name = ?", groupName).First(&group)
-	dbConn.Joins("join group_members on users.id=group_members.user_id").Where("group_id =?", group.ID).Find(&users)
-	return users
+//GetGroupList method gets all groups of special user from DB.
+// It returns slice []models.Group.
+func (g GroupDBService) GetGroupList(user *models.User) []models.Group {
+	var groupList []models.Group
+	dbConn.Where("login = ?", user.Login).First(&user)
+	dbConn.Joins("join group_members on groups.id=group_members.group_id").Where("user_id = ?", user.ID).Find(&groupList)
+	return groupList
+}
+
+//GetGroup method gets group of special user from DB.
+// It returns object of models.Group.
+func (g GroupDBService) GetGroup(group *models.Group) models.Group {
+	//dbConn.Where("username = ?", userName).First(&user)  ????
+	dbConn.Where("group_name = ?", group.GroupName).Where("user_id = ?", group.User.ID).Find(&group)
+	return *group
+}
+
+//GetMemberList method gets all members of special group from DB.
+// It returns slice []models.User.
+func (g GroupDBService) GetMemberList(group *models.Group) []models.User {
+	memberList := []models.User{}
+	dbConn.Where("group_name = ?", group.GroupName).First(&group)
+	dbConn.Joins("join group_members on users.id=group_members.user_id").Where("group_id =?", group.ID).Find(&memberList)
+	return memberList
 }

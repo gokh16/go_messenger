@@ -29,4 +29,3 @@ func WaitJSON(conns []net.Conn, str *serviceModels.MessageOut) {
 		fmt.Println("HERE")
 	}
 }
-

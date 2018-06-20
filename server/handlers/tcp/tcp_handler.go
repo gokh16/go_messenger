@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"go_messenger/server/routerIn"
 	"go_messenger/server/userConnections"
 	"log"
 	"net"
-	"go_messenger/server/routerIn"
 )
 
 //HandlerTCP is a structure which has attribute to connect with source structure in userConnections

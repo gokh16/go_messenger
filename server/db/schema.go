@@ -110,6 +110,7 @@ func CreateDatabase() {
 	}
 }
 
+//InitDatabase creates database when it dropped or launch on a new computer
 func InitDatabase() {
 	//for testing
 	db, err := gorm.Open("postgres", "user=root password=root dbname=golangDB sslmode=disable")

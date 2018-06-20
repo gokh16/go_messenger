@@ -6,7 +6,6 @@ import (
 	"net"
 
 	"github.com/ProtonMail/ui"
-	"go_messenger/desktop/structure"
 )
 
 var users = []string{}
@@ -69,85 +68,28 @@ func drawAuthWindow(conn net.Conn) {
 		return true
 	})
 	window.Show()
-
-
-
 	//обработчик кнопки входа, который отправляет запрос на получение всех юзеров в базе
 	//для вывода и создание кнопок с ними
 	signIn.OnClicked(func(*ui.Button) {
-		login = loginInput.Text()
-		message := MessageOut{
-			User:structure.User{
-				Login:login,
-				Password:passwordInput.Text(),
-				Username:login,
-				Email:" ",
-				Status:true,
-				UserIcon:" ",
-			},
-			Group:structure.Group{
-				User:structure.User{},
-				GroupType:structure.GroupType{
-					Type:1,
-				},
-				GroupName:groupName,
-				GroupOwnerID:0, //???
-				GroupTypeID:1, //???
-			},
-			GroupType:structure.GroupType{
-				Type:1,
-			},
-			Message:structure.Message{
-				User:structure.User{},
-				Group:structure.Group{},
-				Content:"",
-				MessageSenderID:1,//????
-				MessageRecipientID:1, //????
-				MessageContentType:"text",
-			},
-			Action:"GetUsers",
-		}
-		_, err := conn.Write([]byte(JSONencode(message)))
+		userName = loginInput.Text()
+		_, err := conn.Write([]byte(JSONencode(userName, "", "",
+			0, " ", 1,
+			" ", nil, " ", "", "",
+			userName, " ", " ", true, " ", "GetUsers")))
 		if err != nil {
 			log.Println(err)
 		}
+		login = loginInput.Text()
 		window.Hide()
 		drawChatWindow(conn)
+		fmt.Println(users, "graphic, 72")
 	})
 	signUp.OnClicked(func(*ui.Button) {
-		login = loginInput.Text()
-		message := MessageOut{
-			User:structure.User{
-				Login:login,
-				Password:passwordInput.Text(),
-				Username:login,
-				Email:" ",
-				Status:true,
-				UserIcon:" ",
-			},
-			Group:structure.Group{
-				User:structure.User{},
-				GroupType:structure.GroupType{
-					Type:1,
-				},
-				GroupName:groupName,
-				GroupOwnerID:0, //???
-				GroupTypeID:1, //???
-			},
-			GroupType:structure.GroupType{
-				Type:1,
-			},
-			Message:structure.Message{
-				User:structure.User{},
-				Group:structure.Group{},
-				Content:"",
-				MessageSenderID:1,//????
-				MessageRecipientID:1, //????
-				MessageContentType:"text",
-			},
-			Action:"CreateUser",
-		}
-		_, err := conn.Write([]byte(JSONencode(message)))
+		userName = loginInput.Text()
+		_, err := conn.Write([]byte(JSONencode(userName, "", "",
+			0, " ", 1,
+			" ", nil, " ", " ", "",
+			userName, " ", " ", true, " ", "CreateUser")))
 		if err != nil {
 			log.Println(err)
 		}
@@ -196,6 +138,18 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	}
 
 	sliceMembers := make([]string, 0)
+	//for num, buttons := range buttonUserSlice{
+	//	buttons.OnClicked(func(*ui.Button) {
+	//		sliceMembers = []string{login, buttons.Text()}
+	//		groupName = login + buttons.Text()
+	//		conn.Write([]byte(JSONencode(login, "", "",
+	//			0, groupName, 1,
+	//			login, sliceMembers, " ", " ", "",
+	//			" ", " ", " ", true, " ", "CreateGroup")))
+	//		fmt.Println(login, groupName, num,"graphic 131")
+	//		output.SetText("")
+	//	})
+	//}
 	fmt.Println(buttonUserSlice)
 	for i := 0; i < len(buttonUserSlice)-1; i++ {
 		ListenerButton(i, buttonUserSlice[i], conn)
@@ -219,42 +173,14 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {
-		message := MessageOut{
-			User:structure.User{
-				Login:login,
-				Password:"",
-				Username:login,
-				Email:" ",
-				Status:true,
-				UserIcon:" ",
-			},
-			Group:structure.Group{
-				User:structure.User{},
-				GroupType:structure.GroupType{
-					Type:1,
-				},
-				GroupName:groupName,
-				GroupOwnerID:0, //???
-				GroupTypeID:1, //???
-			},
-			GroupType:structure.GroupType{
-				Type:1,
-			},
-			Message:structure.Message{
-				User:structure.User{},
-				Group:structure.Group{},
-				Content:input.Text(),
-				MessageSenderID:1,//????
-				MessageRecipientID:1, //????
-				MessageContentType:"text",
-			},
-			Action:"SendMessageTo",
-		}
 		//FIX SLICEMEMBER
 		fmt.Println(sliceMembers)
 		fmt.Println(groupName, 159)
 		output.Append(login + ": " + input.Text())
-		_, err := conn.Write([]byte(JSONencode(message)))
+		_, err := conn.Write([]byte(JSONencode(login, "", "",
+			0, groupName, 1,
+			" ", sliceMembers, " ", input.Text(), "",
+			login, " ", " ", true, " ", "SendMessageTo")))
 		if err != nil {
 			fmt.Println("OnClickedError! Empty field.")
 		}

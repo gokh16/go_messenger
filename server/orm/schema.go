@@ -40,13 +40,12 @@ func CreateDatabase() {
 			Rollback: func(tx *gorm.DB) error {
 				return tx.DropTable("group_types").Error
 			},
-			//todo missing return, ask to Max
 		},
 		{
 			ID: "1",
 			Migrate: func(tx *gorm.DB) error {
 				//todo resolve this problem, ask to Max
-				//return tx.AutoMigrate(&structure.MessageContentType{}).Error
+				//return tx.AutoMigrate(&models.MessageContentType{}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.DropTable("message_content_types").Error

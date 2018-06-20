@@ -5,13 +5,13 @@ import (
 )
 
 //Group type with build-in model of Group.
-type Group struct {
+type GroupDBService struct {
 	models.Group
 }
 
 //CreateGroup method creates new record in DB Group table.
 // It returns bool value.
-func (g Group) CreateGroup(group *models.Group) bool {
+func (g GroupDBService) CreateGroup(group *models.Group) bool {
 	dbConn.Where("username = ?", group.User.Username).First(&group.User)
 	dbConn.Where("group_name = ?", group.GroupName).First(&group)
 	//group.GroupOwnerID = group.User.ID   ?????
@@ -24,7 +24,7 @@ func (g Group) CreateGroup(group *models.Group) bool {
 
 //AddGroupMember method creates new record in DB GroupMember table.
 // It returns bool value.
-func (g Group) AddGroupMember(user *models.User, group *models.Group, message *models.Message) bool {
+func (g GroupDBService) AddGroupMember(user *models.User, group *models.Group, message *models.Message) bool {
 	dbConn.Where("username = ?", user.Username).First(&user)
 	dbConn.Where("group_name = ?", group.GroupName).First(&group)
 	dbConn.Where("content = ?", message.Content).First(&message)
@@ -38,7 +38,7 @@ func (g Group) AddGroupMember(user *models.User, group *models.Group, message *m
 
 //GetGroupList method gets all groups of special user from DB.
 // It returns slice []models.Group.
-func (g Group) GetGroupList(user *models.User) []models.Group {
+func (g GroupDBService) GetGroupList(user *models.User) []models.Group {
 	var groupList []models.Group
 	dbConn.Where("login = ?", user.Login).First(&user)
 	dbConn.Joins("join group_members on groups.id=group_members.group_id").Where("user_id = ?", user.ID).Find(&groupList)
@@ -47,7 +47,7 @@ func (g Group) GetGroupList(user *models.User) []models.Group {
 
 //GetGroup method gets group of special user from DB.
 // It returns object of models.Group.
-func (g Group) GetGroup(group *models.Group) models.Group {
+func (g GroupDBService) GetGroup(group *models.Group) models.Group {
 	//dbConn.Where("username = ?", userName).First(&user)  ????
 	dbConn.Where("group_name = ?", group.GroupName).Where("user_id = ?", group.User.ID).Find(&group)
 	return *group
@@ -55,7 +55,7 @@ func (g Group) GetGroup(group *models.Group) models.Group {
 
 //GetMemberList method gets all members of special group from DB.
 // It returns slice []models.User.
-func (g Group) GetMemberList(group *models.Group) []models.User {
+func (g GroupDBService) GetMemberList(group *models.Group) []models.User {
 	memberList := []models.User{}
 	dbConn.Where("group_name = ?", group.GroupName).First(&group)
 	dbConn.Joins("join group_members on users.id=group_members.user_id").Where("group_id =?", group.ID).Find(&memberList)

@@ -10,5 +10,6 @@ type MessageIn struct {
 	Message      models.Message
 	Members      []models.User
 	RelationType uint
+	MessageLimit uint
 	Action       string
 }

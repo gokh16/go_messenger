@@ -6,9 +6,10 @@ import (
 	"net"
 
 	"github.com/ProtonMail/ui"
+	"go_messenger/desktop/structure"
 )
 
-var users = []string{}
+var users []string
 var login string
 
 //Draw func which must configure connection and draw window
@@ -68,28 +69,63 @@ func drawAuthWindow(conn net.Conn) {
 		return true
 	})
 	window.Show()
+
+
+
 	//обработчик кнопки входа, который отправляет запрос на получение всех юзеров в базе
 	//для вывода и создание кнопок с ними
 	signIn.OnClicked(func(*ui.Button) {
-		userName = loginInput.Text()
-		_, err := conn.Write([]byte(JSONencode(userName, "", "",
-			0, " ", 1,
-			" ", nil, " ", "", "",
-			userName, " ", " ", true, " ", "GetUsers")))
+		//формирование новой структуры на отправку на сервер,
+		//заполнение текущего экземпляра требуемыми полями.
+
+		message := MessageOut{
+			User:structure.User{
+				Login:login,
+				Password:passwordInput.Text(),
+				Username:login,
+				Email:"test@test.com",
+				Status:true,
+				UserIcon:"testUserIcon",
+			},
+			Contact:nil,
+			Group:nil,
+			Message:nil,
+			Members:nil,
+			RelationType:1,
+			MessageLimit:1,
+			Action:"GetUsers",
+		}
+		_, err := conn.Write([]byte(JSONencode(message)))
 		if err != nil {
 			log.Println(err)
 		}
 		login = loginInput.Text()
 		window.Hide()
 		drawChatWindow(conn)
-		fmt.Println(users, "graphic, 72")
+		log.Println(users)
 	})
 	signUp.OnClicked(func(*ui.Button) {
-		userName = loginInput.Text()
-		_, err := conn.Write([]byte(JSONencode(userName, "", "",
-			0, " ", 1,
-			" ", nil, " ", " ", "",
-			userName, " ", " ", true, " ", "CreateUser")))
+		//формирование новой структуры на отправку на сервер,
+		//заполнение текущего экземпляра требуемыми полями.
+
+		message := MessageOut{
+			User:structure.User{
+				Login:login,
+				Password:passwordInput.Text(),
+				Username:login,
+				Email:"test@test.com",
+				Status:true,
+				UserIcon:"testUserIcon",
+			},
+			Contact:nil,
+			Group:nil,
+			Message:nil,
+			Members:nil,
+			RelationType:1,
+			MessageLimit:1,
+			Action:"CreateUser",
+		}
+		_, err := conn.Write([]byte(JSONencode(message)))
 		if err != nil {
 			log.Println(err)
 		}
@@ -102,15 +138,11 @@ func drawAuthWindow(conn net.Conn) {
 	go func() {
 		for {
 			msg := JSONdecode(conn)
-			users = msg.GroupMember
-			fmt.Println(users, "reader")
-			if msg.Status {
-				channel <- true
+			for _, contacts := range msg.ContactList {
+				users = append(users, contacts.Login)
 			}
-			if !msg.Status {
-				channel <- false
-			}
-			//!!!
+			log.Println(users, "READER")
+			channel <- msg.Status
 		}
 	}()
 
@@ -137,19 +169,7 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 		}
 	}
 
-	sliceMembers := make([]string, 0)
-	//for num, buttons := range buttonUserSlice{
-	//	buttons.OnClicked(func(*ui.Button) {
-	//		sliceMembers = []string{login, buttons.Text()}
-	//		groupName = login + buttons.Text()
-	//		conn.Write([]byte(JSONencode(login, "", "",
-	//			0, groupName, 1,
-	//			login, sliceMembers, " ", " ", "",
-	//			" ", " ", " ", true, " ", "CreateGroup")))
-	//		fmt.Println(login, groupName, num,"graphic 131")
-	//		output.SetText("")
-	//	})
-	//}
+	//sliceMembers := make([]string, 0)
 	fmt.Println(buttonUserSlice)
 	for i := 0; i < len(buttonUserSlice)-1; i++ {
 		ListenerButton(i, buttonUserSlice[i], conn)
@@ -174,15 +194,72 @@ func drawChatWindow(conn net.Conn) *ui.Window {
 	}()
 	send.OnClicked(func(*ui.Button) {
 		//FIX SLICEMEMBER
-		fmt.Println(sliceMembers)
-		fmt.Println(groupName, 159)
+		log.Println(groupName)
 		output.Append(login + ": " + input.Text())
-		_, err := conn.Write([]byte(JSONencode(login, "", "",
-			0, groupName, 1,
-			" ", sliceMembers, " ", input.Text(), "",
-			login, " ", " ", true, " ", "SendMessageTo")))
+
+		//формирование новой структуры на отправку на сервер,
+		//заполнение текущего экземпляра требуемыми полями.
+
+		message := MessageOut{
+			User:structure.User{
+				Login:login,
+				Password:"testPassword",
+				Username:login,
+				Email:"test@test.com",
+				Status:true,
+				UserIcon:"testUserIcon",
+			},
+			Contact:nil,
+			Group:structure.Group{
+				User:structure.User{
+					Login:login,
+					Password:"testPassword",
+					Username:login,
+					Email:"test@test.com",
+					Status:true,
+					UserIcon:"testUserIcon",
+				},
+				GroupType:structure.GroupType{
+					Type:1,
+				},
+				GroupName:groupName,
+				GroupOwnerID:123,
+				GroupTypeID:1,
+			},
+			Message:structure.Message{
+				User:structure.User{
+					Login:login,
+					Password:"testPassword",
+					Username:login,
+					Email:"test@test.com",
+					Status:true,
+					UserIcon:"testUserIcon",
+				},
+				Group:structure.Group{
+					User:structure.User{
+						Login:login,
+						Password:"testPassword",
+						Username:login,
+						Email:"test@test.com",
+						Status:true,
+						UserIcon:"testUserIcon",
+					},
+					GroupType:structure.GroupType{
+						Type:1,
+					},
+					GroupName:groupName,
+					GroupOwnerID:123,
+					GroupTypeID:1,
+				},
+			},
+			Members:nil,
+			RelationType:1,
+			MessageLimit:1,
+			Action:"SendMessageTo",
+		}
+		_, err := conn.Write([]byte(JSONencode(message)))
 		if err != nil {
-			fmt.Println("OnClickedError! Empty field.")
+			log.Println("OnClickedError! Empty field.")
 		}
 		input.SetText("")
 

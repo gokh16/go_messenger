@@ -10,6 +10,7 @@ type MessageIn struct {
 	Message      models.Message
 	Members      []models.User
 	RelationType uint
+	//show current limit of past messages
 	MessageLimit uint
 	Action       string
 }

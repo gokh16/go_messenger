@@ -16,7 +16,7 @@ type UserService struct {
 }
 
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
-func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	u.userManager = dbservice.UserDBService{}
 	ok := u.userManager.CreateUser(&messageIn.User)
 	messageOut := serviceModels.MessageOut{Status: ok, Action: messageIn.Action}
@@ -24,7 +24,7 @@ func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut ch
 }
 
 //LoginUser - user's auth.
-func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	u.userManager = dbservice.UserDBService{}
 	u.groupManager = dbservice.GroupDBService{}
 	u.messageManager = dbservice.MessageDBService{}
@@ -47,7 +47,7 @@ func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut cha
 }
 
 //AddContact add spesial user to contact list of special User
-func (u UserService) AddContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	u.userManager = dbservice.UserDBService{}
 	ok := u.userManager.AddContact(&messageIn.User, &messageIn.Contact, messageIn.RelationType)
 	messageOut := serviceModels.MessageOut{Status: ok, Action: messageIn.Action}
@@ -55,7 +55,7 @@ func (u UserService) AddContact(messageIn *userConnections.MessageIn, chanOut ch
 }
 
 //GetUsers method gets all users from DB.
-func (u UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	u.userManager = dbservice.UserDBService{}
 	userList := []models.User{}
 	u.userManager.GetUsers(&userList)
@@ -67,7 +67,7 @@ func (u UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan
 }
 
 //GetUser method get special user from DB.
-func (u UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	u.userManager = dbservice.UserDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	messageOut.ContactList = append(messageOut.ContactList, *u.userManager.GetUser(&messageIn.User))
@@ -75,7 +75,7 @@ func (u UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<
 }
 
 //GetContactList gets contact list of special user from DB.
-func (u UserService) GetContactList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (u *UserService) GetContactList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	u.userManager = dbservice.UserDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)

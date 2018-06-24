@@ -3,6 +3,7 @@ package service
 import (
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/db/dbservice/dbInterfaces"
+	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 )
@@ -14,13 +15,15 @@ type MessageService struct {
 }
 
 //SendMessageTo method add message to DB and gets list of group members.
-func (s *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	s.messageManager = dbservice.MessageDBService{}
-	s.groupManager = dbservice.GroupDBService{}
-	s.messageManager.AddMessage(&messageIn.Message)
-	members := s.groupManager.GetMemberList(&messageIn.Group)
+func (m MessageService) SendMessageTo(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	m.messageManager = dbservice.MessageDBService{}
+	m.groupManager = dbservice.GroupDBService{}
+	m.messageManager.AddMessage(&messageIn.Message)
+	members := m.groupManager.GetMemberList(&messageIn.Group)
+	message := []models.Message{messageIn.Message}
+	groupOut := serviceModels.NewGroup(messageIn.Group, members, message)
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
-		Members: members, Message: messageIn.Message, Action: messageIn.Action}
+		Members: members, Action: messageIn.Action}
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	chanOut <- &messageOut
 }

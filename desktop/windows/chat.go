@@ -1,0 +1,134 @@
+package windows
+
+import (
+	"net"
+	"fmt"
+	"github.com/ProtonMail/ui"
+	"log"
+	"go_messenger/desktop/structure"
+	"go_messenger/desktop/util"
+	"go_messenger/desktop/config"
+)
+
+func DrawChatWindow(conn net.Conn) *ui.Window {
+	fmt.Println(config.Users, "chat window", config.Login)
+	window := ui.NewWindow(config.Login, 500, 500, false)
+	input := ui.NewEntry()
+	input.SetText("message")
+	send := ui.NewButton("Send")
+	output := ui.NewMultilineNonWrappingEntry()
+	output.SetReadOnly(true)
+	mainBox := ui.NewHorizontalBox()
+	usersBox := ui.NewVerticalBox()
+	buttonUserSlice := make([]*ui.Button, 0)
+	for _, user := range config.Users {
+		if user != "" && user != config.Login {
+			buttonWithUser := ui.NewButton(user)
+			usersBox.Append(buttonWithUser, false)
+			buttonUserSlice = append(buttonUserSlice, buttonWithUser)
+		}
+	}
+
+	//sliceMembers := make([]string, 0)
+	fmt.Println(buttonUserSlice)
+	for i := 0; i < len(buttonUserSlice)-1; i++ {
+		util.ListenerButton(i, buttonUserSlice[i], conn)
+		output.SetText("")
+	}
+	//fmt.Println(buttonUserSlice, "slice buttons", buttonUserSlice[0].Text())
+	messageBox := ui.NewVerticalBox()
+	messageBox.Append(output, true)
+	//messageBox.Append(user, false)
+	messageBox.Append(input, false)
+	messageBox.Append(send, false)
+	mainBox.Append(usersBox, false)
+	mainBox.Append(messageBox, true)
+	go func() {
+		for {
+			msg := util.JSONdecode(conn)
+			if msg.Message.Content != "" {
+				output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
+			}
+			fmt.Println(msg.Status)
+		}
+	}()
+	send.OnClicked(func(*ui.Button) {
+		//FIX SLICEMEMBER
+		log.Println(config.GroupName)
+		output.Append(config.Login + ": " + input.Text())
+
+		//формирование новой структуры на отправку на сервер,
+		//заполнение текущего экземпляра требуемыми полями.
+
+		message := util.MessageOut{
+			User: structure.User{
+				Login:    config.Login,
+				Password: "testPassword",
+				Username: config.Login,
+				Email:    "test@test.com",
+				Status:   true,
+				UserIcon: "testUserIcon",
+			},
+			Contact: structure.User{},
+			Group: structure.Group{
+				User: structure.User{
+					Login:    config.Login,
+					Password: "testPassword",
+					Username: config.Login,
+					Email:    "test@test.com",
+					Status:   true,
+					UserIcon: "testUserIcon",
+				},
+				GroupType: structure.GroupType{
+					Type: "private",
+				},
+				GroupName:    config.Login,
+				GroupOwnerID: 123,
+				GroupTypeID:  1,
+			},
+			Message: structure.Message{
+				User: structure.User{
+					Login:    config.Login,
+					Password: "testPassword",
+					Username: config.Login,
+					Email:    "test@test.com",
+					Status:   true,
+					UserIcon: "testUserIcon",
+				},
+				Group: structure.Group{
+					User: structure.User{
+						Login:    config.Login,
+						Password: "testPassword",
+						Username: config.Login,
+						Email:    "test@test.com",
+						Status:   true,
+						UserIcon: "testUserIcon",
+					},
+					GroupType: structure.GroupType{
+						Type: "private",
+					},
+					GroupName:    config.GroupName,
+					GroupOwnerID: 123,
+					GroupTypeID:  1,
+				},
+			},
+			Members:      nil,
+			RelationType: 1,
+			MessageLimit: 1,
+			Action:       "SendMessageTo",
+		}
+		_, err := conn.Write([]byte(util.JSONencode(message)))
+		if err != nil {
+			log.Println("OnClickedError! Empty field.")
+		}
+		input.SetText("")
+
+	})
+	window.SetChild(mainBox)
+	window.OnClosing(func(*ui.Window) bool {
+		ui.Quit()
+		return true
+	})
+	window.Show()
+	return window
+}

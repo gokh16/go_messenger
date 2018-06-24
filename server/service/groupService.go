@@ -14,10 +14,19 @@ type GroupService struct {
 	messageManager dbInterfaces.MessageManager
 }
 
-//CreateGroup function creats a special Group and makes a record in DB. It returns bool value
-func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+//Init for GroupService struct
+func (g GroupService) initGroupService(messageIn *userConnections.MessageIn) *serviceModels.MessageOut {
+	g.userManager = dbservice.UserDBService{}
 	g.groupManager = dbservice.GroupDBService{}
+	g.messageManager = dbservice.MessageDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	return &messageOut
+}
+
+//CreateGroup function creats a special Group and makes a record in DB. It returns bool value
+func (g GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	//variable messageOut is pointer type
+	messageOut := g.initGroupService(messageIn)
 	switch messageIn.Group.GroupTypeID {
 	// groupTypeID == 1 means privat message
 	case 1:
@@ -28,7 +37,7 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 			}
 		}
 		messageOut.Status = ok
-	// groupType == 2 means group chat
+		// groupType == 2 means group chat
 	case 2:
 		ok := g.groupManager.CreateGroup(&messageIn.Group)
 		if ok {
@@ -36,27 +45,25 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 		}
 		messageOut.Status = ok
 	}
-	chanOut <- &messageOut
+	chanOut <- messageOut
 }
 
 //GetGroup gets special group fo user from DB
-func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	//variable messageOut is pointer type
+	messageOut := g.initGroupService(messageIn)
 	groupModel := g.groupManager.GetGroup(&messageIn.Group)
 	members := g.groupManager.GetMemberList(&groupModel)
 	messages := g.messageManager.GetGroupMessages(&groupModel, messageIn.MessageLimit)
 	groupOut := serviceModels.NewGroup(groupModel, members, messages)
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
-	chanOut <- &messageOut
+	chanOut <- messageOut
 }
 
 //GetGroupList gets all groups of special user from DB
-func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	//variable messageOut is pointer type
+	messageOut := g.initGroupService(messageIn)
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
 	for _, gr := range groupModelList {
 		members := g.groupManager.GetMemberList(&gr)
@@ -64,11 +71,11 @@ func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOu
 		groupOut := serviceModels.NewGroup(gr, members, messages)
 		messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	}
-	chanOut <- &messageOut
+	chanOut <- messageOut
 }
 
 //AddGroupMember add new members in spesific Group.
-func (g *GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (g GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	g.groupManager = dbservice.GroupDBService{}
 	for _, member := range messageIn.Members {
 		g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
@@ -76,7 +83,7 @@ func (g *GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chan
 }
 
 //GetMemberList method gets all users of special group.
-func (g *GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (g GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	g.groupManager = dbservice.GroupDBService{}
 	messageOut := serviceModels.MessageOut{Members: g.groupManager.GetMemberList(&messageIn.Group),
 		Action: messageIn.Action}

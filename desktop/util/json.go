@@ -1,11 +1,11 @@
-package client
+package util
 
 import (
-	"encoding/json"
-	"log"
-	"go_messenger/desktop/structure"
-	"net"
 	"bufio"
+	"encoding/json"
+	"go_messenger/desktop/structure"
+	"log"
+	"net"
 )
 
 //Message is a structure which has fields with data for send

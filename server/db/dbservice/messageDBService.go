@@ -2,25 +2,26 @@ package dbservice
 
 import "go_messenger/server/models"
 
-//MessageDBService struct
+//Message struct
 type MessageDBService struct {
 	models.Message
 }
 
 //AddMessage func.
-func (msg *MessageDBService) AddMessage(content, username, groupName, contentType string) bool {
-	sender := models.User{}
-	recipient := models.Group{}
-	dbConn.Where("username = ?", username).First(&sender)
-	dbConn.Where("group_name = ?", groupName).First(&recipient)
-	message := models.Message{Content: content, MessageSenderID: sender.ID, MessageRecipientID: recipient.ID}
+func (msg MessageDBService) AddMessage(message *models.Message) bool {
+	dbConn.Where("username = ?", message.User.Username).First(&message.User)
+	dbConn.Where("group_name = ?", message.Group.GroupName).First(&message.Group)
 	if dbConn.NewRecord(message) {
 		dbConn.Create(&message)
 		return true
 	}
 	return false
 }
-func (msg *MessageDBService) GetGroupMessages(groupName string) []models.Message {
+
+//GetGroupMessages gets messages of special group with count limit.
+func (msg MessageDBService) GetGroupMessages(group *models.Group, count uint) []models.Message {
 	var messageList = []models.Message{}
+	dbConn.Where("group_name = ?", group.GroupName).First(&group)
+	dbConn.Where("message_recipient_id = ?", group.ID).Limit(count).Find(&messageList)
 	return messageList
 }

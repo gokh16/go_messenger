@@ -16,10 +16,10 @@ type UserService struct {
 }
 
 //Init for GroupService struct
-func (u *UserService) initUserService(messageIn *userConnections.MessageIn) *serviceModels.MessageOut {
-	u.userManager = &dbservice.UserDBService{}
-	u.groupManager = &dbservice.GroupDBService{}
-	u.messageManager = &dbservice.MessageDBService{}
+func (u UserService) initUserService(messageIn *userConnections.MessageIn) *serviceModels.MessageOut {
+	u.userManager = dbservice.UserDBService{}
+	u.groupManager = dbservice.GroupDBService{}
+	u.messageManager = dbservice.MessageDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	return &messageOut
 }
@@ -34,6 +34,9 @@ func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut ch
 
 //LoginUser - user's auth.
 func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	u.userManager = dbservice.UserDBService{}
+	u.groupManager = dbservice.GroupDBService{}
+	u.messageManager = dbservice.MessageDBService{}
 	//variable messageOut is pointer type
 	messageOut := u.initUserService(messageIn)
 	ok := u.userManager.LoginUser(&messageIn.User)

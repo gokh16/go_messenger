@@ -16,15 +16,18 @@ type GroupService struct {
 
 //Init for GroupService struct
 func (g GroupService) initGroupService(messageIn *userConnections.MessageIn) *serviceModels.MessageOut {
-	g.userManager = dbservice.UserDBService{}
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
+	//g.userManager = dbservice.UserDBService{}
+	//g.groupManager = dbservice.GroupDBService{}
+	//g.messageManager = dbservice.MessageDBService{}
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	return &messageOut
 }
 
 //CreateGroup function creats a special Group and makes a record in DB. It returns bool value
 func (g GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	g.userManager = dbservice.UserDBService{}
+	g.groupManager = dbservice.GroupDBService{}
+	g.messageManager = dbservice.MessageDBService{}
 	//variable messageOut is pointer type
 	messageOut := g.initGroupService(messageIn)
 	switch messageIn.Group.GroupTypeID {

@@ -35,17 +35,15 @@ func (t *HandlerTCP) Handler() {
 			log.Println(err)
 		}
 	}()
-	go func() {
-		for {
-			conn, err := ln.Accept()
-			if err != nil {
-				log.Print("Connection doesn't accepted: ")
-				log.Fatal(err)
-			}
-			t.Connection.Join <- conn
-			go HandleJSON(conn, t)
+	for {
+		conn, err := ln.Accept()
+		if err != nil {
+			log.Print("Connection doesn't accepted: ")
+			log.Fatal(err)
 		}
-	}()
+
+		go HandleJSON(conn, t)
+	}
 }
 
 //HandleJSON method is handling json and call parser
@@ -55,8 +53,8 @@ func HandleJSON(conn net.Conn, str *HandlerTCP) {
 	for {
 		data, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			log.Print("Data didn't read right: ")
-			log.Fatal(err)
+			log.Println("Data didn't read right: ")
+			log.Println(err)
 		}
 		ParseJSON([]byte(data), conn, str)
 	}
@@ -64,13 +62,13 @@ func HandleJSON(conn net.Conn, str *HandlerTCP) {
 
 //ParseJSON method which advocates like parser
 func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
-	messageIn := userConnections.MessageIn{}
-	err := json.Unmarshal(bytes, &messageIn)
+	message := userConnections.MessageIn{}
+	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-
-	str.Connection.AddTCPConn(conn, messageIn.User.Username)
-	routerIn.RouterIn(&messageIn, str.Connection.OutChan)
+	log.Println(message.Group.GroupName, message.User.Username, message.Message.Content, "tcp_handler.go 71")
+	str.Connection.AddTCPConn(conn, message.User.Username)
+	routerIn.RouterIn(&message, str.Connection.OutChan)
 }

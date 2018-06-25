@@ -113,12 +113,13 @@ func CreateDatabase() {
 //InitDatabase creates database when it dropped or launch on a new computer
 func InitDatabase() {
 	//for testing
-	db, err := gorm.Open("postgres", "user=root password=root dbname=golangDB sslmode=disable")
+	dbinfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", HostDB, PortDB, UserDB, NameDB, PasswordDB, SSLModeDB)
+	db, err := gorm.Open("postgres", dbinfo)
 	if err != nil {
 		log.Println(err)
 	}
 	defer func() {
-		err := db.Close()
+		err = db.Close()
 		if err != nil {
 			log.Println(err)
 		}

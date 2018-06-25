@@ -56,7 +56,7 @@ func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 
 	//for conn, onlineUser := range mapTCP {
 	//	for _, group := range msg.GroupList {
-	//		for _, groupMember := range group.Members {
+	//		for _, groupMember := range group.Recipient {
 	//			if onlineUser == groupMember.Username && onlineUser != msg.User.Username {
 	//				sliceTCP = append(sliceTCP, conn)
 	//			}
@@ -64,7 +64,7 @@ func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 	//	}
 	//}
 	for conn, onlineUser := range mapTCP {
-		for _, user := range msg.Members {
+		for _, user := range msg.Recipient {
 			if onlineUser == user.Username && onlineUser != msg.User.Username {
 				sliceTCP = append(sliceTCP, conn)
 			}

@@ -53,8 +53,8 @@ func HandleJSON(conn net.Conn, str *HandlerTCP) {
 	for {
 		data, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			log.Print("Data didn't read right: ")
-			log.Fatal(err)
+			log.Println("Data didn't read right: ")
+			log.Println(err)
 		}
 		ParseJSON([]byte(data), conn, str)
 	}
@@ -68,6 +68,7 @@ func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
+	log.Println(message.Group.GroupName, message.User.Username, message.Message.Content, "tcp_handler.go 71")
 	str.Connection.AddTCPConn(conn, message.User.Username)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 }

@@ -34,6 +34,9 @@ func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut ch
 
 //LoginUser - user's auth.
 func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	u.userManager = dbservice.UserDBService{}
+	u.groupManager = dbservice.GroupDBService{}
+	u.messageManager = dbservice.MessageDBService{}
 	//variable messageOut is pointer type
 	messageOut := u.initUserService(messageIn)
 	ok := u.userManager.LoginUser(&messageIn.User)

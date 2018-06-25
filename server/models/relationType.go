@@ -1,3 +1,4 @@
+
 package models
 
 import (
@@ -8,5 +9,5 @@ import (
 type RelationType struct {
 	gorm.Model
 
-	Type string
+	Type string `json:"relation_type"`
 }

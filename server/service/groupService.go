@@ -88,7 +88,7 @@ func (g GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanO
 //GetMemberList method gets all users of special group.
 func (g GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	g.groupManager = dbservice.GroupDBService{}
-	messageOut := serviceModels.MessageOut{Members: g.groupManager.GetMemberList(&messageIn.Group),
+	messageOut := serviceModels.MessageOut{Recipient: g.groupManager.GetMemberList(&messageIn.Group),
 		Action: messageIn.Action}
 	chanOut <- &messageOut
 }

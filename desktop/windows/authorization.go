@@ -79,7 +79,8 @@ func DrawAuthWindow(conn net.Conn) {
 	signUp.OnClicked(func(*ui.Button) {
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-
+		config.Login = loginInput.Text()
+		log.Println(config.Login, "signup")
 		message := util.MessageOut{
 			User: structure.User{
 				Login:    config.Login,

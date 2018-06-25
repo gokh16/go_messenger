@@ -8,9 +8,11 @@ import (
 	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
 	"go_messenger/desktop/config"
+	"time"
 )
 
 func DrawChatWindow(conn net.Conn) *ui.Window {
+	time.Sleep(10 * time.Millisecond)
 	fmt.Println(config.Users, "chat window", config.Login)
 	window := ui.NewWindow(config.Login, 500, 500, false)
 	input := ui.NewEntry()
@@ -28,17 +30,13 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 			buttonUserSlice = append(buttonUserSlice, buttonWithUser)
 		}
 	}
-
-	//sliceMembers := make([]string, 0)
-	fmt.Println(buttonUserSlice)
-	for i := 0; i < len(buttonUserSlice)-1; i++ {
+	for i := 0; i < len(buttonUserSlice); i++ {
+		log.Println("chat.go 35")
 		util.ListenerButton(i, buttonUserSlice[i], conn)
 		output.SetText("")
 	}
-	//fmt.Println(buttonUserSlice, "slice buttons", buttonUserSlice[0].Text())
 	messageBox := ui.NewVerticalBox()
 	messageBox.Append(output, true)
-	//messageBox.Append(user, false)
 	messageBox.Append(input, false)
 	messageBox.Append(send, false)
 	mainBox.Append(usersBox, false)
@@ -55,7 +53,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	send.OnClicked(func(*ui.Button) {
 		//FIX SLICEMEMBER
 		log.Println(config.GroupName)
-		output.Append(config.Login + ": " + input.Text())
+		output.Append(config.Login + ": " + input.Text() + "\n")
 
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
@@ -82,8 +80,8 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 				GroupType: structure.GroupType{
 					Type: "private",
 				},
-				GroupName:    config.Login,
-				GroupOwnerID: 123,
+				GroupName:    config.GroupName,
+				//GroupOwnerID: 123,
 				GroupTypeID:  1,
 			},
 			Message: structure.Message{
@@ -108,9 +106,10 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 						Type: "private",
 					},
 					GroupName:    config.GroupName,
-					GroupOwnerID: 123,
+					//GroupOwnerID: 123,
 					GroupTypeID:  1,
 				},
+				Content:input.Text(),
 			},
 			Members:      nil,
 			RelationType: 1,

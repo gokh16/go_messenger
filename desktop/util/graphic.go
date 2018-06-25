@@ -34,7 +34,7 @@ func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
 		})
 
 		config.GroupName = config.Login + button.Text()
-
+		log.Println(config.GroupName)
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 
@@ -61,7 +61,7 @@ func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
 					Type: "private",
 				},
 				GroupName:    config.GroupName,
-				GroupOwnerID: 123,
+				//GroupOwnerID: 123,
 				GroupTypeID:  1,
 			},
 			Message: structure.Message{
@@ -86,20 +86,20 @@ func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
 						Type: "private",
 					},
 					GroupName:    config.GroupName,
-					GroupOwnerID: 123,
+					//GroupOwnerID: 123,
 					GroupTypeID:  1,
 				},
 			},
 			Members:      members,
 			RelationType: 1,
 			MessageLimit: 1,
-			Action:       "SendMessageTo",
+			Action:       "CreateGroup",
 		}
 		_, err := conn.Write([]byte(JSONencode(message)))
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println(config.Login, config.GroupName, number, "graphic 131")
+		fmt.Println(config.Login, config.GroupName, number, "graphic 102")
 	})
 	return config.GroupName
 }

@@ -11,8 +11,8 @@ type Message struct {
 	User  User
 	Group Group
 
-	Content            string
-	MessageSenderID    uint
-	MessageRecipientID uint
-	MessageContentType string
+	Content            string `json:"message_content"`
+	MessageSenderID    uint   `json:"message_sender_id"`
+	MessageRecipientID uint   `json:"message_recepient_id"`
+	MessageContentType string `json:"message_content_type_id"`
 }

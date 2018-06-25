@@ -13,7 +13,6 @@ import (
 
 func DrawChatWindow(conn net.Conn) *ui.Window {
 	time.Sleep(10 * time.Millisecond)
-	fmt.Println(config.Users, "chat window", config.Login)
 	window := ui.NewWindow(config.Login, 500, 500, false)
 	input := ui.NewEntry()
 	input.SetText("message")

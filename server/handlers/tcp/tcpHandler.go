@@ -35,15 +35,17 @@ func (t *HandlerTCP) Handler() {
 			log.Println(err)
 		}
 	}()
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			log.Print("Connection doesn't accepted: ")
-			log.Fatal(err)
+	go func() {
+		for {
+			conn, err := ln.Accept()
+			if err != nil {
+				log.Print("Connection doesn't accepted: ")
+				log.Fatal(err)
+			}
+			t.Connection.Join <- conn
+			go HandleJSON(conn, t)
 		}
-
-		go HandleJSON(conn, t)
-	}
+	}()
 }
 
 //HandleJSON method is handling json and call parser
@@ -62,12 +64,13 @@ func HandleJSON(conn net.Conn, str *HandlerTCP) {
 
 //ParseJSON method which advocates like parser
 func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
-	message := userConnections.MessageIn{}
-	err := json.Unmarshal(bytes, &message)
+	messageIn := userConnections.MessageIn{}
+	err := json.Unmarshal(bytes, &messageIn)
 	if err != nil {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	str.Connection.AddTCPConn(conn, message.User.Username)
-	routerIn.RouterIn(&message, str.Connection.OutChan)
+
+	str.Connection.AddTCPConn(conn, messageIn.User.Username)
+	routerIn.RouterIn(&messageIn, str.Connection.OutChan)
 }

@@ -17,6 +17,8 @@ type Connections struct {
 	TCPConnectionsMutex *sync.Mutex
 	TCPConnections      map[net.Conn]string // connection:login
 	OutChan             chan *serviceModels.MessageOut
+	Join                chan net.Conn
+	Leave               chan net.Conn
 }
 
 //Function InitConnections is init for Connections struct
@@ -27,6 +29,8 @@ func InitConnections() *Connections {
 	instance.TCPConnectionsMutex = new(sync.Mutex)
 	instance.TCPConnections = make(map[net.Conn]string, 0)
 	instance.OutChan = make(chan *serviceModels.MessageOut, 1024)
+	instance.Join = make(chan net.Conn)
+	instance.Leave = make(chan net.Conn)
 	return &instance
 }
 
@@ -38,10 +42,24 @@ func (c *Connections) AddTCPConn(conn net.Conn, userName string) {
 	fmt.Println(c.TCPConnections, "ADDTCP")
 }
 
+//DeleteTCPConn method is deleting suitable connection from TCPConnections map of Connections struct
+func (c *Connections) DeleteTCPConn(conn net.Conn) {
+	c.TCPConnectionsMutex.Lock()
+	delete(c.TCPConnections, conn)
+	c.TCPConnectionsMutex.Unlock()
+}
+
 //AddWSConn method is adding incoming connection with login to source structure
 func (c *Connections) AddWSConn(conn *websocket.Conn, userName string) {
 	c.WSConnectionsMutex.Lock()
 	c.WSConnections[conn] = userName
+	c.WSConnectionsMutex.Unlock()
+}
+
+//DeleteWSConn method is deleting suitable connection from WSConnections map of Connections struct
+func (c *Connections) DeleteWSConnection(conn *websocket.Conn) {
+	c.WSConnectionsMutex.Lock()
+	delete(c.WSConnections, conn)
 	c.WSConnectionsMutex.Unlock()
 }
 

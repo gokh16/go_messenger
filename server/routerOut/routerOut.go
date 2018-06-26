@@ -7,6 +7,8 @@ import (
 	"go_messenger/server/userConnections"
 	"net"
 
+	"go_messenger/server/service/serviceModels"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -15,7 +17,7 @@ type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
-//InitRouterOut is an init for router out
+//Function InitRouterOut is an init for routerOut struct
 func InitRouterOut(conn *userConnections.Connections) {
 	initRout := RouterOut{}
 	initRout.Connection = conn
@@ -26,7 +28,7 @@ func InitRouterOut(conn *userConnections.Connections) {
 //connection
 func (r *RouterOut) Handler() {
 
-	//var msg is (*) pointer of userConnections.Message struct
+	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 			tcp.WaitJSON(sliceTCPCon, msg)
@@ -37,7 +39,7 @@ func (r *RouterOut) Handler() {
 	}
 }
 
-func (r *RouterOut) getSliceOfTCP(msg *userConnections.Message) []net.Conn {
+func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 
 	//get current TCP connections
 	mapTCP := r.Connection.GetAllTCPConnections()
@@ -46,15 +48,15 @@ func (r *RouterOut) getSliceOfTCP(msg *userConnections.Message) []net.Conn {
 
 	if msg.Action == "GetUsers" {
 		for conn, onlineUser := range mapTCP {
-			if onlineUser == msg.UserName {
+			if onlineUser == msg.User.Username {
 				sliceTCP = append(sliceTCP, conn)
 			}
 		}
 	}
 
 	for conn, onlineUser := range mapTCP {
-		for _, groupMember := range msg.GroupMember {
-			if onlineUser == groupMember && onlineUser != msg.UserName {
+		for _, user := range msg.Recipients {
+			if onlineUser == user.Username && onlineUser != msg.User.Username {
 				sliceTCP = append(sliceTCP, conn)
 			}
 		}
@@ -62,7 +64,7 @@ func (r *RouterOut) getSliceOfTCP(msg *userConnections.Message) []net.Conn {
 	return sliceTCP
 }
 
-func (r *RouterOut) getSliceOfWS(msg *userConnections.Message) []*websocket.Conn {
+func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Conn {
 
 	//get current WS connections
 	mapWS := r.Connection.GetAllWSConnections()
@@ -71,15 +73,15 @@ func (r *RouterOut) getSliceOfWS(msg *userConnections.Message) []*websocket.Conn
 
 	if msg.Action == "GetUsers" {
 		for conn, onlineUser := range mapWS {
-			if onlineUser == msg.UserName {
+			if onlineUser == msg.User.Username {
 				sliceWS = append(sliceWS, conn)
 			}
 		}
 	}
 
 	for conn, onlineUser := range mapWS {
-		for _, groupMember := range msg.GroupMember {
-			if onlineUser == groupMember && onlineUser != msg.UserName {
+		for _, user := range msg.Recipients {
+			if onlineUser == user.Username && onlineUser != msg.User.Username {
 				sliceWS = append(sliceWS, conn)
 			}
 		}

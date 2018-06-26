@@ -1,33 +1,36 @@
 package routerIn
 
 import (
-	"fmt"
 	"go_messenger/server/service"
+	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
+	"log"
 )
 
-//RouterIn method which directs data to next step by action field in message structure
-func RouterIn(msg *userConnections.Message, chanOut chan *userConnections.Message) {
+//RouterIn is function which directs data to next step by action field in messageIn structure
+func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
 
 	// variable "action" is a command what to do with the structures
-	action := msg.Action
+	action := messageIn.Action
 
 	switch action {
 
 	case "SendMessageTo":
-		go service.SendMessageTo(msg, chanOut)
+		go service.MessageService{}.SendMessageTo(messageIn, chanOut)
 	case "CreateUser":
-		go service.CreateUser(msg, chanOut)
-	//case "LoginUser":
-	//	go service.LoginUser(msg, chanOut)
+		go service.UserService{}.CreateUser(messageIn, chanOut)
+	case "LoginUser":
+		go service.UserService{}.LoginUser(messageIn, chanOut)
 	case "CreateGroup":
-		go service.CreateGroup(msg, chanOut)
-	//case "AddGroupMember":
-	//	go service.AddGroupMember(c)
+		go service.GroupService{}.CreateGroup(messageIn, chanOut)
+	case "AddGroupMember":
+		go service.GroupService{}.AddGroupMember(messageIn, chanOut)
 	case "GetUsers":
-		go service.GetUsers(msg, chanOut)
+		go service.UserService{}.GetUsers(messageIn, chanOut)
+	case "GetGroupList":
+		go service.GroupService{}.GetGroupList(messageIn, chanOut)
 
 	default:
-		fmt.Println("Unknown format of data from server")
+		log.Println("Unknown format of data from server")
 	}
 }

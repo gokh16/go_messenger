@@ -14,6 +14,7 @@ import (
 func init() {
 	db.CreateDatabase()
 	//db.InitDatabase()
+
 }
 
 func main() {
@@ -43,6 +44,3 @@ func main() {
 	stop := make(chan bool)
 	<-stop
 }
-
-//TODO GOLINTERS
-//TODO waitgroups

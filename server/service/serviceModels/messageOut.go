@@ -2,7 +2,7 @@ package serviceModels
 
 import "go_messenger/server/models"
 
-//MessageOut responce struct
+//MessageOut response struct
 type MessageOut struct {
 	User        models.User
 	Recipient   []models.User

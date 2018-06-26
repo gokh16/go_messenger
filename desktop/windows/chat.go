@@ -92,6 +92,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 					Status:   true,
 					UserIcon: "testUserIcon",
 				},
+
 				Group: structure.Group{
 					User: structure.User{
 						Login:    config.Login,

@@ -132,7 +132,7 @@ func InitDatabase() {
 	db.Create(&user1)
 	db.Create(&user2)
 	db.Create(&group)
-	msg := models.Message{Content: "Hello", MessageContentType: "Text", MessageRecipientID: 1, MessageSenderID: 2}
+	msg := models.Message{Content: "HelloWOW", MessageContentType: "Text", MessageRecipientID: 1, MessageSenderID: 2}
 	db.Create(&msg)
 	groupMember1 := models.GroupMember{GroupID: 1, UserID: 1, LastReadMessageID: 1}
 	groupMember2 := models.GroupMember{GroupID: 1, UserID: 2, LastReadMessageID: 1}

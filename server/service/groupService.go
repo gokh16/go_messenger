@@ -14,15 +14,6 @@ type GroupService struct {
 	messageManager dbInterfaces.MessageManager
 }
 
-//Init for GroupService struct
-//func (g GroupService) initGroupService(messageIn *userConnections.MessageIn) serviceModels.MessageOut {
-//	g.userManager = &dbservice.UserDBService{}
-//	g.groupManager = &dbservice.GroupDBService{}
-//	g.messageManager = &dbservice.MessageDBService{}
-//	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
-//	return messageOut
-//}
-
 //CreateGroup function creats a special Group and makes a record in DB. It returns bool value
 func (g GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	g.userManager = dbservice.UserDBService{}

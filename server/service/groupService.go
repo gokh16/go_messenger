@@ -5,6 +5,7 @@ import (
 	"go_messenger/server/db/dbservice/dbInterfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
+	"log"
 )
 
 //GroupService ...
@@ -66,6 +67,7 @@ func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut
 		groupOut := serviceModels.NewGroup(gr, members, messages)
 		messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	}
+	log.Println(messageOut.GroupList)
 	chanOut <- &messageOut
 }
 

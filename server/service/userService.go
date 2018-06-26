@@ -15,15 +15,6 @@ type UserService struct {
 	messageManager dbInterfaces.MessageManager
 }
 
-//Init for GroupService struct
-//func (u UserService) initUserService(messageIn *userConnections.MessageIn) *serviceModels.MessageOut {
-//	u.userManager = dbservice.UserDBService{}
-//	u.groupManager = dbservice.GroupDBService{}
-//	u.messageManager = dbservice.MessageDBService{}
-//	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
-//	return &messageOut
-//}
-
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func (u UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	u.userManager = dbservice.UserDBService{}

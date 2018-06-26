@@ -65,7 +65,7 @@ func DrawAuthWindow(conn net.Conn) {
 			Members:      nil,
 			RelationType: 1,
 			MessageLimit: 1,
-			Action:       "GetUsers",
+			Action:       "GetGroupList",
 		}
 		_, err := conn.Write([]byte(util.JSONencode(message)))
 		if err != nil {
@@ -74,7 +74,7 @@ func DrawAuthWindow(conn net.Conn) {
 		config.Login = loginInput.Text()
 		window.Hide()
 		DrawChatWindow(conn)
-		log.Println(config.Users)
+		log.Println(config.UserGroups)
 	})
 	signUp.OnClicked(func(*ui.Button) {
 		//формирование новой структуры на отправку на сервер,
@@ -111,10 +111,9 @@ func DrawAuthWindow(conn net.Conn) {
 	go func() {
 		for {
 			msg := util.JSONdecode(conn)
-			for _, contacts := range msg.ContactList {
-				config.Users = append(config.Users, contacts.Login)
+			for _, contacts := range msg.GroupList {
+				config.UserGroups = append(config.UserGroups, contacts.GroupName)
 			}
-			log.Println(config.Users, "READER")
 			channel <- msg.Status
 		}
 	}()

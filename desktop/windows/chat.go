@@ -91,6 +91,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 					Status:   true,
 					UserIcon: "testUserIcon",
 				},
+				MessageSenderID:1, //todo fix it
 				Group: structure.Group{
 					User: structure.User{
 						Login:    config.Login,

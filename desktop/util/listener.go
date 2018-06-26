@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"log"
 	"net"
 
@@ -15,6 +14,7 @@ import (
 func ButtonListener(number int, button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
 	button.OnClicked(func(*ui.Button) {
 
+		output.SetText("Now you can texting with:" + button.Text())
 		var members []structure.User
 		members = append(members, structure.User{
 			Login:    config.Login,
@@ -59,9 +59,9 @@ func ButtonListener(number int, button *ui.Button, conn net.Conn, output *ui.Mul
 				GroupType: structure.GroupType{
 					Type: "private",
 				},
-				GroupName:    config.GroupName,
+				GroupName: config.GroupName,
 				//GroupOwnerID: 123,
-				GroupTypeID:  1,
+				GroupTypeID: 1,
 			},
 			Message: structure.Message{
 				User: structure.User{
@@ -84,9 +84,9 @@ func ButtonListener(number int, button *ui.Button, conn net.Conn, output *ui.Mul
 					GroupType: structure.GroupType{
 						Type: "private",
 					},
-					GroupName:    config.GroupName,
+					GroupName: config.GroupName,
 					//GroupOwnerID: 123,
-					GroupTypeID:  1,
+					GroupTypeID: 1,
 				},
 			},
 			Members:      members,

@@ -6,7 +6,7 @@ import (
 	"go_messenger/server/handlers/ws"
 	"go_messenger/server/userConnections"
 	"net"
-	"fmt"
+
 	"go_messenger/server/service/serviceModels"
 
 	"github.com/gorilla/websocket"

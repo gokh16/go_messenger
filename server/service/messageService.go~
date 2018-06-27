@@ -6,7 +6,7 @@ import (
 	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	
+	"fmt"
 	
 )
 
@@ -21,9 +21,9 @@ func (m MessageService) SendMessageTo(messageIn *userConnections.MessageIn, chan
 	m.messageManager = dbservice.MessageDBService{}
 	m.groupManager = dbservice.GroupDBService{}
 	m.messageManager.AddMessage(&messageIn.Message)
-
+	fmt.Println(messageIn.Group.GroupName)
 	members := m.groupManager.GetMemberList(&messageIn.Group)
-
+fmt.Println("members",members)
 	message := []models.Message{messageIn.Message}
 	groupOut := serviceModels.NewGroup(messageIn.Group, members, message)
 	messageOut := serviceModels.MessageOut{User: messageIn.User,

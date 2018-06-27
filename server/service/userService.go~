@@ -42,6 +42,7 @@ func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut cha
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
 	}
+	messageOut.UserID = messageOut.User.ID
 	messageOut.Status = ok
 	chanOut <- &messageOut
 }

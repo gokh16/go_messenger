@@ -12,7 +12,7 @@ import (
 )
 
 func DrawChatWindow(conn net.Conn) *ui.Window {
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	window := ui.NewWindow(config.Login, 500, 500, false)
 	input := ui.NewEntry()
 	input.SetText("message")
@@ -22,16 +22,15 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	mainBox := ui.NewHorizontalBox()
 	usersBox := ui.NewVerticalBox()
 	buttonUserSlice := make([]*ui.Button, 0)
-	for _, user := range config.Users {
-		if user != "" && user != config.Login {
-			buttonWithUser := ui.NewButton(user)
+	for _, group := range config.UserGroups {
+		if group != "" && group != config.Login {
+			buttonWithUser := ui.NewButton(group)
 			usersBox.Append(buttonWithUser, false)
 			buttonUserSlice = append(buttonUserSlice, buttonWithUser)
 		}
 	}
 	for i := 0; i < len(buttonUserSlice); i++ {
-		log.Println("chat.go 35")
-		util.ListenerButton(i, buttonUserSlice[i], conn)
+		util.ButtonActions(buttonUserSlice[i], conn, output)
 		output.SetText("")
 	}
 	messageBox := ui.NewVerticalBox()
@@ -92,7 +91,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 					Status:   true,
 					UserIcon: "testUserIcon",
 				},
-
+				MessageSenderID: config.UserID, //todo fix it
 				Group: structure.Group{
 					User: structure.User{
 						Login:    config.Login,

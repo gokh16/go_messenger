@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"log"
 	"net"
 
@@ -9,11 +8,31 @@ import (
 
 	"github.com/ProtonMail/ui"
 	"go_messenger/desktop/config"
+	"fmt"
 )
 
-//ListenerButton is hanging listeners for contact button
-func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
+//ButtonActions is hanging listeners for contact button
+func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
 	button.OnClicked(func(*ui.Button) {
+		output.SetText("")
+		output.SetText("Now you can texting with:" + button.Text() + "\n") //todo fix group messaging
+
+		go func() {
+			for {
+				msg := JSONdecode(conn)
+				for _, group := range msg.GroupList {
+					if msg.Message.Content != "" && group.GroupName == button.Text() {
+						config.MessagesInGroup = group.Messages
+						break
+					}
+				}
+				break
+				fmt.Println(msg.Status)
+			}
+			for _, message := range config.MessagesInGroup {
+				output.Append(message.User.Login + ": " + message.Content + "\n")
+			}
+		}()
 
 		var members []structure.User
 		members = append(members, structure.User{
@@ -33,8 +52,7 @@ func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
 			UserIcon: "testUserIcon",
 		})
 
-		config.GroupName = config.Login + button.Text()
-		log.Println(config.GroupName)
+		config.GroupName = button.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 
@@ -60,9 +78,9 @@ func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
 				GroupType: structure.GroupType{
 					Type: "private",
 				},
-				GroupName:    config.GroupName,
+				GroupName: config.GroupName,
 				//GroupOwnerID: 123,
-				GroupTypeID:  1,
+				GroupTypeID: 1,
 			},
 			Message: structure.Message{
 				User: structure.User{
@@ -85,46 +103,20 @@ func ListenerButton(number int, button *ui.Button, conn net.Conn) string {
 					GroupType: structure.GroupType{
 						Type: "private",
 					},
-					GroupName:    config.GroupName,
+					GroupName: config.GroupName,
 					//GroupOwnerID: 123,
-					GroupTypeID:  1,
+					GroupTypeID: 1,
 				},
 			},
 			Members:      members,
 			RelationType: 1,
 			MessageLimit: 1,
-			Action:       "CreateGroup",
+			Action:       "GetGroup",
 		}
 		_, err := conn.Write([]byte(JSONencode(message)))
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println(config.Login, config.GroupName, number, "graphic 102")
 	})
 	return config.GroupName
 }
-
-//func drawSignInErrorWindow(conn net.Conn) {
-//	window := ui.NewWindow("Chat", 100, 100, false)
-//	back := ui.NewButton("Back")
-//	error := ui.NewLabel("Wrong Login or password!")
-//	box := ui.NewVerticalBox()
-//	box.Append(back, false)
-//	box.Append(error, false)
-//	window.SetChild(box)
-//	back.OnClicked(func(*ui.Button) {
-//		drawAuthWindow(conn)
-//		window.Hide()
-//	})
-//	window.Show()
-//}
-
-//func GetUser(conn net.Conn) []string {
-//	conn.Write([]byte(JSONencode("", "", "",
-//		0, " ", 1,
-//		" ", nil, " ", "", "",
-//		" ", " ", " ", true, " ", "GetUsers")))
-//	time.Sleep(2 * time.Second)
-//	msg := JSONdecode(conn)
-//	return msg.GroupMember
-//}

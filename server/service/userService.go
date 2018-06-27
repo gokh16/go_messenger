@@ -14,7 +14,7 @@ type UserService struct {
 	messageManager dbInterfaces.MessageManager
 }
 
-func (u *UserService)InitUserService (ui dbInterfaces.UserManager, mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
+func (u *UserService) InitUserService (ui dbInterfaces.UserManager, mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
 	u.userManager = ui
 	u.groupManager = gi
 	u.messageManager = mi

@@ -2,7 +2,6 @@ package dbservice
 
 import (
 	"go_messenger/server/models"
-	"log"
 )
 
 //Group type with build-in model of Group.
@@ -12,12 +11,7 @@ type GroupDBService struct {
 
 //CreateGroup method creates new record in DB Group table.
 // It returns bool value.
-<<<<<<< HEAD
 func (g *GroupDBService) CreateGroup(group *models.Group) bool {
-=======
-func (g GroupDBService) CreateGroup(group *models.Group) bool {
-	log.Println(group.User.Username, group.GroupName)
->>>>>>> dev
 	dbConn.Where("username = ?", group.User.Username).First(&group.User)
 	dbConn.Where("group_name = ?", group.GroupName).First(&group)
 	group.GroupOwnerID = group.User.ID

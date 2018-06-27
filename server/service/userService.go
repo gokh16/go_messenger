@@ -50,15 +50,16 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 //AddContact add spesial user to contact list of special User
 func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	ok := u.userManager.AddContact(&messageIn.User, &messageIn.Contact, messageIn.RelationType)
-	messageOut := serviceModels.MessageOut{Status: ok, Action: messageIn.Action}
+	messageOut := serviceModels.MessageOut{User: messageIn.User,
+		Status: ok, Action: messageIn.Action}
 	chanOut <- &messageOut
 }
 
 //GetUsers method gets all users from DB.
 func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	userList := []models.User{}
 	u.userManager.GetUsers(&userList)
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	for _, user := range userList {
 		messageOut.ContactList = append(messageOut.ContactList, user)
 	}
@@ -67,7 +68,7 @@ func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut cha
 
 //GetUser method get special user from DB.
 func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	messageOut.ContactList = append(messageOut.ContactList, u.userManager.GetUser(&messageIn.User))
 	chanOut <- &messageOut
 }

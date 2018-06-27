@@ -22,15 +22,28 @@ func (g *GroupService) InitGroupService(ui interfaces.UserManager, gi interfaces
 
 //CreateGroup function creats a special Group and makes a record in DB. It returns bool value
 func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	ok := g.groupManager.CreateGroup(&messageIn.Group)
 	if ok {
 		switch messageIn.Group.GroupTypeID {
+
 		// groupTypeID == 1 means privat message
 		case 1:
+			g.messageManager.AddMessage(&messageIn.Message)
 			for _, member := range messageIn.Members {
 				g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
 			}
+
+			groupOut := serviceModels.Group{
+				GroupName: messageIn.Group.GroupName,
+				GroupType: messageIn.Group.GroupType,
+				Members:   messageIn.Members,
+				Messages:  g.messageManager.GetGroupMessages(&messageIn.Group, messageIn.MessageLimit),
+			}
+
+			messageOut.GroupList = append(messageOut.GroupList, groupOut)
+			messageOut.Recipients = messageIn.Members
+
 			// groupType == 2 means group chat
 		case 2:
 			g.groupManager.AddGroupMember(&messageIn.Group.User, &messageIn.Group, &messageIn.Message)
@@ -42,7 +55,7 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 
 //GetGroup gets special group fo user from DB
 func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModel := g.groupManager.GetGroup(&messageIn.Group)
 	members := g.groupManager.GetMemberList(&groupModel)
 	messages := g.messageManager.GetGroupMessages(&groupModel, messageIn.MessageLimit)

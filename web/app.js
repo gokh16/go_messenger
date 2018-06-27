@@ -1,64 +1,96 @@
+
+
+var user={
+    'Login': '',
+    'Password': '',
+    'Username': '',
+    'Email': '',
+    'Status': false,
+    'UserIcon': '',
+};
+
+var message={
+    'Content': '',
+};
+var group={
+    'GroupName': '',
+    'Messages':[message],
+    'Members': [user],
+};
 new Vue({
     el: '#app',
-
     data: {
+        MessageIn:{
+            User: user,
+            Contact: user,
+            Group: group,
+            Message: message,
+            Members: [user],
+            RelationType: 0,
+            MessageLimit: 0,
+            Action: '',
+        },
+
+        User: user,
+        ContactList: [user],
+        GroupList: [group],
+        Status: null,
+        Action: '',
         ws: null, // Our websocket
-        newMsg: '', // Holds new messages to be sent to the server
-        chatContent: '', // A running list of chat messages displayed on the screen
-        email: null,
-        username: null,
+
+        RecContents: {},
+        RecContent: '',
         joined: false, // True if email and username have been filled in
-        action: ''
+        OnlineUsers: '',
     },
+
 
     created: function () {
         var self = this;
         this.ws = new WebSocket('ws://' + window.location.host + '/ws');
         this.ws.addEventListener('message', function (e) {
             var msg = JSON.parse(e.data);
-            self.chatContent += '<div class="chip">' +
-                '<img src="' + self.gravatarURL(msg.email) + '">' // Avatar
-                +
-                msg.username +
-                '</div>' +
-                '<div class="white-text">' + msg.content + '</div>' +
-                '<br/>';
-
+            if (msg.Action == "LoginUser") {
+                for (var i = 0; i < msg.GroupList.length; i++) {
+                    for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
+                        self.OnlineUsers += '<div class="white-text">' + msg.GroupList[i].Members[c].Username + '</div>' + '<br/>';
+                    }
+                }
+            } else if (msg.Action == "SendMessageTo") {
+                self.RecContent +=
+                    '<div class="chip">' + msg.User.Username + ' from: ' + msg.GroupList[0].GroupName + '</div>' +
+                    '<div class="white-text">' + msg.GroupList[0].Messages.Content + '</div>' +
+                    '<br/>';
+            }
             var element = document.getElementById('chat-messages');
-            element.scrollTop = element.scrollHeight; // Auto scroll to the bottom
+            element.scrollTop = element.scrollHeight;// Auto scroll to the bottom
         });
     },
 
     methods: {
         send: function () {
-            if (this.newMsg != '') {
-                this.ws.send(
-                    JSON.stringify({
-                        email: this.email,
-                        username: this.username,
-                        content: $('<p>').html(this.newMsg).text(), // Strip out html
-                        action: "SendMessageTo"
-                    }));
-                this.newMsg = ''; // Reset newMsg
+            if (this.MessageIn.Message.Content != '') {
+                this.MessageIn.Message.Content = $('<p>').html(this.MessageIn.Message.Content).text();
+                this.MessageIn.Action = "SendMessageTo";
+                this.ws.send(JSON.stringify(this.MessageIn));
+                this.MessageIn.Message.Content = ''; // Reset newMsg
             }
         },
 
         join: function () {
-            if (!this.email) {
-                Materialize.toast('You must enter an email', 2000);
-                return
-            }
-            if (!this.username) {
+            if (!this.MessageIn.User.Login) {
                 Materialize.toast('You must choose a username', 2000);
                 return
             }
-            this.email = $('<p>').html(this.email).text();
-            this.username = $('<p>').html(this.username).text();
+            this.MessageIn.User.Username = $('<p>').html(this.MessageIn.User.Login).text();
+            this.MessageIn.User.Login = $('<p>').html(this.MessageIn.User.Login).text();
+            this.MessageIn.User.Password = $('<p>').html(this.MessageIn.User.Password).text();
+            this.MessageIn.User.Email = "email";
+            this.MessageIn.User.Status = true;
+            this.MessageIn.User.UserIcon = "usericon";
+            this.MessageIn.Action = "LoginUser";
+            this.ws.send(JSON.stringify(this.MessageIn));
             this.joined = true;
         },
-
-        gravatarURL: function (email) {
-            return 'http://www.gravatar.com/avatar/' + CryptoJS.MD5(email);
-        }
     }
 });

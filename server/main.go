@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"go_messenger/server/handlers/tcp"
-	"go_messenger/server/handlers/ws"
-	"go_messenger/server/routerOut"
-	"go_messenger/server/userConnections"
 	"go_messenger/server/db"
 	"go_messenger/server/db/dbservice"
+	"go_messenger/server/handlers/tcp"
+	"go_messenger/server/handlers/ws"
+	"go_messenger/server/routerIn"
+	"go_messenger/server/routerOut"
+	"go_messenger/server/userConnections"
 	"log"
 )
 
@@ -24,6 +25,9 @@ func main() {
 
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)
+
+	//init services
+	routerIn.InitServices(&dbservice.UserDBService{}, &dbservice.GroupDBService{}, &dbservice.MessageDBService{})
 
 	ws.NewHandlerWS(connectionList)
 	fmt.Println("WS started : Ok!")
@@ -42,5 +46,5 @@ func main() {
 	fmt.Println("DB opened : Ok!")
 
 	stop := make(chan bool)
-	<-stop
+	<-stop //все неправильно
 }

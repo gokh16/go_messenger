@@ -1,5 +1,4 @@
-
-package dbInterfaces
+package interfaces
 
 import "go_messenger/server/models"
 

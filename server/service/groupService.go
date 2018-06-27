@@ -1,7 +1,6 @@
 package service
 
 import (
-	"go_messenger/server/db/dbservice"
 	"go_messenger/server/db/dbservice/dbInterfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
@@ -14,11 +13,14 @@ type GroupService struct {
 	messageManager dbInterfaces.MessageManager
 }
 
+func (g *GroupService)InitGroupService (ui dbInterfaces.UserManager, mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
+	g.userManager = ui
+	g.messageManager = mi
+	g.groupManager = gi
+}
+
 //CreateGroup function creats a special Group and makes a record in DB. It returns bool value
-func (g GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.userManager = dbservice.UserDBService{}
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
+func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action:messageIn.Action}
 	switch messageIn.Group.GroupTypeID {
 	// groupTypeID == 1 means privat message
@@ -42,9 +44,7 @@ func (g GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut 
 }
 
 //GetGroup gets special group fo user from DB
-func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
+func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action:messageIn.Action}
 	groupModel := g.groupManager.GetGroup(&messageIn.Group)
 	members := g.groupManager.GetMemberList(&groupModel)
@@ -55,9 +55,7 @@ func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut cha
 }
 
 //GetGroupList gets all groups of special user from DB
-func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
+func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action:messageIn.Action}
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
 	for _, gr := range groupModelList {
@@ -70,16 +68,14 @@ func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut
 }
 
 //AddGroupMember add new members in spesific Group.
-func (g GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
+func (g *GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	for _, member := range messageIn.Members {
 		g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
 	}
 }
 
 //GetMemberList method gets all users of special group.
-func (g GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
+func (g *GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Recipients: g.groupManager.GetMemberList(&messageIn.Group),
 		Action: messageIn.Action}
 	chanOut <- &messageOut

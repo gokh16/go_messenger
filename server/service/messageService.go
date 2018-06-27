@@ -1,7 +1,6 @@
 package service
 
 import (
-	"go_messenger/server/db/dbservice"
 	"go_messenger/server/db/dbservice/dbInterfaces"
 	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
@@ -14,10 +13,13 @@ type MessageService struct {
 	groupManager   dbInterfaces.GroupManager
 }
 
+func (m *MessageService)InitMessageService (mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
+	m.groupManager = gi
+	m.messageManager = mi
+}
+
 //SendMessageTo method add message to DB and gets list of group members.
-func (m MessageService) SendMessageTo(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	m.messageManager = dbservice.MessageDBService{}
-	m.groupManager = dbservice.GroupDBService{}
+func (m *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	m.messageManager.AddMessage(&messageIn.Message)
 	members := m.groupManager.GetMemberList(&messageIn.Group)
 	message := []models.Message{messageIn.Message}

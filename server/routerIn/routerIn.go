@@ -5,7 +5,18 @@ import (
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 	"log"
+	"go_messenger/server/db/dbservice/dbInterfaces"
 )
+
+var userService = service.UserService{}
+var messageService = service.MessageService{}
+var groupService = service.GroupService{}
+
+func InitServices(ui dbInterfaces.UserManager, mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
+	userService.InitUserService(ui, mi, gi)
+	messageService.InitMessageService(mi, gi)
+	groupService.InitGroupService(ui, mi, gi)
+}
 
 //RouterIn is function which directs data to next step by action field in messageIn structure
 func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
@@ -16,19 +27,19 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 	switch action {
 
 	case "SendMessageTo":
-		go service.MessageService{}.SendMessageTo(messageIn, chanOut)
+		go messageService.SendMessageTo(messageIn, chanOut)
 	case "CreateUser":
-		go service.UserService{}.CreateUser(messageIn, chanOut)
+		go userService.CreateUser(messageIn, chanOut)
 	case "LoginUser":
-		go service.UserService{}.LoginUser(messageIn, chanOut)
+		go userService.LoginUser(messageIn, chanOut)
 	case "CreateGroup":
-		go service.GroupService{}.CreateGroup(messageIn, chanOut)
+		go groupService.CreateGroup(messageIn, chanOut)
 	case "AddGroupMember":
-		go service.GroupService{}.AddGroupMember(messageIn, chanOut)
+		go groupService.AddGroupMember(messageIn, chanOut)
 	case "GetUsers":
-		go service.UserService{}.GetUsers(messageIn, chanOut)
+		go userService.GetUsers(messageIn, chanOut)
 	case "GetGroupList":
-		go service.GroupService{}.GetGroupList(messageIn, chanOut)
+		go groupService.GetGroupList(messageIn, chanOut)
 
 	default:
 		log.Println("Unknown format of data from server")

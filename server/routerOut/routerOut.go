@@ -46,7 +46,7 @@ func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 	fmt.Println("ONLINE TCP connects -> ", len(mapTCP))
 	var sliceTCP []net.Conn
 
-	if msg.Action == "GetUsers" {
+	if msg.Action == "LoginUser" || msg.Action == "GetUsers" {
 		for conn, onlineUser := range mapTCP {
 			if onlineUser == msg.User.Username {
 				sliceTCP = append(sliceTCP, conn)
@@ -55,11 +55,9 @@ func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 	}
 
 	for conn, onlineUser := range mapTCP {
-		for _, group := range msg.GroupList {
-			for _, groupMember := range group.Members {
-				if onlineUser == groupMember.Username && onlineUser != msg.User.Username {
-					sliceTCP = append(sliceTCP, conn)
-				}
+		for _, user := range msg.Recipients {
+			if onlineUser == user.Username && onlineUser != msg.User.Username {
+				sliceTCP = append(sliceTCP, conn)
 			}
 		}
 	}
@@ -73,7 +71,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 	fmt.Println("ONLINE WS connects -> ", len(mapWS))
 	var sliceWS []*websocket.Conn
 
-	if msg.Action == "GetUsers" {
+	if msg.Action == "LoginUser" || msg.Action == "GetUsers" {
 		for conn, onlineUser := range mapWS {
 			if onlineUser == msg.User.Username {
 				sliceWS = append(sliceWS, conn)
@@ -82,11 +80,9 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 	}
 
 	for conn, onlineUser := range mapWS {
-		for _, group := range msg.GroupList {
-			for _, groupMember := range group.Members {
-				if onlineUser == groupMember.Username && onlineUser != msg.User.Username {
-					sliceWS = append(sliceWS, conn)
-				}
+		for _, user := range msg.Recipients {
+			if onlineUser == user.Username && onlineUser != msg.User.Username {
+				sliceWS = append(sliceWS, conn)
 			}
 		}
 	}

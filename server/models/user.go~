@@ -10,8 +10,8 @@ type User struct {
 
 	Login    string
 	Password string
-	Username string 
-	Email    string 
+	Username string `json:"username"`
+	Email    string `json:"email"`
 	Status   bool
 	UserIcon string
 }

@@ -25,7 +25,7 @@ func NewHandlerTCP(conns *userConnections.Connections) {
 //connection
 func (t *HandlerTCP) Handler() {
 	//todo ask about binds!
-	ln, err := net.Listen("tcp", ":8081")
+	ln, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatal(err)
 	}

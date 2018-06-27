@@ -71,7 +71,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 	fmt.Println("ONLINE WS connects -> ", len(mapWS))
 	var sliceWS []*websocket.Conn
 
-	if msg.Action == "GetUsers" {
+	if msg.Action == "LoginUser" {
 		for conn, onlineUser := range mapWS {
 			if onlineUser == msg.User.Username {
 				sliceWS = append(sliceWS, conn)

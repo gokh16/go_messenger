@@ -13,7 +13,7 @@ type MessageService struct {
 	groupManager   dbInterfaces.GroupManager
 }
 
-func (m *MessageService)InitMessageService (mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
+func (m *MessageService) InitMessageService (mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
 	m.groupManager = gi
 	m.messageManager = mi
 }

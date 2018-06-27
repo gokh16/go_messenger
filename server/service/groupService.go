@@ -13,7 +13,7 @@ type GroupService struct {
 	messageManager dbInterfaces.MessageManager
 }
 
-func (g *GroupService)InitGroupService (ui dbInterfaces.UserManager, mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
+func (g *GroupService) InitGroupService (ui dbInterfaces.UserManager, mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
 	g.userManager = ui
 	g.messageManager = mi
 	g.groupManager = gi

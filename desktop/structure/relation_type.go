@@ -8,5 +8,5 @@ import (
 type RelationType struct {
 	gorm.Model
 
-	Type string `json:"relation_type"`
+	Type string
 }

@@ -1,13 +1,13 @@
 package userConnections
 
 import (
-	"fmt"
 	"net"
 	"sync"
 
 	"go_messenger/server/service/serviceModels"
 
 	"github.com/gorilla/websocket"
+	"log"
 )
 
 //Connections is a structure with connections and channel for write out data
@@ -35,7 +35,13 @@ func (c *Connections) AddTCPConn(conn net.Conn, userName string) {
 	c.TCPConnectionsMutex.Lock()
 	c.TCPConnections[conn] = userName
 	c.TCPConnectionsMutex.Unlock()
-	fmt.Println(c.TCPConnections, "ADDTCP")
+}
+
+//DeleteTCPConn method is deleting suitable connection from TCPConnections map of Connections struct
+func (c *Connections) DeleteTCPConn(conn net.Conn) {
+	c.TCPConnectionsMutex.Lock()
+	delete(c.TCPConnections, conn)
+	c.TCPConnectionsMutex.Unlock()
 }
 
 //AddWSConn method is adding incoming connection with login to source structure
@@ -43,6 +49,28 @@ func (c *Connections) AddWSConn(conn *websocket.Conn, userName string) {
 	c.WSConnectionsMutex.Lock()
 	c.WSConnections[conn] = userName
 	c.WSConnectionsMutex.Unlock()
+	log.Println(c.WSConnections[conn], "ADDWS")
+}
+
+//DeleteWSConn method is deleting suitable connection from WSConnections map of Connections struct
+func (c *Connections) DeleteWSConnection(conn *websocket.Conn) {
+	c.WSConnectionsMutex.Lock()
+	delete(c.WSConnections, conn)
+	c.WSConnectionsMutex.Unlock()
+}
+
+//GetUserNameByTCPConnection method returns Name of User whose connected with the TCP connection
+func (c *Connections) GetUserNameByTCPConnection(conn net.Conn) string {
+	c.TCPConnectionsMutex.Lock()
+	defer c.TCPConnectionsMutex.Unlock()
+	return c.TCPConnections[conn]
+}
+
+//GetUserNameByWSConnection method returns Name of User whose connected with the WS connection
+func (c *Connections) GetUserNameByWSConnection(conn *websocket.Conn) string {
+	c.WSConnectionsMutex.Lock()
+	defer c.WSConnectionsMutex.Unlock()
+	return c.WSConnections[conn]
 }
 
 //GetAllTCPConnections method returns slice of tcp connections

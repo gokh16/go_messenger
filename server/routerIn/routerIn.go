@@ -1,16 +1,16 @@
 package routerIn
 
 import (
-	"fmt"
 	"go_messenger/server/service"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
+	"log"
 )
 
-var userService *service.UserService
-var groupService *service.GroupService
-var messageService *service.MessageService
+var userService = service.UserService{}
+var groupService = service.GroupService{}
+var messageService = service.MessageService{}
 
 //InitServices to init service.Service structure
 func InitServices(ui interfaces.UserManager, gi interfaces.GroupManager, mi interfaces.MessageManager) {
@@ -41,6 +41,6 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go userService.GetUsers(messageIn, chanOut)
 
 	default:
-		fmt.Println("Unknown format of data from server")
+		log.Println("Unknown format of data from server")
 	}
 }

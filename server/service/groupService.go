@@ -4,6 +4,7 @@ import (
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
+	"log"
 )
 
 //GroupService ...
@@ -54,6 +55,7 @@ func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut ch
 func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
+	log.Println(groupModelList)
 	for _, gr := range groupModelList {
 		members := g.groupManager.GetMemberList(&gr)
 		messages := g.messageManager.GetGroupMessages(&gr, messageIn.MessageLimit)
@@ -71,20 +73,20 @@ func (g *GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chan
 }
 
 //GetMemberList method gets all users of special group.
-func (s *GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Recipients: s.groupManager.GetMemberList(&messageIn.Group),
+func (g *GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{Recipients: g.groupManager.GetMemberList(&messageIn.Group),
 		Action: messageIn.Action}
 	chanOut <- &messageOut
 }
 
 //EditGroup method edit owner's special group and saves changes.
-func (s *GroupService) EditGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (g *GroupService) EditGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	chanOut <- &messageOut
 }
 
 //DeleteGroup method delete owner's special group from DB.
-func (s *GroupService) DeleteGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+func (g *GroupService) DeleteGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	chanOut <- &messageOut
 }

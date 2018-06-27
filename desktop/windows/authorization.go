@@ -12,7 +12,6 @@ import (
 func DrawAuthWindow(conn net.Conn) {
 	window := ui.NewWindow("Chat", 500, 500, false)
 	loginInput := ui.NewEntry()
-
 	passwordInput := ui.NewPasswordEntry()
 	loginLabel := ui.NewLabel("Login")
 	passwordLabel := ui.NewLabel("Password")
@@ -47,9 +46,9 @@ func DrawAuthWindow(conn net.Conn) {
 	//обработчик кнопки входа, который отправляет запрос на получение всех юзеров в базе
 	//для вывода и создание кнопок с ними
 	signIn.OnClicked(func(*ui.Button) {
+		config.Login = loginInput.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-
 		message := util.MessageOut{
 			User: structure.User{
 				Login:    config.Login,
@@ -65,7 +64,7 @@ func DrawAuthWindow(conn net.Conn) {
 			Members:      nil,
 			RelationType: 1,
 			MessageLimit: 1,
-			Action:       "GetGroupList",
+			Action:       "LoginUser",
 		}
 		_, err := conn.Write([]byte(util.JSONencode(message)))
 		if err != nil {
@@ -114,6 +113,7 @@ func DrawAuthWindow(conn net.Conn) {
 			for _, contacts := range msg.GroupList {
 				config.UserGroups = append(config.UserGroups, contacts.GroupName)
 			}
+			config.ID = msg.User.ID
 			channel <- msg.Status
 		}
 	}()

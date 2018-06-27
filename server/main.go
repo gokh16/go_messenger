@@ -13,7 +13,6 @@ import (
 
 func init() {
 	db.CreateDatabase()
-	//db.InitDatabase()
 
 }
 

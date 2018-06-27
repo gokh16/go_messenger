@@ -35,7 +35,6 @@ func (c *Connections) AddTCPConn(conn net.Conn, userName string) {
 	c.TCPConnectionsMutex.Lock()
 	c.TCPConnections[conn] = userName
 	c.TCPConnectionsMutex.Unlock()
-	log.Println(c.TCPConnections[conn], "ADDTCP")
 }
 
 //DeleteTCPConn method is deleting suitable connection from TCPConnections map of Connections struct

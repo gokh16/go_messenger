@@ -73,7 +73,7 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 	fmt.Println(message.Message.Content)
 	str.Connection.AddWSConn(conn, message.User.Username)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
-	//return str.Connection.OutChan
+	//return str.Connection.outChan
 }
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to util

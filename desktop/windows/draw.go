@@ -1,8 +1,9 @@
 package windows
 
 import (
-	"net"
 	"log"
+	"net"
+
 	"github.com/ProtonMail/ui"
 )
 

@@ -1,12 +1,13 @@
 package windows
 
 import (
-	"net"
-	"github.com/ProtonMail/ui"
-	"go_messenger/desktop/structure"
-	"log"
-	"go_messenger/desktop/util"
 	"go_messenger/desktop/config"
+	"go_messenger/desktop/structure"
+	"go_messenger/desktop/util"
+	"log"
+	"net"
+
+	"github.com/ProtonMail/ui"
 )
 
 func DrawAuthWindow(conn net.Conn) {

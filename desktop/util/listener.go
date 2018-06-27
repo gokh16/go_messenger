@@ -6,8 +6,9 @@ import (
 
 	"go_messenger/desktop/structure"
 
-	"github.com/ProtonMail/ui"
 	"go_messenger/desktop/config"
+
+	"github.com/ProtonMail/ui"
 )
 
 //ButtonListener is hanging listeners for contact button

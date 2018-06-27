@@ -1,14 +1,15 @@
 package windows
 
 import (
-	"net"
 	"fmt"
-	"github.com/ProtonMail/ui"
-	"log"
+	"go_messenger/desktop/config"
 	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
-	"go_messenger/desktop/config"
+	"log"
+	"net"
 	"time"
+
+	"github.com/ProtonMail/ui"
 )
 
 func DrawChatWindow(conn net.Conn) *ui.Window {
@@ -78,9 +79,9 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 				GroupType: structure.GroupType{
 					Type: "private",
 				},
-				GroupName:    config.GroupName,
+				GroupName: config.GroupName,
 				//GroupOwnerID: 123,
-				GroupTypeID:  1,
+				GroupTypeID: 1,
 			},
 			Message: structure.Message{
 				User: structure.User{
@@ -104,11 +105,11 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 					GroupType: structure.GroupType{
 						Type: "private",
 					},
-					GroupName:    config.GroupName,
+					GroupName: config.GroupName,
 					//GroupOwnerID: 123,
-					GroupTypeID:  1,
+					GroupTypeID: 1,
 				},
-				Content:input.Text(),
+				Content: input.Text(),
 			},
 			Members:      nil,
 			RelationType: 1,

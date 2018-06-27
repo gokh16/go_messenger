@@ -113,7 +113,7 @@ func DrawAuthWindow(conn net.Conn) {
 			for _, contacts := range msg.GroupList {
 				config.UserGroups = append(config.UserGroups, contacts.GroupName)
 			}
-			config.ID = msg.User.ID
+			config.UserID = msg.User.ID
 			channel <- msg.Status
 		}
 	}()

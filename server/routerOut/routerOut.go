@@ -10,6 +10,7 @@ import (
 	"go_messenger/server/service/serviceModels"
 
 	"github.com/gorilla/websocket"
+	"log"
 )
 
 //RouterOut is a structure which has attribute to connect with source structure in userConnections
@@ -31,6 +32,7 @@ func (r *RouterOut) Handler() {
 	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
+			log.Println(msg.GroupList, "router out")
 			tcp.WaitJSON(sliceTCPCon, msg)
 		}
 		if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {

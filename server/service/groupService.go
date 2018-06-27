@@ -59,9 +59,9 @@ func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut cha
 func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	g.groupManager = dbservice.GroupDBService{}
 	g.messageManager = dbservice.MessageDBService{}
-	messageOut := serviceModels.MessageOut{Action:messageIn.Action}
+	messageOut := serviceModels.MessageOut{User:messageIn.User,Action:messageIn.Action}
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
-	log.Println(groupModelList)
+	log.Println(groupModelList, "get group list")
 	for _, gr := range groupModelList {
 		members := g.groupManager.GetMemberList(&gr)
 		messages := g.messageManager.GetGroupMessages(&gr, messageIn.MessageLimit)

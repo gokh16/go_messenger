@@ -12,7 +12,7 @@ import (
 )
 
 func DrawChatWindow(conn net.Conn) *ui.Window {
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	window := ui.NewWindow(config.Login, 500, 500, false)
 	input := ui.NewEntry()
 	input.SetText("message")
@@ -30,7 +30,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		}
 	}
 	for i := 0; i < len(buttonUserSlice); i++ {
-		util.ButtonListener(i, buttonUserSlice[i], conn, output)
+		util.ButtonActions(buttonUserSlice[i], conn, output)
 		output.SetText("")
 	}
 	messageBox := ui.NewVerticalBox()
@@ -91,7 +91,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 					Status:   true,
 					UserIcon: "testUserIcon",
 				},
-				MessageSenderID: config.ID, //todo fix it
+				MessageSenderID: config.UserID, //todo fix it
 				Group: structure.Group{
 					User: structure.User{
 						Login:    config.Login,

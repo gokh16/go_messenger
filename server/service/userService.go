@@ -6,7 +6,6 @@ import (
 	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	"log"
 )
 
 //UserService ...
@@ -44,7 +43,6 @@ func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut cha
 		}
 	}
 	messageOut.Status = ok
-	log.Println(messageOut.User.ID)
 	chanOut <- &messageOut
 }
 

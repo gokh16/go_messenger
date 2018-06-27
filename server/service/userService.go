@@ -6,6 +6,7 @@ import (
 	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
+	"log"
 )
 
 //UserService ...
@@ -28,7 +29,7 @@ func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut cha
 	u.userManager = dbservice.UserDBService{}
 	u.groupManager = dbservice.GroupDBService{}
 	u.messageManager = dbservice.MessageDBService{}
-	messageOut := serviceModels.MessageOut{Action:messageIn.Action}
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	ok := u.userManager.LoginUser(&messageIn.User)
 	if ok {
 		messageOut.User = *u.userManager.GetUser(&messageIn.User)
@@ -36,13 +37,14 @@ func (u UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut cha
 		groupList := u.groupManager.GetGroupList(&messageIn.User)
 		for _, group := range groupList {
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-				Members:  u.groupManager.GetMemberList(&group),
+				Members: u.groupManager.GetMemberList(&group),
 				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
 	}
 	messageOut.Status = ok
+	log.Println(messageOut.User.ID)
 	chanOut <- &messageOut
 }
 

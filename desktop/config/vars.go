@@ -1,5 +1,6 @@
 package config
 
-var Users []string
+var UserGroups []string
 var Login string
 var GroupName string
+var ID uint

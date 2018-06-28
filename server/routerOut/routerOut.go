@@ -10,7 +10,6 @@ import (
 	"go_messenger/server/service/serviceModels"
 
 	"github.com/gorilla/websocket"
-	"log"
 )
 
 //RouterOut is a structure which has attribute to connect with source structure in userConnections
@@ -32,7 +31,6 @@ func (r *RouterOut) Handler() {
 	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
-			log.Println(msg.GroupList, "router out")
 			tcp.WaitJSON(sliceTCPCon, msg)
 		}
 		if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
@@ -47,7 +45,8 @@ func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 	mapTCP := r.Connection.GetAllTCPConnections()
 	fmt.Println("ONLINE TCP connects -> ", len(mapTCP))
 	var sliceTCP []net.Conn
-	if msg.Action == "LoginUser" {
+
+	if msg.Action == r.getAction(msg) /*"LoginUser" || msg.Action == "GetUsers"*/ {
 		for conn, onlineUser := range mapTCP {
 			if onlineUser == msg.User.Username {
 				sliceTCP = append(sliceTCP, conn)
@@ -72,7 +71,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 	fmt.Println("ONLINE WS connects -> ", len(mapWS))
 	var sliceWS []*websocket.Conn
 
-	if msg.Action == "GetUsers" {
+	if msg.Action == r.getAction(msg)/*"LoginUser" || msg.Action == "GetUsers"*/ {
 		for conn, onlineUser := range mapWS {
 			if onlineUser == msg.User.Username {
 				sliceWS = append(sliceWS, conn)
@@ -88,4 +87,14 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 		}
 	}
 	return sliceWS
+}
+
+func (r *RouterOut) getAction(msg *serviceModels.MessageOut) string {
+
+	switch msg.Action {
+	case "LoginUser", "GetUsers", "GetGroupList":
+		return msg.Action
+	default:
+		return ""
+	}
 }

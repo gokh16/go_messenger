@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"log"
 	"net"
 
@@ -8,7 +9,6 @@ import (
 
 	"github.com/ProtonMail/ui"
 	"go_messenger/desktop/config"
-	"fmt"
 )
 
 //ButtonActions is hanging listeners for contact button

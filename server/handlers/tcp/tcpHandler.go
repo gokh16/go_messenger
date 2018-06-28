@@ -56,7 +56,7 @@ func HandleJSON(conn net.Conn, str *HandlerTCP) {
 			log.Printf("Client %v is gone!\n", str.Connection.GetUserNameByTCPConnection(conn))
 			str.Connection.DeleteTCPConn(conn)
 			log.Printf("ONLINE TCP CONNECTS AFTER DISCONNECT: -> %v", len(str.Connection.GetAllTCPConnections()))
-			break
+			return
 		}
 		ParseJSON([]byte(data), conn, str)
 	}

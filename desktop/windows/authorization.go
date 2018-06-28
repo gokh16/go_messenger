@@ -12,6 +12,7 @@ import (
 func DrawAuthWindow(conn net.Conn) {
 	window := ui.NewWindow("Chat", 500, 500, false)
 	loginInput := ui.NewEntry()
+
 	passwordInput := ui.NewPasswordEntry()
 	loginLabel := ui.NewLabel("Login")
 	passwordLabel := ui.NewLabel("Password")
@@ -73,7 +74,6 @@ func DrawAuthWindow(conn net.Conn) {
 		window.Hide()
 		DrawChatWindow(conn)
 		log.Println(config.UserGroups)
-
 	})
 	signUp.OnClicked(func(*ui.Button) {
 		//формирование новой структуры на отправку на сервер,
@@ -101,6 +101,8 @@ func DrawAuthWindow(conn net.Conn) {
 		if err != nil {
 			log.Println(err)
 		}
+		window.Hide()
+		DrawChatWindow(conn)
 	})
 
 	channel := make(chan bool)

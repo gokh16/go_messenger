@@ -61,18 +61,20 @@ var test = new Vue({
             var msg = JSON.parse(e.data);
             self.User.ID = msg.User.ID;
             if (msg.Action == "LoginUser") {
-                for (var i = 0; i < msg.GroupList.length; i++) {
-                    for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
-                        if(msg.GroupList[i].Members[c].Login != self.OurUsername){
-                            self.OnlineUsers +=
-                                '<div class="input-field col s12">' +
-                                '<button class="waves-effect waves-light btn col s12" onclick="changeUser(this)" id = "' +
-                                 msg.GroupList[i].GroupName+'">'+
-                                 msg.GroupList[i].Members[c].Login +
-                                '</button></div>' +
-                                '<br/>';
-                        }
+                if(msg.GroupList != null) {
+                    for (var i = 0; i < msg.GroupList.length; i++) {
+                        for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
+                            if (msg.GroupList[i].Members[c].Login != self.OurUsername) {
+                                self.OnlineUsers +=
+                                    '<div class="input-field col s12">' +
+                                    '<button class="waves-effect waves-light btn col s12" onclick="changeUser(this)" id = "' +
+                                    msg.GroupList[i].GroupName + '">' +
+                                    msg.GroupList[i].Members[c].Login +
+                                    '</button></div>' +
+                                    '<br/>';
+                            }
 
+                        }
                     }
                 }
             }else if (msg.Action == "SendMessageTo") {

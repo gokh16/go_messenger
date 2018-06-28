@@ -142,11 +142,12 @@ var test = new Vue({
             this.MessageIn.Action = "CreateUser";
             this.ws.send(JSON.stringify(this.MessageIn));
         },
-	getUsers: function(){
-	    this.MessageIn.User.Login = this.OurUsername;
+        showUsers: function (){
+            this.MessageIn.User.Login = this.OurUsername;
             this.MessageIn.User.Username = this.OurUsername;
-	    this.MessageIn.Action = "GetUsers";
-},
+            this.MessageIn.Action = "GetUsers";
+            this.ws.send(JSON.stringify(this.MessageIn))
+        },
     }
 });
 

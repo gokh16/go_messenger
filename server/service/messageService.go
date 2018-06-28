@@ -22,12 +22,13 @@ func (m *MessageService) InitMessageService(ui interfaces.UserManager, gi interf
 
 //SendMessageTo method add message to DB and gets list of group members.
 func (m *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+
 	m.messageManager.AddMessage(&messageIn.Message)
 	members := m.groupManager.GetMemberList(&messageIn.Group)
 	message := []models.Message{messageIn.Message}
-	groupOut := serviceModels.NewGroup(messageIn.Group, members, message)
+	groupOut := serviceModels.NewGroup(messageIn.Group.ID, messageIn.Group, members, message)
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
-		Recipients: members, Action: messageIn.Action}
+		Recipients: members, Action: messageIn.Action, Message:messageIn.Message}
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	chanOut <- &messageOut
 }

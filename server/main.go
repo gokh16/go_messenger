@@ -9,6 +9,7 @@ import (
 	"go_messenger/server/db"
 	"go_messenger/server/db/dbservice"
 	"log"
+	"go_messenger/server/routerIn"
 )
 
 func init() {
@@ -21,6 +22,9 @@ func main() {
 
 	// init connections struct
 	connectionList := userConnections.InitConnections()
+
+	// init services
+	routerIn.InitServices(&dbservice.UserDBService{}, &dbservice.GroupDBService{}, &dbservice.MessageDBService{})
 
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)

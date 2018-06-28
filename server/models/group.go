@@ -13,5 +13,5 @@ type Group struct {
 
 	GroupName    string `json:"group_name"`
 	GroupOwnerID uint   `json:"group_owner_id"`
-	GroupTypeID  uint   `json:"group_type_id"`
+	GroupTypeID  uint
 }

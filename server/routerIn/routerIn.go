@@ -2,10 +2,22 @@ package routerIn
 
 import (
 	"go_messenger/server/service"
+	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 	"log"
 )
+
+var userService = service.UserService{}
+var groupService = service.GroupService{}
+var messageService = service.MessageService{}
+
+//InitServices to init service.Service structure
+func InitServices(ui interfaces.UserManager, gi interfaces.GroupManager, mi interfaces.MessageManager) {
+	userService.InitUserService(ui, gi, mi)
+	groupService.InitGroupService(ui, gi, mi)
+	messageService.InitMessageService(ui, gi, mi)
+}
 
 //RouterIn is function which directs data to next step by action field in messageIn structure
 func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.MessageOut) {
@@ -16,23 +28,22 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 	switch action {
 
 	case "SendMessageTo":
-		go service.MessageService{}.SendMessageTo(messageIn, chanOut)
+		go messageService.SendMessageTo(messageIn, chanOut)
 	case "CreateUser":
-		go service.UserService{}.CreateUser(messageIn, chanOut)
+		go userService.CreateUser(messageIn, chanOut)
 	case "LoginUser":
-		go service.UserService{}.LoginUser(messageIn, chanOut)
+		go userService.LoginUser(messageIn, chanOut)
 	case "CreateGroup":
-		go service.GroupService{}.CreateGroup(messageIn, chanOut)
+		go groupService.CreateGroup(messageIn, chanOut)
 	case "AddGroupMember":
-		go service.GroupService{}.AddGroupMember(messageIn, chanOut)
+		go groupService.AddGroupMember(messageIn, chanOut)
 	case "GetUsers":
-		go service.UserService{}.GetUsers(messageIn, chanOut)
-	case "GetGroupList":
-		go service.GroupService{}.GetGroupList(messageIn, chanOut)
+		go userService.GetUsers(messageIn, chanOut)
 	case "GetGroup":
-		go service.GroupService{}.GetGroup(messageIn, chanOut)
+		go groupService.GetGroup(messageIn, chanOut)
 
 	default:
+		//go UnknownAction()
 		log.Println("Unknown format of data from server")
 	}
 }

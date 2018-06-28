@@ -1,52 +1,61 @@
 package service
 
 import (
-	"go_messenger/server/db/dbservice"
-	"go_messenger/server/db/dbservice/dbInterfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 	"log"
+	"go_messenger/server/service/interfaces"
 )
 
 //GroupService ...
 type GroupService struct {
-	userManager    dbInterfaces.UserManager
-	groupManager   dbInterfaces.GroupManager
-	messageManager dbInterfaces.MessageManager
+	userManager    interfaces.UserManager
+	groupManager   interfaces.GroupManager
+	messageManager interfaces.MessageManager
+}
+
+func (g *GroupService) InitGroupService(ui interfaces.UserManager, gi interfaces.GroupManager, mi interfaces.MessageManager) {
+	g.userManager = ui
+	g.groupManager = gi
+	g.messageManager = mi
 }
 
 //CreateGroup function creats a special Group and makes a record in DB. It returns bool value
-func (g GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.userManager = dbservice.UserDBService{}
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
-	messageOut := serviceModels.MessageOut{Action:messageIn.Action}
-	switch messageIn.Group.GroupTypeID {
-	// groupTypeID == 1 means privat message
-	case 1:
-		ok := g.groupManager.CreateGroup(&messageIn.Group)
-		if ok {
+func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
+	ok := g.groupManager.CreateGroup(&messageIn.Group)
+	if ok {
+		switch messageIn.Group.GroupTypeID {
+
+		// groupTypeID == 1 means privat message
+		case 1:
+			g.messageManager.AddMessage(&messageIn.Message)
 			for _, member := range messageIn.Members {
 				g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
 			}
-		}
-		messageOut.Status = ok
-		// groupType == 2 means group chat
-	case 2:
-		ok := g.groupManager.CreateGroup(&messageIn.Group)
-		if ok {
+
+			groupOut := serviceModels.Group{
+				GroupName: messageIn.Group.GroupName,
+				GroupType: messageIn.Group.GroupType,
+				Members:   messageIn.Members,
+				Messages:  g.messageManager.GetGroupMessages(&messageIn.Group, messageIn.MessageLimit),
+			}
+
+			messageOut.GroupList = append(messageOut.GroupList, groupOut)
+			messageOut.Recipients = messageIn.Members
+
+			// groupType == 2 means group chat
+		case 2:
 			g.groupManager.AddGroupMember(&messageIn.Group.User, &messageIn.Group, &messageIn.Message)
 		}
-		messageOut.Status = ok
 	}
+	messageOut.Status = ok
 	chanOut <- &messageOut
 }
 
 //GetGroup gets special group fo user from DB
-func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
-	messageOut := serviceModels.MessageOut{Action:messageIn.Action}
+func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModel := g.groupManager.GetGroup(&messageIn.Group)
 	members := g.groupManager.GetMemberList(&groupModel)
 	messages := g.messageManager.GetGroupMessages(&groupModel, messageIn.MessageLimit)
@@ -56,34 +65,41 @@ func (g GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut cha
 }
 
 //GetGroupList gets all groups of special user from DB
-func (g GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
-	g.messageManager = dbservice.MessageDBService{}
-	messageOut := serviceModels.MessageOut{User:messageIn.User,Action:messageIn.Action}
+func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
-	log.Println(groupModelList, "get group list")
+	log.Println(groupModelList)
 	for _, gr := range groupModelList {
 		members := g.groupManager.GetMemberList(&gr)
 		messages := g.messageManager.GetGroupMessages(&gr, messageIn.MessageLimit)
 		groupOut := serviceModels.NewGroup(gr, members, messages)
 		messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	}
-	log.Println(messageOut.GroupList)
 	chanOut <- &messageOut
 }
 
 //AddGroupMember add new members in spesific Group.
-func (g GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
+func (g *GroupService) AddGroupMember(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	for _, member := range messageIn.Members {
 		g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
 	}
 }
 
 //GetMemberList method gets all users of special group.
-func (g GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	g.groupManager = dbservice.GroupDBService{}
+func (g *GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Recipients: g.groupManager.GetMemberList(&messageIn.Group),
 		Action: messageIn.Action}
+	chanOut <- &messageOut
+}
+
+//EditGroup method edit owner's special group and saves changes.
+func (g *GroupService) EditGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	chanOut <- &messageOut
+}
+
+//DeleteGroup method delete owner's special group from DB.
+func (g *GroupService) DeleteGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	chanOut <- &messageOut
 }

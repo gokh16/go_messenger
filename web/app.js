@@ -61,8 +61,13 @@ var test = new Vue({
             var msg = JSON.parse(e.data);
             self.User.ID = msg.User.ID;
             if (msg.Action == "LoginUser") {
-                if(msg.GroupList != null) {
+                if(typeof msg.GroupList != "undefined") {
                     for (var i = 0; i < msg.GroupList.length; i++) {
+                        if(typeof msg.GroupList[i].Messages !=  "undefined") {
+                            for (var j = 0; j < msg.GroupList.Messages.length; j++) {
+                                self.RecContents[msg.GroupList[i].GroupName] += msg.GroupList.Messages[j];
+                            }
+                        }
                         for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
                             if (msg.GroupList[i].Members[c].Login != self.OurUsername) {
                                 self.OnlineUsers +=
@@ -72,7 +77,7 @@ var test = new Vue({
                                     msg.GroupList[i].Members[c].Login +
                                     '</button></div>' +
                                     '<br/>';
-                            }
+                             }
 
                         }
                     }

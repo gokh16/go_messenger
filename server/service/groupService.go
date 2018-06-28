@@ -3,7 +3,6 @@ package service
 import (
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	"log"
 	"go_messenger/server/service/interfaces"
 )
 
@@ -59,7 +58,7 @@ func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut ch
 	groupModel := g.groupManager.GetGroup(&messageIn.Group)
 	members := g.groupManager.GetMemberList(&groupModel)
 	messages := g.messageManager.GetGroupMessages(&groupModel, messageIn.MessageLimit)
-	groupOut := serviceModels.NewGroup(groupModel, members, messages)
+	groupOut := serviceModels.NewGroup(groupModel.ID,groupModel, members, messages)
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	chanOut <- &messageOut
 }
@@ -68,11 +67,10 @@ func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut ch
 func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
-	log.Println(groupModelList)
 	for _, gr := range groupModelList {
 		members := g.groupManager.GetMemberList(&gr)
 		messages := g.messageManager.GetGroupMessages(&gr, messageIn.MessageLimit)
-		groupOut := serviceModels.NewGroup(gr, members, messages)
+		groupOut := serviceModels.NewGroup(gr.ID, gr, members, messages)
 		messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	}
 	chanOut <- &messageOut

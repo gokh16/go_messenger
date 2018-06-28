@@ -2,7 +2,6 @@ package tcp
 
 import (
 	"encoding/json"
-	"fmt"
 	"go_messenger/server/service/serviceModels"
 	"log"
 	"net"
@@ -15,7 +14,7 @@ func WaitJSON(conns []net.Conn, str *serviceModels.MessageOut) {
 	//for _, as := range str.GroupList{
 	//	fmt.Println(as.GroupName)
 	//}
-
+	log.Println(str.Message.Content)
 	outComingData, err := json.Marshal(str)
 	if err != nil {
 		log.Println(err)
@@ -30,6 +29,5 @@ func WaitJSON(conns []net.Conn, str *serviceModels.MessageOut) {
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println("HERE")
 	}
 }

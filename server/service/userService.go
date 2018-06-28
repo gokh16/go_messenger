@@ -36,7 +36,7 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 		groupList := u.groupManager.GetGroupList(&messageIn.User)
 		for _, group := range groupList {
-			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
+			groupOut := serviceModels.Group{ID:group.ID ,GroupName: group.GroupName, GroupType: group.GroupType,
 				Members:  u.groupManager.GetMemberList(&group),
 				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
 			}

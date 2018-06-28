@@ -34,6 +34,7 @@ type MessageIn struct {
 }
 
 type Group struct {
+	ID uint
 	GroupName string
 	GroupType structure.GroupType
 	Members   []structure.User

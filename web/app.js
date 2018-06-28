@@ -42,10 +42,11 @@ var test = new Vue({
         ContactList: [user],
         GroupList: [group],
         Message: [message],
+        Recipients: [user],
         Status: null,
         Action: '',
         ws: null, // Our websocket
-
+        UsersFromServer: [user],
         RecContents: {},
         RecContent: '',
         joined: false, // True if email and username have been filled in
@@ -59,15 +60,17 @@ var test = new Vue({
         this.ws = new WebSocket('ws://' + window.location.host + '/ws');
         this.ws.addEventListener('message', function (e) {
             var msg = JSON.parse(e.data);
-            self.User.ID = msg.User.ID;
+            if (typeof msg.User.ID != "undefined") {
+                self.User.ID = msg.User.ID;
+            }
             if (msg.Action == "LoginUser") {
-                if(typeof msg.GroupList != "undefined") {
+                if(typeof msg.GroupList != "undefined" && msg.GroupList != null) {
                     for (var i = 0; i < msg.GroupList.length; i++) {
-                        if(typeof msg.GroupList[i].Messages !=  "undefined") {
-                            for (var j = 0; j < msg.GroupList.Messages.length; j++) {
-                                self.RecContents[msg.GroupList[i].GroupName] += msg.GroupList.Messages[j];
-                            }
-                        }
+                        // if(typeof msg.GroupList[i].Messages !=  "undefined") {
+                        //     for (var j = 0; j < msg.GroupList.Messages; j++) {
+                        //         self.RecContents[msg.GroupList[i].GroupName] += msg.GroupList[i].Messages[j].Content;
+                        //     }
+                        // }
                         for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
                             if (msg.GroupList[i].Members[c].Login != self.OurUsername) {
                                 self.OnlineUsers +=
@@ -90,6 +93,18 @@ var test = new Vue({
                     '<div class="white-text">' +
                      msg.Message.Content + '</div>' +
                     '<br/>';
+            }else if(msg.Action =="GetUsers"){
+                test.User = msg.Recipients[0];
+                for(var i=0; i<msg.ContactList.length;i++){
+                    test.UsersFromServer[i] = msg.ContactList[i];
+                    self.OnlineUsers +=
+                        '<div class="input-field col s12">' +
+                        '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
+                        msg.Recipients[0].Username +  msg.ContactList[i].Username+ '>' +
+                        msg.ContactList[i].Username +
+                        '</button></div>' +
+                        '<br/>';
+                }
             }
             var element = document.getElementById('chat-messages');
             element.scrollTop = element.scrollHeight;// Auto scroll to the bottom
@@ -133,7 +148,7 @@ var test = new Vue({
             this.MessageIn.User.Status = true;
             this.MessageIn.User.UserIcon = "usericon";
             this.MessageIn.Action = "LoginUser";
-            this.OurUsername = $('<p>').html(this.MessageIn.User.Login).text();
+            this.OurUsername = this.MessageIn.User.Username;
             this.ws.send(JSON.stringify(this.MessageIn));
             this.joined = true;
         },
@@ -151,17 +166,22 @@ var test = new Vue({
             this.MessageIn.Action = "CreateUser";
             this.ws.send(JSON.stringify(this.MessageIn));
         },
-        // showUsers: function (){
-        //     this.MessageIn.User.Login = this.OurUsername;
-        //     this.MessageIn.User.Username = this.OurUsername;
-        //     this.MessageIn.Action = "GetUsers";
-        //     this.ws.send(JSON.stringify(this.MessageIn))
-        // },
+        showUsers: function (){
+            this.MessageIn.User.Login = this.OurUsername;
+            this.MessageIn.User.Username = this.OurUsername;
+            this.MessageIn.Action = "GetUsers";
+            this.ws.send(JSON.stringify(this.MessageIn))
+        },
     }
 });
 
 function changeUser(el) {
+    test.MessageIn.Action = "CreateGroup"
+    test.MessageIn.Group.GroupTypeID = 1;
+    test.MessageIn.Group.User = test.User;
+    test.MessageIn.Group.GroupOwnerID = test.User.ID;
     test.MessageIn.Group.GroupName =el.id;
+    test.ws.send(JSON.stringify(test.MessageIn))
     test.RecContent = test.RecContents[el.id];
 }
 

@@ -59,7 +59,9 @@ func (u UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan
 	u.userManager = dbservice.UserDBService{}
 	userList := []models.User{}
 	u.userManager.GetUsers(&userList)
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	recipient := []models.User{}
+	recipient = append(recipient, messageIn.User)
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action, Recipients: recipient}
 	for _, user := range userList {
 		messageOut.ContactList = append(messageOut.ContactList, user)
 	}

@@ -36,7 +36,6 @@ func (r *RouterOut) Handler() {
 		}
 		
 		if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
-		
 			ws.SendJSON(sliceWSCon, msg)
 		}
 	}
@@ -82,7 +81,6 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 	}
 
 	for conn, onlineUser := range mapWS {
-		fmt.Println("recip",msg.Recipients)
 		for _, user := range msg.Recipients {
 			if onlineUser == user.Username && onlineUser != msg.User.Username {
 				sliceWS = append(sliceWS, conn)

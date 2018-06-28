@@ -35,7 +35,7 @@ func NewHandlerWS(conns *userConnections.Connections) {
 //Handler is a main func which is establish connections and call func for reading data from
 //connection
 func Handler(str HandlerWS) {
-	fs := http.FileServer(http.Dir("../web"))
+	fs := http.FileServer(http.Dir("./web"))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)

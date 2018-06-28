@@ -59,7 +59,7 @@ var test = new Vue({
         this.ws.addEventListener('message', function (e) {
             var msg = JSON.parse(e.data);
 	    self.User.ID = msg.User.ID;
-	
+
             if (msg.Action == "LoginUser") {
                 for (var i = 0; i < msg.GroupList.length; i++) {
                     for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
@@ -70,11 +70,11 @@ var test = new Vue({
 
                     }
                 }
-            }else if (msg.Action =="GetUsers"){ 
-		
+            }else if (msg.Action =="GetUsers"){
+
 	    }else if (msg.Action == "SendMessageTo") {
-		
-                self.RecContents[msg.GroupList[0].GroupName] += '<div class="chip">' + msg.User.Username +'</div>' +
+
+                self.RecContents[msg.GroupList[0].GroupName] += '<div class="chip">' + msg.Message.Username +'</div>' +
                     '<div class="white-text">' + msg.Message.Content + '</div>' +
                     '<br/>';
 
@@ -88,7 +88,7 @@ var test = new Vue({
     methods: {
         send: function () {
             if (this.MessageIn.Message.Content != '') {
-	
+
 		this.MessageIn.Message.User.Username = this.OurUsername;
 
 		this.MessageIn.Message.MessageSenderID = this.User.ID;
@@ -96,14 +96,15 @@ var test = new Vue({
                 this.MessageIn.User.Login = this.OurUsername;
                 this.MessageIn.User.Username = this.OurUsername;
                 this.MessageIn.Message.Content = $('<p>').html(this.MessageIn.Message.Content).text();
-		
+
                 this.MessageIn.Group.GroupName= $('<p>').html(this.MessageIn.Group.GroupName).text();
 		this.MessageIn.Message.Group.GroupName = $('<p>').html(this.MessageIn.Group.GroupName).text();
                 this.MessageIn.Action = "SendMessageTo";
-		
-		this.RecContents[this.MessageIn.Group.GroupName] +='<div class="chip">' + this.OutUsername +'</div>' +
+
+		this.RecContents[this.MessageIn.Group.GroupName] +='<div class="chip">' + this.OurUsername +'</div>' +
                     '<div class="white-text">' + this.MessageIn.Message.Content + '</div>' +
                     '<br/>';
+		this.RecContent = this.RecContents[this.MessageIn.Group.GroupName];
 
                 this.ws.send(JSON.stringify(this.MessageIn));
 
@@ -150,7 +151,7 @@ var test = new Vue({
 });
 
 function changeUser(el) {
-    test.MessageIn.Group.GroupName =el.id;	
+    test.MessageIn.Group.GroupName =el.id;
     test.RecContent = test.RecContents[el.id];
 
 }

@@ -12,7 +12,7 @@ type UserDBService struct {
 //CreateUser method creates User in DB.
 //It returns bool value.
 func (u *UserDBService) CreateUser(user *models.User) bool {
-	dbConn.Where("username = ?", user.Username).First(&user)
+	dbConn.Where("username = ?", u.Username).First(&user)
 	if dbConn.NewRecord(user) {
 		dbConn.Create(&user)
 		return true
@@ -49,9 +49,10 @@ func (u *UserDBService) GetUsers(users *[]models.User) {
 
 //GetUser method get special user from DB.
 //It returns User object.
-func (u *UserDBService) GetUser(user *models.User) *models.User {
+func (u *UserDBService) GetUser(user *models.User) models.User {
+
 	dbConn.Where("login = ?", user.Login).Take(&user)
-	return user
+	return *user
 }
 
 //GetContactList gets contact list of special user from DB.

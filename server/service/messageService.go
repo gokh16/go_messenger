@@ -1,19 +1,21 @@
 package service
 
 import (
-	"go_messenger/server/db/dbservice/dbInterfaces"
 	"go_messenger/server/models"
+	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 )
 
 //MessageService struct of Message model on service level
 type MessageService struct {
-	messageManager dbInterfaces.MessageManager
-	groupManager   dbInterfaces.GroupManager
+	userManager    interfaces.UserManager
+	messageManager interfaces.MessageManager
+	groupManager   interfaces.GroupManager
 }
 
-func (m *MessageService) InitMessageService (mi dbInterfaces.MessageManager, gi dbInterfaces.GroupManager) {
+func (m *MessageService) InitMessageService(ui interfaces.UserManager, gi interfaces.GroupManager, mi interfaces.MessageManager) {
+	m.userManager = ui
 	m.groupManager = gi
 	m.messageManager = mi
 }
@@ -25,7 +27,7 @@ func (m *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, cha
 	message := []models.Message{messageIn.Message}
 	groupOut := serviceModels.NewGroup(messageIn.Group, members, message)
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
-		Recipients: members, Action: messageIn.Action, Message:messageIn.Message}
+		Recipients: members, Action: messageIn.Action}
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	chanOut <- &messageOut
 }

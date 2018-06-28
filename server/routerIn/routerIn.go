@@ -29,6 +29,8 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go service.UserService{}.GetUsers(messageIn, chanOut)
 	case "GetGroupList":
 		go service.GroupService{}.GetGroupList(messageIn, chanOut)
+	case "GetGroup":
+		go service.GroupService{}.GetGroup(messageIn, chanOut)
 
 	default:
 		log.Println("Unknown format of data from server")

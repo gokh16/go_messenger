@@ -8,3 +8,4 @@ var GroupName string
 var UserID uint
 var MessagesInGroup []structure.Message
 var GroupID uint
+var ErrorStatus bool

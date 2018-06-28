@@ -23,8 +23,8 @@ func main() {
 	// init connections struct
 	connectionList := userConnections.InitConnections()
 
-	//init services struct
-	routerIn.InitServices(&dbservice.UserDBService{}, &dbservice.MessageDBService{}, &dbservice.GroupDBService{})
+	// init services
+	routerIn.InitServices(&dbservice.UserDBService{}, &dbservice.GroupDBService{}, &dbservice.MessageDBService{})
 
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)

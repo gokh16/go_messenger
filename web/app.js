@@ -13,7 +13,7 @@ var user={
 
 var message={
     'User': user,
-    'Group': {},
+    'Group': {'GroupName': ''},
     'Content': '',
 };
 var group={
@@ -67,8 +67,8 @@ var test = new Vue({
                             if (msg.GroupList[i].Members[c].Login != self.OurUsername) {
                                 self.OnlineUsers +=
                                     '<div class="input-field col s12">' +
-                                    '<button class="waves-effect waves-light btn col s12" onclick="changeUser(this)" id = "' +
-                                    msg.GroupList[i].GroupName + '">' +
+                                    '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
+                                    msg.GroupList[i].GroupName + '>' +
                                     msg.GroupList[i].Members[c].Login +
                                     '</button></div>' +
                                     '<br/>';

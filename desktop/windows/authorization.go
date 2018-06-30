@@ -49,24 +49,10 @@ func DrawAuthWindow(conn net.Conn) {
 		config.Login = loginInput.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-		message := util.MessageOut{
-			User: structure.User{
-				Login:    config.Login,
-				Password: passwordInput.Text(),
-				Username: config.Login,
-				Email:    "test@test.com",
-				Status:   true,
-				UserIcon: "testUserIcon",
-			},
-			Contact:      structure.User{},
-			Group:        structure.Group{},
-			Message:      structure.Message{},
-			Members:      nil,
-			RelationType: 1,
-			MessageLimit: 1,
-			Action:       "LoginUser",
-		}
-		_, err := conn.Write([]byte(util.JSONencode(message)))
+		user:=util.NewUser(config.Login,passwordInput.Text(),config.Login, "test@test.com", true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1,0,"LoginUser")
+
+		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println(err)
 		}
@@ -82,25 +68,9 @@ func DrawAuthWindow(conn net.Conn) {
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 		config.Login = loginInput.Text()
-		log.Println(config.Login, "signup")
-		message := util.MessageOut{
-			User: structure.User{
-				Login:    config.Login,
-				Password: passwordInput.Text(),
-				Username: config.Login,
-				Email:    "test@test.com",
-				Status:   true,
-				UserIcon: "testUserIcon",
-			},
-			Contact:      structure.User{},
-			Group:        structure.Group{},
-			Message:      structure.Message{},
-			Members:      nil,
-			RelationType: 1,
-			MessageLimit: 1,
-			Action:       "CreateUser",
-		}
-		_, err := conn.Write([]byte(util.JSONencode(message)))
+		user:=util.NewUser(config.Login,passwordInput.Text(),config.Login, "test@test.com", true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1,0,"CreateUser")
+		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println(err)
 		}
@@ -108,19 +78,17 @@ func DrawAuthWindow(conn net.Conn) {
 		DrawChatWindow(conn)
 	})
 
-	channel := make(chan bool)
 
 	go func() {
 		for {
 			msg := util.JSONdecode(conn)
 			config.ErrorStatus = msg.Status
-			log.Println(config.ErrorStatus)
 			for _, contacts := range msg.GroupList {
 				config.UserGroups = append(config.UserGroups, contacts.GroupName)
 				config.GroupID[contacts.GroupName] = contacts.ID
 			}
 			config.UserID = msg.User.ID
-			channel <- msg.Status
+			break
 		}
 	}()
 

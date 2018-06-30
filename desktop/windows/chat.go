@@ -40,87 +40,34 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	mainBox.Append(usersBox, false)
 	mainBox.Append(messageBox, true)
 	go func() {
-		for {
-			msg := util.JSONdecode(conn)
-			if msg.Message.Content != "" {
-				output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
-			}
-			log.Println(msg.Message.Content)
-			//todo подтягивать сообщение из базы
-			//todo create update timeout
+		status := <-config.MessagesGet
+		if status {
+			for {
+				msg := util.JSONdecode(conn)
+				if msg.Message.Content != "" {
+					output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
+				}
+				log.Println(msg.Message.Content, "hjkhjkhjk")
+				//todo подтягивать сообщение из базы
+				//todo create update timeout
 
-			fmt.Println(msg.Status)
+				fmt.Println(msg.Status)
+			}
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {
 		//FIX SLICEMEMBER
 		output.Append(config.Login + ": " + input.Text() + "\n")
 		id := config.GroupID[config.GroupName]
-		log.Println(id, config.GroupName)
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-		message := util.MessageOut{
-			User: structure.User{
-				Login:    config.Login,
-				Password: "testPassword",
-				Username: config.Login,
-				Email:    "test@test.com",
-				Status:   true,
-				UserIcon: "testUserIcon",
-			},
-			Contact: structure.User{},
-			Group: structure.Group{
-				User: structure.User{
-					Login:    config.Login,
-					Password: "testPassword",
-					Username: config.Login,
-					Email:    "test@test.com",
-					Status:   true,
-					UserIcon: "testUserIcon",
-				},
-				GroupType: structure.GroupType{
-					Type: "private",
-				},
-				GroupName:    config.GroupName,
-				//GroupOwnerID: config.UserID,
-				GroupTypeID:  1,
-			},
-			Message: structure.Message{
-				User: structure.User{
-					Login:    config.Login,
-					Password: "testPassword",
-					Username: config.Login,
-					Email:    "test@test.com",
-					Status:   true,
-					UserIcon: "testUserIcon",
-				},
-				MessageSenderID: config.UserID,
-				MessageRecipientID: id,
-				Group: structure.Group{
-					User: structure.User{
-						Login:    config.Login,
-						Password: "testPassword",
-						Username: config.Login,
-						Email:    "test@test.com",
-						Status:   true,
-						UserIcon: "testUserIcon",
-					},
-					GroupType: structure.GroupType{
-						Type: "private",
-					},
-					GroupName:    config.GroupName,
-					//GroupOwnerID: 123,
-					GroupTypeID:  1,
-				},
-				Content:input.Text(),
-			},
-			Members:      nil,
-			RelationType: 1,
-			MessageLimit: 1,
-			Action:       "SendMessageTo",
-		}
-		log.Println(message.Group.GroupName)
-		_, err := conn.Write([]byte(util.JSONencode(message)))
+
+		user:=util.NewUser(config.Login,"",config.Login, "test@test.com", true, "testUserIcon")
+		group:=util.NewGroup(user,"private", config.GroupName, config.UserID, 1)
+		msg := util.NewMessage(user, group, input.Text(), config.UserID, id,"Text")
+		message := util.NewMessageOut(user, &structure.User{}, group, msg, nil, 1,0,"SendMessageTo")
+
+		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")
 		}

@@ -9,3 +9,4 @@ var UserID uint
 var MessagesInGroup []structure.Message
 var GroupID = make(map[string]uint)
 var ErrorStatus bool
+var MessagesGet = make(chan bool)

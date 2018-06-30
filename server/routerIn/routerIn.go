@@ -41,9 +41,11 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go userService.GetUsers(messageIn, chanOut)
 	case "GetGroup":
 		go groupService.GetGroup(messageIn, chanOut)
+	case "GetGroupList":
+		go groupService.GetGroupList(messageIn, chanOut)
 
 	default:
-		//go UnknownAction()
-		log.Println("Unknown format of data from server")
+		var errorService = service.ErrorService{}
+		go errorService.UnknownActionError(messageIn, chanOut)
 	}
 }

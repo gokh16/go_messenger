@@ -70,6 +70,7 @@ func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
+	//log.Println(message.Group.GroupName, message.User.Username, message.Message.Content, "tcp_handler.go 72")
 	str.Connection.AddTCPConn(conn, message.User.Username)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 }

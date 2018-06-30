@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"go_messenger/server/handlers/tcp"
-	"go_messenger/server/handlers/ws"
-	"go_messenger/server/routerOut"
-	"go_messenger/server/userConnections"
 	"go_messenger/server/db"
 	"go_messenger/server/db/dbservice"
-	"log"
+	"go_messenger/server/handlers/tcp"
+	"go_messenger/server/handlers/ws"
 	"go_messenger/server/routerIn"
+	"go_messenger/server/routerOut"
+	"go_messenger/server/userConnections"
+	"log"
 )
 
 func init() {

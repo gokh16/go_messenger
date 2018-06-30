@@ -30,11 +30,11 @@ type MessageIn struct {
 	Message     structure.Message
 	Status      bool
 	Action      string
-	Err         error
+	Err         string
 }
 
 type Group struct {
-	ID uint
+	ID        uint
 	GroupName string
 	GroupType structure.GroupType
 	Members   []structure.User
@@ -55,11 +55,14 @@ func JSONdecode(conn net.Conn) MessageIn {
 	message := MessageIn{}
 	jsonObj, err := bufio.NewReader(conn).ReadBytes('\n')
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	jsonError := json.Unmarshal(jsonObj, &message)
 	if jsonError != nil {
-		log.Println(jsonError)
+		log.Println(jsonError, "unmarshaling")
+	}
+	if message.Err != "" {
+		log.Println(message.Err,  " :CLIENT")
 	}
 	return message
 }

@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"log"
 	"net"
 
@@ -9,29 +8,32 @@ import (
 
 	"github.com/ProtonMail/ui"
 	"go_messenger/desktop/config"
+	"fmt"
 )
 
 //ButtonActions is hanging listeners for contact button
 func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
 	button.OnClicked(func(*ui.Button) {
 		output.SetText("")
-		output.SetText("Now you can texting with:" + button.Text() + "\n") //todo fix group messaging
 
 		go func() {
 			for {
 				msg := JSONdecode(conn)
+				log.Println("LUL")
 				for _, group := range msg.GroupList {
-					if msg.Message.Content != "" && group.GroupName == button.Text() {
+					if group.GroupName == button.Text() {
+						log.Println("here")
 						config.MessagesInGroup = group.Messages
 						break
 					}
 				}
 				break
-				fmt.Println(msg.Status)
 			}
+			fmt.Println(config.MessagesInGroup)
 			for _, message := range config.MessagesInGroup {
 				output.Append(message.User.Login + ": " + message.Content + "\n")
 			}
+			config.MessagesGet <- true
 		}()
 
 		var members []structure.User
@@ -110,7 +112,7 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 			},
 			Members:      members,
 			RelationType: 1,
-			MessageLimit: 1,
+			MessageLimit: 10,
 			Action:       "GetGroup",
 		}
 		_, err := conn.Write([]byte(JSONencode(message)))

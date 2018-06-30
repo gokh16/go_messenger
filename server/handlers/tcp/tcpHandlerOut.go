@@ -2,7 +2,6 @@ package tcp
 
 import (
 	"encoding/json"
-	"fmt"
 	"go_messenger/server/service/serviceModels"
 	"log"
 	"net"
@@ -10,13 +9,10 @@ import (
 
 //WaitJSON is waiting for data from route out, parsing data into json format and write to util
 func WaitJSON(conns []net.Conn, str *serviceModels.MessageOut) {
-	log.Println("handler out", str.Message.Content)
 	outComingData, err := json.Marshal(str)
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(conns)
-	fmt.Println(outComingData)
 	for _, conn := range conns {
 		//todo ask how i may optimize it!
 		_, err := conn.Write(outComingData)
@@ -27,6 +23,5 @@ func WaitJSON(conns []net.Conn, str *serviceModels.MessageOut) {
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println("HERE")
 	}
 }

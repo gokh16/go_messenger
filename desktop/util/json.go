@@ -30,10 +30,11 @@ type MessageIn struct {
 	Message     structure.Message
 	Status      bool
 	Action      string
-	Err         error
+	Err         string
 }
 
 type Group struct {
+	ID        uint
 	GroupName string
 	GroupType structure.GroupType
 	Members   []structure.User
@@ -59,6 +60,9 @@ func JSONdecode(conn net.Conn) MessageIn {
 	jsonError := json.Unmarshal(jsonObj, &message)
 	if jsonError != nil {
 		log.Println(jsonError)
+	}
+	if message.Err != "" {
+		log.Println(message.Err,  " :CLIENT")
 	}
 	return message
 }

@@ -19,10 +19,8 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 		go func() {
 			for {
 				msg := JSONdecode(conn)
-				log.Println("LUL")
 				for _, group := range msg.GroupList {
 					if group.GroupName == button.Text() {
-						log.Println("here")
 						config.MessagesInGroup = group.Messages
 						break
 					}

@@ -1,6 +1,8 @@
 package dbservice
 
-import "go_messenger/server/models"
+import (
+	"go_messenger/server/models"
+)
 
 //Message struct
 type MessageDBService struct {
@@ -11,6 +13,8 @@ type MessageDBService struct {
 func (msg MessageDBService) AddMessage(message *models.Message) bool {
 	dbConn.Where("username = ?", message.User.Username).First(&message.User)
 	dbConn.Where("group_name = ?", message.Group.GroupName).First(&message.Group)
+	message.MessageSenderID = message.User.ID
+	message.MessageRecipientID = message.Group.ID
 	if dbConn.NewRecord(message) {
 		dbConn.Create(&message)
 		return true
@@ -22,6 +26,6 @@ func (msg MessageDBService) AddMessage(message *models.Message) bool {
 func (msg MessageDBService) GetGroupMessages(group *models.Group, count uint) []models.Message {
 	var messageList = []models.Message{}
 	dbConn.Where("group_name = ?", group.GroupName).First(&group)
-	dbConn.Where("message_recipient_id = ?", group.ID).Limit(count).Find(&messageList)
+	dbConn.Where("message_recipient_id = ?", group.ID).Find(&messageList)
 	return messageList
 }

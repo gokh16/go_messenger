@@ -6,8 +6,7 @@ import (
 	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	
-	
+
 )
 
 //MessageService struct of Message model on service level
@@ -20,6 +19,7 @@ type MessageService struct {
 func (m MessageService) SendMessageTo(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	m.messageManager = dbservice.MessageDBService{}
 	m.groupManager = dbservice.GroupDBService{}
+
 	m.messageManager.AddMessage(&messageIn.Message)
 
 	members := m.groupManager.GetMemberList(&messageIn.Group)

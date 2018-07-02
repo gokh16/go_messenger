@@ -26,27 +26,15 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 	ok := g.groupManager.CreateGroup(&messageIn.Group)
 	if ok {
 		switch messageIn.Group.GroupTypeID {
-
 		// groupTypeID == 1 means privat message
 		case 1:
-			g.messageManager.AddMessage(&messageIn.Message)
 			for _, member := range messageIn.Members {
 				g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
 			}
-
-			groupOut := serviceModels.Group{
-				GroupName: messageIn.Group.GroupName,
-				GroupType: messageIn.Group.GroupType,
-				Members:   messageIn.Members,
-				Messages:  g.messageManager.GetGroupMessages(&messageIn.Group, messageIn.MessageLimit),
-			}
-
-			messageOut.GroupList = append(messageOut.GroupList, groupOut)
-			messageOut.Recipients = messageIn.Members
-
 			// groupType == 2 means group chat
 		case 2:
 			g.groupManager.AddGroupMember(&messageIn.Group.User, &messageIn.Group, &messageIn.Message)
+
 		}
 	}
 	messageOut.Status = ok

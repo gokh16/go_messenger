@@ -2,7 +2,6 @@ package windows
 
 import (
 	"net"
-	"fmt"
 	"github.com/ProtonMail/ui"
 	"log"
 	"go_messenger/desktop/structure"
@@ -49,18 +48,17 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	mainBox.Append(usersBox, false)
 	mainBox.Append(messageBox, true)
 	go func() {
-		status := <-config.MessagesGet
+		status := <-config.MarkForRead
 		for {
-			if status {//todo finish THIS PART!
+			if status { //todo finish THIS PART!
 				msg := util.JSONdecode(conn)
 				if msg.Message.Content != "" {
 					output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
 				}
-				log.Println(msg.Message.Content, "hjkhjkhjk")
+				log.Println(msg.Action, "chat window")
 				//todo подтягивать сообщение из базы
 				//todo create update timeout
 
-				fmt.Println(msg.Status)
 			}
 		}
 	}()
@@ -83,13 +81,14 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 			input.SetText("")
 		}
 	})
-	profile.OnClicked(func(*ui.Button) {
+	contacts.OnClicked(func(*ui.Button) {
 		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
 		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "GetUsers")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")
 		}
+		DrawContactsWindow(conn)
 	})
 	window.SetChild(mainBox)
 	window.OnClosing(func(*ui.Window) bool {

@@ -11,8 +11,8 @@ type Message struct {
 	User  User
 	Group Group
 
-	Content            string
-	MessageSenderID    uint
-	MessageRecipientID uint
+	Content            string 
+	MessageSenderID    uint   
+	MessageRecipientID uint  
 	MessageContentType string
 }

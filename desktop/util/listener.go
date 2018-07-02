@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"log"
 	"net"
 
@@ -16,26 +15,36 @@ import (
 func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
 	button.OnClicked(func(*ui.Button) {
 		output.SetText("")
-		output.SetText("Now you can texting with:" + button.Text() + "\n") //todo fix group messaging
 
 		go func() {
+			users := make(map[uint]string)
+			members := make([]structure.User, 0)
 			for {
 				msg := JSONdecode(conn)
 				for _, group := range msg.GroupList {
-					if msg.Message.Content != "" && group.GroupName == button.Text() {
+					if group.GroupName == button.Text() {
 						config.MessagesInGroup = group.Messages
+						members = group.Members
 						break
 					}
 				}
+				for _, user := range members {
+					users[user.ID] = user.Login
+				}
 				break
-				fmt.Println(msg.Status)
 			}
 			for _, message := range config.MessagesInGroup {
-				output.Append(message.User.Login + ": " + message.Content + "\n")
+				var login string
+				for id, name := range users {
+					if message.MessageSenderID == id {
+						login = name
+					}
+				}
+				output.Append(login + ": " + message.Content + "\n")
 			}
+			config.MarkForRead <- true
 		}()
 
-		output.SetText("Now you can texting with:" + button.Text())
 		var members []structure.User
 		members = append(members, structure.User{
 			Login:    config.Login,
@@ -112,7 +121,7 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 			},
 			Members:      members,
 			RelationType: 1,
-			MessageLimit: 5,
+			MessageLimit: 10,
 			Action:       "GetGroup",
 		}
 		_, err := conn.Write([]byte(JSONencode(message)))

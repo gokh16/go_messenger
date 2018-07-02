@@ -11,7 +11,7 @@ type Group struct {
 	User      User
 	GroupType GroupType
 
-	GroupName    string
-	GroupOwnerID uint
-	GroupTypeID  uint
+	GroupName    string `json:"group_name"`
+	GroupOwnerID uint   `json:"group_owner_id"`
+	GroupTypeID  uint   `json:"group_type_id"`
 }

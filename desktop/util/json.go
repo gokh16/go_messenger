@@ -55,11 +55,11 @@ func JSONdecode(conn net.Conn) MessageIn {
 	message := MessageIn{}
 	jsonObj, err := bufio.NewReader(conn).ReadBytes('\n')
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	jsonError := json.Unmarshal(jsonObj, &message)
 	if jsonError != nil {
-		log.Println(jsonError)
+		log.Println(jsonError, "unmarshaling")
 	}
 	if message.Err != "" {
 		log.Println(message.Err,  " :CLIENT")

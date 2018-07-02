@@ -72,7 +72,6 @@ func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut ch
 func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
-	log.Println(groupModelList)
 	for _, gr := range groupModelList {
 		log.Printf("GET GROUP LIST SERVICE, group_id -> %d, group_name -> %s", gr.ID, gr.GroupName)
 		members := g.groupManager.GetMemberList(&gr)

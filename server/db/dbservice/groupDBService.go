@@ -48,7 +48,7 @@ func (g *GroupDBService) GetGroupList(user *models.User) []models.Group {
 //GetGroup method gets group of special user from DB.
 // It returns object of models.Group.
 func (g *GroupDBService) GetGroup(group *models.Group) models.Group {
-	//dbConn.Where("username = ?", userName).First(&user)  ????
+	//dbConn.Where("username = ?", group.User.Username).First(&group.User.Username)
 	dbConn.Where("group_name = ?", group.GroupName).Find(&group) //.Where("group_owner_id = ?", group.User.ID)
 	return *group
 }

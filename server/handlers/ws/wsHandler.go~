@@ -56,9 +56,7 @@ func ReadMessage(conn *websocket.Conn, str HandlerWS) {
 	for {
 		messageType, data, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Client %v is gone!\n", str.Connection.GetUserNameByWSConnection(conn))
-			str.Connection.DeleteWSConnection(conn)
-			log.Printf("ONLINE WS CONNECTS AFTER DISCONNECT: -> %v", len(str.Connection.GetAllWSConnections()))
+			log.Println(err)
 			return
 		}
 		if err := conn.WriteMessage(messageType, data); err != nil {
@@ -82,9 +80,8 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 		log.Println("Unmarshal error")
 	}
 	str.Connection.AddWSConn(conn, message.User.Username)
-	fmt.Println("gn", message.Group.GroupName)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
-	//return str.Connection.outChan
+	//return str.Connection.OutChan
 }
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to util

@@ -12,7 +12,7 @@ type GroupMember struct {
 	Group   Group
 	Message Message
 
-	UserID            uint `json:"user_id"`
-	GroupID           uint `json:"group_id"`
-	LastReadMessageID uint `json:"last_read_message_id"`
+	UserID            uint
+	GroupID           uint
+	LastReadMessageID uint
 }

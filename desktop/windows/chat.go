@@ -52,7 +52,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		for {
 			if status { //todo finish THIS PART!
 				msg := util.JSONdecode(conn)
-				if msg.Message.Content != "" {
+				if msg.Message.Content != "" && msg.Message.MessageRecipientID == config.GroupID[config.GroupName]{
 					output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
 				}
 				log.Println(msg.Action, "chat window")

@@ -122,16 +122,16 @@ var test = new Vue({
                     '<br/>';
                 self.RecContent = self.RecContents[msg.GroupList[0].GroupName];
             }else if(msg.Action =="GetUsers"){
-                test.User = msg.Recipients[0];
+                test.User = msg.User;
                 self.OnlineUsers = '';
                 for(var i=0; i<msg.ContactList.length;i++){
                     if(test.User.Username != msg.ContactList[i].Username) {
-                        var gName = msg.Recipients[0].Username + msg.ContactList[i].Username;
+                        var gName = msg.User.Username + msg.ContactList[i].Username;
                         test.UsersFromServer[gName] = msg.ContactList[i];
                         self.OnlineUsers +=
                             '<div class="input-field col s12">' +
                             '<button class="waves-effect waves-light btn col s12" onclick=createGroup(this) id = ' +
-                            msg.Recipients[0].Username + msg.ContactList[i].Username + '>' +
+                            msg.User.Username + msg.ContactList[i].Username + '>' +
                             msg.ContactList[i].Username +
                             '</button></div>' +
                             '<br/>';

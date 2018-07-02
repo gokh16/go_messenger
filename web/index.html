@@ -25,21 +25,28 @@
 <main id="app">
     <div class="row">
         <div class="col s2">
-           <div class="input-field col s4">
-                <button class="waves-effect waves-light btn" @click="showUsers()">
-                    showUsers
-                </button>
-            </div>
-            <div class="card horizontal">
 
-                <div id="chat-messages" class="card-content blue-grey darken-3" v-html="OnlineUsers">
+            <div class="card horizontal">
+                <div id="chat-messages" class="card-content blue-grey darken-3" v-html="MyGroups">
 
                 </div>
             </div>
         </div>
-        <div class="col s10">
+        <div class="col s8">
             <div class="card horizontal">
                 <div id="chat-messages" class="card-content blue-grey darken-3" v-html="RecContent">
+                </div>
+            </div>
+        </div>
+        <div class="col s2">
+            <div class="card vertical">
+                <div class="input-field col s2">
+                    <button class="waves-effect waves-light btn" @click="showUsers()">
+                        showUsers
+                    </button>
+                </div>
+                <div id="userList" class="card-content blue-grey darken-3 col" v-html="OnlineUsers">
+
                 </div>
             </div>
         </div>
@@ -77,7 +84,8 @@
             </button>
         </div>
         <div class="input-field col s4">
-            <button class="waves-effect waves-light btn" @click="signUp()">
+
+            <button class="waves-effect waves-light btn" onClick='location.href="signUp.html"'> <!--@click="signUp()"> -->
                 Sign up
             </button>
         </div>

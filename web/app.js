@@ -51,6 +51,7 @@ var test = new Vue({
         RecContent: '',
         joined: false, // True if email and username have been filled in
         OnlineUsers: '',
+        MyGroups: '',
         OurUsername: '',
     },
 
@@ -70,7 +71,7 @@ var test = new Vue({
 
                         for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
                             if (msg.GroupList[i].Members[c].Login != self.OurUsername) {
-                                self.OnlineUsers +=
+                                self.MyGroups +=
                                     '<div class="input-field col s12">' +
                                     '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
                                     msg.GroupList[i].GroupName + '>' +
@@ -104,7 +105,7 @@ var test = new Vue({
                     if(a!=null){
                         a.remove();
                     }
-                    self.OnlineUsers +=
+                    self.MyGroups +=
                         '<div class="input-field col s12">' +
                         '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
                         msg.GroupList[0].GroupName + '>' +
@@ -196,14 +197,15 @@ var test = new Vue({
                 Materialize.toast('You must choose a username', 2000);
                 return
             }
-            this.MessageIn.User.Username = $('<p>').html(this.MessageIn.User.Login).text();
+            this.MessageIn.User.Username = $('<p>').html(this.MessageIn.User.Username).text();
             this.MessageIn.User.Login = $('<p>').html(this.MessageIn.User.Login).text();
             this.MessageIn.User.Password = $('<p>').html(this.MessageIn.User.Password).text();
-            this.MessageIn.User.Email = "email";
+            this.MessageIn.User.Email = $('<p>').html(this.MessageIn.User.Email).text();
             this.MessageIn.User.Status = true;
             this.MessageIn.User.UserIcon = "usericon";
             this.MessageIn.Action = "CreateUser";
             this.ws.send(JSON.stringify(this.MessageIn));
+            location.href="index.html"
         },
         showUsers: function (){
             this.MessageIn.User.Login = this.OurUsername;

@@ -71,10 +71,13 @@ func DrawAuthWindow(conn net.Conn) {
 		if err != nil {
 			log.Println(err)
 		}
-		config.Login = loginInput.Text()
-		window.Hide()
-		DrawChatWindow(conn)
-		log.Println(config.UserGroups)
+		if config.ErrorStatus {
+			DrawErrorWindow("Wrong login or password!")
+		} else {
+			window.Hide()
+			DrawChatWindow(conn)
+			log.Println(config.UserGroups)
+		}
 	})
 	signUp.OnClicked(func(*ui.Button) {
 		//формирование новой структуры на отправку на сервер,
@@ -111,10 +114,13 @@ func DrawAuthWindow(conn net.Conn) {
 	go func() {
 		for {
 			msg := util.JSONdecode(conn)
+			config.ErrorStatus = msg.Status
+			log.Println(config.ErrorStatus)
 			for _, contacts := range msg.GroupList {
 				config.UserGroups = append(config.UserGroups, contacts.GroupName)
+				config.GroupID[contacts.GroupName] = contacts.ID
 			}
-			config.ID = msg.User.ID
+			config.UserID = msg.User.ID
 			channel <- msg.Status
 		}
 	}()

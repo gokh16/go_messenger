@@ -5,7 +5,6 @@ import (
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	"log"
 )
 
 var userService = service.UserService{}
@@ -39,8 +38,13 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go groupService.AddGroupMember(messageIn, chanOut)
 	case "GetUsers":
 		go userService.GetUsers(messageIn, chanOut)
+	case "GetGroup":
+		go groupService.GetGroup(messageIn, chanOut)
+	case "GetGroupList":
+		go groupService.GetGroupList(messageIn, chanOut)
 
 	default:
-		log.Println("Unknown format of data from server")
+		var errorService = service.ErrorService{}
+		go errorService.UnknownActionError(messageIn, chanOut)
 	}
 }

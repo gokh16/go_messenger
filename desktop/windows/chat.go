@@ -13,7 +13,7 @@ import (
 )
 
 func DrawChatWindow(conn net.Conn) *ui.Window {
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 	window := ui.NewWindow(config.Login, 500, 500, false)
 	input := ui.NewEntry()
 	input.SetText("message")
@@ -31,7 +31,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		}
 	}
 	for i := 0; i < len(buttonUserSlice); i++ {
-		util.ButtonListener(i, buttonUserSlice[i], conn, output)
+		util.ButtonActions(buttonUserSlice[i], conn, output)
 		output.SetText("")
 	}
 	messageBox := ui.NewVerticalBox()
@@ -46,17 +46,20 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 			if msg.Message.Content != "" {
 				output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
 			}
+			log.Println(msg.Message.Content)
+			//todo подтягивать сообщение из базы
+			//todo create update timeout
+
 			fmt.Println(msg.Status)
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {
 		//FIX SLICEMEMBER
-		log.Println(config.GroupName)
 		output.Append(config.Login + ": " + input.Text() + "\n")
-
+		id := config.GroupID[config.GroupName]
+		log.Println(id, config.GroupName)
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-
 		message := util.MessageOut{
 			User: structure.User{
 				Login:    config.Login,
@@ -80,7 +83,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 					Type: "private",
 				},
 				GroupName: config.GroupName,
-				//GroupOwnerID: 123,
+				//GroupOwnerID: config.UserID,
 				GroupTypeID: 1,
 			},
 			Message: structure.Message{
@@ -92,7 +95,8 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 					Status:   true,
 					UserIcon: "testUserIcon",
 				},
-				MessageSenderID: config.ID, //todo fix it
+				MessageSenderID:    config.UserID,
+				MessageRecipientID: id,
 				Group: structure.Group{
 					User: structure.User{
 						Login:    config.Login,
@@ -116,6 +120,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 			MessageLimit: 1,
 			Action:       "SendMessageTo",
 		}
+		log.Println(message.Group.GroupName)
 		_, err := conn.Write([]byte(util.JSONencode(message)))
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")

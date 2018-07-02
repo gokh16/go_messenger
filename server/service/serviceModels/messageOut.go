@@ -11,5 +11,5 @@ type MessageOut struct {
 	GroupList   []Group
 	Status      bool
 	Action      string
-	Err         error
+	Err         string
 }

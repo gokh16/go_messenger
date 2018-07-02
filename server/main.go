@@ -23,6 +23,9 @@ func main() {
 	// init connections struct
 	connectionList := userConnections.InitConnections()
 
+	// init services
+	routerIn.InitServices(&dbservice.UserDBService{}, &dbservice.GroupDBService{}, &dbservice.MessageDBService{})
+
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)
 
@@ -46,5 +49,5 @@ func main() {
 	fmt.Println("DB opened : Ok!")
 
 	stop := make(chan bool)
-	<-stop //все неправильно
+	<-stop
 }

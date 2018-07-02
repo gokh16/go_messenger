@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"log"
 	"net"
 
@@ -11,9 +12,28 @@ import (
 	"github.com/ProtonMail/ui"
 )
 
-//ButtonListener is hanging listeners for contact button
-func ButtonListener(number int, button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
+//ButtonActions is hanging listeners for contact button
+func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
 	button.OnClicked(func(*ui.Button) {
+		output.SetText("")
+		output.SetText("Now you can texting with:" + button.Text() + "\n") //todo fix group messaging
+
+		go func() {
+			for {
+				msg := JSONdecode(conn)
+				for _, group := range msg.GroupList {
+					if msg.Message.Content != "" && group.GroupName == button.Text() {
+						config.MessagesInGroup = group.Messages
+						break
+					}
+				}
+				break
+				fmt.Println(msg.Status)
+			}
+			for _, message := range config.MessagesInGroup {
+				output.Append(message.User.Login + ": " + message.Content + "\n")
+			}
+		}()
 
 		output.SetText("Now you can texting with:" + button.Text())
 		var members []structure.User
@@ -34,7 +54,7 @@ func ButtonListener(number int, button *ui.Button, conn net.Conn, output *ui.Mul
 			UserIcon: "testUserIcon",
 		})
 
-		config.GroupName = config.Login + button.Text()
+		config.GroupName = button.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 
@@ -92,7 +112,7 @@ func ButtonListener(number int, button *ui.Button, conn net.Conn, output *ui.Mul
 			},
 			Members:      members,
 			RelationType: 1,
-			MessageLimit: 1,
+			MessageLimit: 5,
 			Action:       "GetGroup",
 		}
 		_, err := conn.Write([]byte(JSONencode(message)))

@@ -57,8 +57,12 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModel := g.groupManager.GetGroup(&messageIn.Group)
+	log.Printf("GET GROUP SERVICE, group_id -> %d, group_name -> %s", groupModel.ID, groupModel.GroupName)
 	members := g.groupManager.GetMemberList(&groupModel)
 	messages := g.messageManager.GetGroupMessages(&groupModel, messageIn.MessageLimit)
+	for i, msg := range messages {
+		log.Printf("GET GROUP SERVICE MSG; %d: %s", i, msg.Content)
+	}
 	groupOut := serviceModels.NewGroup(groupModel, members, messages)
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	chanOut <- &messageOut
@@ -70,6 +74,7 @@ func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOu
 	groupModelList := g.groupManager.GetGroupList(&messageIn.User)
 	log.Println(groupModelList)
 	for _, gr := range groupModelList {
+		log.Printf("GET GROUP LIST SERVICE, group_id -> %d, group_name -> %s", gr.ID, gr.GroupName)
 		members := g.groupManager.GetMemberList(&gr)
 		messages := g.messageManager.GetGroupMessages(&gr, messageIn.MessageLimit)
 		groupOut := serviceModels.NewGroup(gr, members, messages)

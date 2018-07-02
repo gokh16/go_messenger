@@ -5,7 +5,7 @@ const (
 	HostDB     = "0.0.0.0"
 	PortDB     = "5432"
 	UserDB     = "postgres" // postgres
-	PasswordDB = "root"    // admin
+	PasswordDB = "1111"     // admin
 	NameDB     = "golangDB"
 	SSLModeDB  = "disable"
 )

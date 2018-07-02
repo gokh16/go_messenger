@@ -9,8 +9,7 @@ import (
 	"time"
 
 	"github.com/ProtonMail/ui"
-
-	"github.com/ProtonMail/ui"
+	//"github.com/ProtonMail/ui"
 )
 
 func DrawChatWindow(conn net.Conn) *ui.Window {

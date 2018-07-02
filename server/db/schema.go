@@ -109,4 +109,3 @@ func CreateDatabase() {
 		log.Printf("Could not migrate: %v", err)
 	}
 }
-

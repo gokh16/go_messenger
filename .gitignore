@@ -2,3 +2,5 @@
 #IDEA files
 .idea/*
 ignore/*
+.vscode/*
+debug

@@ -29,12 +29,12 @@ type HandlerWS struct {
 //NewHandlerWS is a constructor for WS handler
 func NewHandlerWS(conns *userConnections.Connections) {
 	ws := HandlerWS{conns}
-	go Handler(ws)
+	go ws.Handler()
 }
 
 //Handler is a main func which is establish connections and call func for reading data from
 //connection
-func Handler(str HandlerWS) {
+func (ws *HandlerWS) Handler() {
 	fs := http.FileServer(http.Dir("../web"))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
@@ -42,56 +42,55 @@ func Handler(str HandlerWS) {
 		if err != nil {
 			log.Println("Cannot upgrade")
 		}
-		go ReadMessage(conn, str)
+		go ReadMessage(conn, ws)
 	})
 	log.Println("HTTP server started on :12345")
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
-		panic(err)
+		fmt.Println("There are no users connected!")
 	}
 }
 
 //ReadMessage is a func for reading data from ws connection
-func ReadMessage(conn *websocket.Conn, str HandlerWS) {
+func ReadMessage(conn *websocket.Conn, hdl *HandlerWS) {
 	for {
 		messageType, data, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Client %v is gone!\n", str.Connection.GetUserNameByWSConnection(conn))
-			str.Connection.DeleteWSConnection(conn)
-			log.Printf("ONLINE WS CONNECTS AFTER DISCONNECT: -> %v", len(str.Connection.GetAllWSConnections()))
+			log.Printf("Client %v is gone!\n", hdl.Connection.GetUserNameByWSConnection(conn))
+			hdl.Connection.DeleteWSConnection(conn)
+			log.Printf("ONLINE WS CONNECTS AFTER DISCONNECT: -> %v", len(hdl.Connection.GetAllWSConnections()))
 			return
 		}
 		if err := conn.WriteMessage(messageType, data); err != nil {
 			log.Println(err)
 			return
 		}
-		GetJSON(data, conn, str)
-		/*_, data, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("Cannot read message")
-		}*/
-		//GetJSON(data, conn, str)
+		GetJSON(data, conn, hdl)
 	}
 }
 
 //GetJSON is
-func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
+func GetJSON(bytes []byte, conn *websocket.Conn, hdl *HandlerWS) {
 	message := userConnections.MessageIn{}
+
 	err := json.Unmarshal(bytes, &message)
 	if err != nil {
 		log.Println("Unmarshal error")
 	}
-	str.Connection.AddWSConn(conn, message.User.Username)
-	fmt.Println("gn", message.Group.GroupName)
-	routerIn.RouterIn(&message, str.Connection.OutChan)
+
+	hdl.Connection.AddWSConn(conn, message.User.Username)
+	fmt.Println("Group name: ", message.Group.GroupName)
+	routerIn.RouterIn(&message, hdl.Connection.OutChan)
 	//return str.Connection.outChan
 }
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to util
-func SendJSON(conns []*websocket.Conn, str *serviceModels.MessageOut) {
-	fmt.Println("send",str.Message.Content)
+func SendJSON(conns []*websocket.Conn, msgOut *serviceModels.MessageOut) {
+
+	fmt.Println("send", msgOut.Message.Content)
+
 	for _, conn := range conns {
-		err := conn.WriteJSON(str)
+		err := conn.WriteJSON(msgOut)
 		if err != nil {
 			log.Println(err)
 		}

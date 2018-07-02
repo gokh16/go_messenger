@@ -8,7 +8,6 @@ import (
 
 	"github.com/ProtonMail/ui"
 	"go_messenger/desktop/config"
-	"fmt"
 )
 
 //ButtonActions is hanging listeners for contact button
@@ -17,21 +16,32 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 		output.SetText("")
 
 		go func() {
+			users := make(map[uint]string)
+			members := make([]structure.User, 0)
 			for {
 				msg := JSONdecode(conn)
 				for _, group := range msg.GroupList {
 					if group.GroupName == button.Text() {
 						config.MessagesInGroup = group.Messages
+						members = group.Members
 						break
 					}
 				}
+				for _, user := range members {
+					users[user.ID] = user.Login
+				}
 				break
 			}
-			fmt.Println(config.MessagesInGroup)
 			for _, message := range config.MessagesInGroup {
-				output.Append(message.User.Login + ": " + message.Content + "\n")
+				var login string
+				for id, name := range users {
+					if message.MessageSenderID == id {
+						login = name
+					}
+				}
+				output.Append(login + ": " + message.Content + "\n")
 			}
-			config.MessagesGet <- true
+			config.MarkForRead <- true
 		}()
 
 		var members []structure.User

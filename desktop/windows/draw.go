@@ -11,7 +11,7 @@ import (
 func Draw() {
 	conn, err := net.Dial("tcp", ":8080")
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	defer func() {
 		err := conn.Close()

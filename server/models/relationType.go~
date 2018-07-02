@@ -1,4 +1,5 @@
-package structure
+
+package models
 
 import (
 	"github.com/jinzhu/gorm"
@@ -8,5 +9,5 @@ import (
 type RelationType struct {
 	gorm.Model
 
-	Type string
+	Type string `json:"relation_type"`
 }

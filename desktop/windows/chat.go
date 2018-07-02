@@ -2,7 +2,6 @@ package windows
 
 import (
 	"net"
-	"fmt"
 	"github.com/ProtonMail/ui"
 	"log"
 	"go_messenger/desktop/structure"
@@ -12,115 +11,84 @@ import (
 )
 
 func DrawChatWindow(conn net.Conn) *ui.Window {
-	time.Sleep(10 * time.Millisecond)
-	window := ui.NewWindow(config.Login, 500, 500, false)
+	time.Sleep(30 * time.Millisecond)
+	window := ui.NewWindow(config.Login, 800, 500, false)
 	input := ui.NewEntry()
 	input.SetText("message")
 	send := ui.NewButton("Send")
+	profile := ui.NewButton("Profile")
+	contacts := ui.NewButton("Contacts")
+	userHeader := ui.NewHorizontalBox()
 	output := ui.NewMultilineNonWrappingEntry()
 	output.SetReadOnly(true)
 	mainBox := ui.NewHorizontalBox()
+	searchEntry := ui.NewEntry()
+	searchEntry.SetText("Search")
 	usersBox := ui.NewVerticalBox()
+	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
 	for _, group := range config.UserGroups {
 		if group != "" && group != config.Login {
-			buttonWithUser := ui.NewButton(group)
-			usersBox.Append(buttonWithUser, false)
-			buttonUserSlice = append(buttonUserSlice, buttonWithUser)
+			buttonWithGroup := ui.NewButton(group)
+			usersBox.Append(buttonWithGroup, false)
+			buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
 		}
 	}
 	for i := 0; i < len(buttonUserSlice); i++ {
-		util.ButtonListener(i, buttonUserSlice[i], conn, output)
+		util.ButtonActions(buttonUserSlice[i], conn, output)
 		output.SetText("")
 	}
+	userHeader.Append(profile, true)
+	userHeader.Append(contacts, true)
 	messageBox := ui.NewVerticalBox()
+	messageBox.Append(userHeader, false)
 	messageBox.Append(output, true)
 	messageBox.Append(input, false)
 	messageBox.Append(send, false)
 	mainBox.Append(usersBox, false)
 	mainBox.Append(messageBox, true)
 	go func() {
+		status := <-config.MarkForRead
 		for {
-			msg := util.JSONdecode(conn)
-			if msg.Message.Content != "" {
-				output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
+			if status { //todo finish THIS PART!
+				msg := util.JSONdecode(conn)
+				if msg.Message.Content != "" && msg.Message.MessageRecipientID == config.GroupID[config.GroupName]{
+					output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
+				}
+				log.Println(msg.Action, "chat window")
+				//todo подтягивать сообщение из базы
+				//todo create update timeout
+
 			}
-			fmt.Println(msg.Status)
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {
 		//FIX SLICEMEMBER
-		log.Println(config.GroupName)
 		output.Append(config.Login + ": " + input.Text() + "\n")
-
+		id := config.GroupID[config.GroupName]
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 
-		message := util.MessageOut{
-			User: structure.User{
-				Login:    config.Login,
-				Password: "testPassword",
-				Username: config.Login,
-				Email:    "test@test.com",
-				Status:   true,
-				UserIcon: "testUserIcon",
-			},
-			Contact: structure.User{},
-			Group: structure.Group{
-				User: structure.User{
-					Login:    config.Login,
-					Password: "testPassword",
-					Username: config.Login,
-					Email:    "test@test.com",
-					Status:   true,
-					UserIcon: "testUserIcon",
-				},
-				GroupType: structure.GroupType{
-					Type: "private",
-				},
-				GroupName:    config.GroupName,
-				//GroupOwnerID: 123,
-				GroupTypeID:  1,
-			},
-			Message: structure.Message{
-				User: structure.User{
-					Login:    config.Login,
-					Password: "testPassword",
-					Username: config.Login,
-					Email:    "test@test.com",
-					Status:   true,
-					UserIcon: "testUserIcon",
-				},
-				MessageSenderID: config.ID, //todo fix it
-				Group: structure.Group{
-					User: structure.User{
-						Login:    config.Login,
-						Password: "testPassword",
-						Username: config.Login,
-						Email:    "test@test.com",
-						Status:   true,
-						UserIcon: "testUserIcon",
-					},
-					GroupType: structure.GroupType{
-						Type: "private",
-					},
-					GroupName:    config.GroupName,
-					//GroupOwnerID: 123,
-					GroupTypeID:  1,
-				},
-				Content:input.Text(),
-			},
-			Members:      nil,
-			RelationType: 1,
-			MessageLimit: 1,
-			Action:       "SendMessageTo",
+		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		group := util.NewGroup(user, "private", config.GroupName, config.UserID, 1)
+		msg := util.NewMessage(user, group, input.Text(), config.UserID, id, "Text")
+		message := util.NewMessageOut(user, &structure.User{}, group, msg, nil, 1, 0, "SendMessageTo")
+		if msg.Content != "" {
+			_, err := conn.Write([]byte(util.JSONencode(*message)))
+			if err != nil {
+				log.Println("OnClickedError! Empty field.")
+			}
+			input.SetText("")
 		}
-		_, err := conn.Write([]byte(util.JSONencode(message)))
+	})
+	contacts.OnClicked(func(*ui.Button) {
+		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "GetUsers")
+		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")
 		}
-		input.SetText("")
-
+		DrawContactsWindow(conn)
 	})
 	window.SetChild(mainBox)
 	window.OnClosing(func(*ui.Window) bool {

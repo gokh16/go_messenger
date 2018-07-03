@@ -1,20 +1,22 @@
 package dbservice
 
 import (
+	"fmt"
 	"go_messenger/server/models"
 )
 
 //User type with build-in model of User.
 type UserDBService struct {
-	models.User
+	models *models.User
 }
 
 //CreateUser method creates User in DB.
 //It returns bool value.
 func (u *UserDBService) CreateUser(user *models.User) bool {
-	dbConn.Where("username = ?", u.Username).First(&user)
+	dbConn.Where("login = ?", user.Login).First(&user)
 	if dbConn.NewRecord(user) {
 		dbConn.Create(&user)
+		fmt.Println(user.Status)
 		return true
 	}
 	return false
@@ -22,17 +24,15 @@ func (u *UserDBService) CreateUser(user *models.User) bool {
 
 //LoginUser - user's auth.
 func (u *UserDBService) LoginUser(user *models.User) bool {
-	dbConn.Where("login = ?", user.Login).Where("password = ?", user.Password).Take(&user)
-	if dbConn != nil {
-		return true
-	}
-	return false
+	model := models.User{}
+	dbConn.Where("password = ?", user.Password).Where("login = ?", user.Login).Take(&model)
+	return model.Status
 }
 
 //AddContact add spesial user to contact list of special User
 func (u *UserDBService) AddContact(user, contact *models.User, relationType uint) bool {
-	dbConn.Where("username = ?", user.Username).First(&user)
-	dbConn.Where("username = ?", contact.Username).First(&contact)
+	dbConn.Where("login = ?", user.Login).First(&user)
+	dbConn.Where("login = ?", contact.Login).First(&contact)
 	relation := models.UserRelation{RelatingUser: user.ID, RelatedUser: contact.ID, RelationTypeID: relationType}
 	if dbConn.NewRecord(relation) {
 		dbConn.Create(&relation)

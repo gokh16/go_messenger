@@ -6,8 +6,9 @@ import (
 
 	"go_messenger/server/service/serviceModels"
 
-	"github.com/gorilla/websocket"
 	"log"
+
+	"github.com/gorilla/websocket"
 )
 
 //Connections is a structure with connections and channel for write out data

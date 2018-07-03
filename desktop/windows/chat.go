@@ -1,13 +1,15 @@
 package windows
 
 import (
-	"net"
-	"github.com/ProtonMail/ui"
-	"log"
+	"go_messenger/desktop/config"
 	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
-	"go_messenger/desktop/config"
+	"log"
+	"net"
 	"time"
+
+	"github.com/ProtonMail/ui"
+	//"github.com/ProtonMail/ui"
 )
 
 func DrawChatWindow(conn net.Conn) *ui.Window {

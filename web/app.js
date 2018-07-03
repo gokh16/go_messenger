@@ -254,7 +254,7 @@ function createGroup(el) {
     var rgName = test.UsersFromServer[el.id].Login+test.User.Login;
     if(typeof test.GroupList != "undefined" || test.GroupList !=null){
         for (var i = 0; i < test.GroupList.length; i++) {
-            if (test.GroupList[i].GroupName == el.id || rgName == el.id) {
+            if (test.GroupList[i].GroupName == el.id || rgName == test.GroupList[i].GroupName) {
                 net = false;
                 break;
             }

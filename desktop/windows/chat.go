@@ -54,7 +54,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	go func() {
 		status := <-config.MarkForRead
 		for {
-			if status { //todo finish THIS PART!
+			if status == "chat" { //todo finish THIS PART!
 				msg := util.JSONdecode(conn)
 				if msg.Message.Content != "" && msg.Message.MessageRecipientID == config.GroupID[config.GroupName]{
 					output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
@@ -92,7 +92,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")
 		}
-		DrawContactsWindow(conn)
+		DrawContactsWindow(conn, window)
 	})
 	window.SetChild(mainBox)
 	window.OnClosing(func(*ui.Window) bool {

@@ -10,17 +10,19 @@ import (
 	"time"
 )
 
-func DrawContactsWindow(conn net.Conn) {
+func DrawContactsWindow(conn net.Conn, chatWindow *ui.Window) {
 	window := ui.NewWindow("Contacts", 400, 250, false)
 	usersBox := ui.NewVerticalBox()
 	channelForDrawUsers := make(chan []structure.User)
 	users := make([]structure.User, 0)
 	go func() {
 		for {
+			log.Println("wow")
 			msg := util.JSONdecode(conn)
 			users = msg.ContactList
 			channelForDrawUsers <- users
 			log.Println(users)
+			break
 		}
 	}()
 	time.Sleep(1 * time.Second)
@@ -36,7 +38,22 @@ func DrawContactsWindow(conn net.Conn) {
 				}
 			}
 			window.SetChild(usersBox)
+			for i := 0; i < len(buttonUserSlice); i++ {
+				log.Println(i)
+				util.ContactsAction(buttonUserSlice[i], conn, window, chatWindow)
+			}
 			channelForDrawUsers <- nil
+		}
+	}()
+
+	go func() {
+		for {
+			status := <-config.MarkForRedrawChatWindow
+			if status == "groups are accepted" {
+				window.Hide()
+				chatWindow.Show()
+				DrawChatWindow(conn)
+			}
 		}
 	}()
 

@@ -41,7 +41,7 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 				}
 				output.Append(login + ": " + message.Content + "\n")
 			}
-			config.MarkForRead <- true
+			config.MarkForRead <- "chat"
 		}()
 
 		var members []structure.User
@@ -79,4 +79,34 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 }
 
 //ContactsAction is hanging listeners for contacts buttons
+func ContactsAction(button *ui.Button, conn net.Conn, contacts *ui.Window, chat *ui.Window) {
+	button.OnClicked(func(*ui.Button) {
+		config.MarkForRead <- "contacts"
 
+		var members []structure.User
+		members = append(members, *NewUser(config.Login, "", config.Login, "", true, ""))
+		members = append(members, *NewUser(button.Text(), "", button.Text(), "", true, ""))
+		config.GroupName = config.Login + button.Text()
+		config.UserGroups = append(config.UserGroups, config.GroupName)
+		user := NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		group := NewGroup(user, "private", config.GroupName, config.UserID, 1)
+		message := NewMessageOut(user, &structure.User{}, group, &structure.Message{}, members, 1, 0, "CreateGroup")
+		_, err := conn.Write([]byte(JSONencode(*message)))
+		if err != nil {
+			log.Println(err)
+		}
+		go func() {
+			status := <-config.MarkForRead
+			for {
+				if status == "contacts" {
+					msg := JSONdecode(conn)
+					if msg.Status{
+						config.MarkForRedrawChatWindow <- "groups are accepted"
+					}
+				}
+
+			}
+		}()
+
+	})
+}

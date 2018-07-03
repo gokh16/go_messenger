@@ -25,14 +25,8 @@
     <main id="app">
         <div class="row">
             <div class="col s2">
-                <div class="input-field col s4">
-                    <button class="waves-effect waves-light btn" @click="showUsers()">
-                        showUsers
-                    </button>
-                </div>
                 <div class="card horizontal">
-
-                    <div id="chat-messages" class="card-content blue-grey darken-3">
+                    <div id="chat-members" class="card-content blue-grey darken-3">
                         <div v-for="item in OnlineUsersList" class="input-field col s12">
                             <button class="waves-effect waves-light btn col s12" v-on:click="item.action(item)" v-bind:id="item.id">
                                 {{item.content}}

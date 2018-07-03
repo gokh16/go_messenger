@@ -16,12 +16,10 @@ nav img {
     margin: 8px 15px;
 }
 
-
-#chat-messages {
+#chat-messages,
+#chat-members {
     min-height: 10vh;
     height: 60vh;
     width: 100%;
     overflow-y: auto;
-
 }
-

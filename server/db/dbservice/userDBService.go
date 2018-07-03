@@ -1,6 +1,7 @@
 package dbservice
 
 import (
+	"fmt"
 	"go_messenger/server/models"
 )
 
@@ -12,10 +13,10 @@ type UserDBService struct {
 //CreateUser method creates User in DB.
 //It returns bool value.
 func (u *UserDBService) CreateUser(user *models.User) bool {
-	//model := models.User{}
-	dbConn.Where("login = ?", u.Login).First(&user)
+	dbConn.Where("login = ?", user.Login).First(&user)
 	if dbConn.NewRecord(user) {
 		dbConn.Create(&user)
+		fmt.Println(user.Status)
 		return true
 	}
 	return false
@@ -25,9 +26,6 @@ func (u *UserDBService) CreateUser(user *models.User) bool {
 func (u *UserDBService) LoginUser(user *models.User) bool {
 	model := models.User{}
 	dbConn.Where("password = ?", user.Password).Where("login = ?", user.Login).Take(&model)
-	if model.Status {
-		return model.Status
-	}
 	return model.Status
 }
 

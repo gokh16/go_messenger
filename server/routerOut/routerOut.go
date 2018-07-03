@@ -34,6 +34,7 @@ func (r *RouterOut) Handler() {
 			tcp.WaitJSON(sliceTCPCon, msg)
 		}
 		if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
+			fmt.Println("fmt",msg.User.Username)
 			ws.SendJSON(sliceWSCon, msg)
 		}
 	}
@@ -73,7 +74,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 
 	if msg.Action == r.getAction(msg) { //LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error
 		for conn, onlineUser := range mapWS {
-			if onlineUser == msg.User.Username {
+			if onlineUser == msg.User.Login {
 				sliceWS = append(sliceWS, conn)
 			}
 		}
@@ -81,7 +82,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 
 	for conn, onlineUser := range mapWS {
 		for _, user := range msg.Recipients {
-			if onlineUser == user.Username && onlineUser != msg.User.Username {
+			if onlineUser == user.Login && onlineUser != msg.User.Login {
 				sliceWS = append(sliceWS, conn)
 			}
 		}

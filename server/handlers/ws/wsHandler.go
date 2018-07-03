@@ -81,7 +81,7 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 	if err != nil {
 		log.Println("Unmarshal error")
 	}
-	str.Connection.AddWSConn(conn, message.User.Username)
+	str.Connection.AddWSConn(conn, message.User.Login)
 	fmt.Println("gn", message.Group.GroupName)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 	//return str.Connection.outChan

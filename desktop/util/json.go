@@ -64,6 +64,5 @@ func JSONdecode(conn net.Conn) MessageIn {
 	if message.Err != "" {
 		log.Println(message.Err,  " :CLIENT")
 	}
-	log.Println(message.ContactList, "decoder")
 	return message
 }

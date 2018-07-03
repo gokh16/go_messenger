@@ -36,7 +36,7 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 		groupList := u.groupManager.GetGroupList(&messageIn.User)
 		for _, group := range groupList {
-			groupOut := serviceModels.Group{ID:group.ID ,GroupName: group.GroupName, GroupType: group.GroupType,
+			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
 				Members:  u.groupManager.GetMemberList(&group),
 				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
 			}
@@ -57,7 +57,7 @@ func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut c
 
 //GetUsers method gets all users from DB.
 func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User}
 	userList := []models.User{}
 	u.userManager.GetUsers(&userList)
 	for _, user := range userList {

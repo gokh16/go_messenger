@@ -7,7 +7,7 @@ import (
 
 //User type with build-in model of User.
 type UserDBService struct {
-	*models.User
+	models *models.User
 }
 
 //CreateUser method creates User in DB.

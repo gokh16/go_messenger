@@ -27,6 +27,8 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	usersBox := ui.NewVerticalBox()
 	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
+
+
 	for _, group := range config.UserGroups {
 		if group != "" && group != config.Login {
 			buttonWithGroup := ui.NewButton(group)
@@ -38,6 +40,8 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		util.ButtonActions(buttonUserSlice[i], conn, output)
 		output.SetText("")
 	}
+
+
 	userHeader.Append(profile, true)
 	userHeader.Append(contacts, true)
 	messageBox := ui.NewVerticalBox()

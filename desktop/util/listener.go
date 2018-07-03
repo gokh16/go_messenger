@@ -10,7 +10,7 @@ import (
 	"go_messenger/desktop/config"
 )
 
-//ButtonActions is hanging listeners for contact button
+//ButtonActions is hanging listeners for group buttons
 func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
 	button.OnClicked(func(*ui.Button) {
 		output.SetText("")
@@ -77,3 +77,6 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 	})
 	return config.GroupName
 }
+
+//ContactsAction is hanging listeners for contacts buttons
+

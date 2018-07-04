@@ -27,7 +27,7 @@ func (m *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, cha
 	message := []models.Message{messageIn.Message}
 	groupOut := serviceModels.NewGroup(messageIn.Group, members, message)
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
-		Recipients: members, Action: messageIn.Action, Message:messageIn.Message}
+		Recipients: members, Action: messageIn.Action, Message: messageIn.Message}
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	chanOut <- &messageOut
 }

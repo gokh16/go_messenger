@@ -8,7 +8,7 @@ import (
 )
 
 type ErrorService struct {
-	err error
+	err error //a
 }
 
 func (e *ErrorService) Error() string {

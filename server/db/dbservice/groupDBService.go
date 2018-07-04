@@ -4,7 +4,7 @@ import (
 	"go_messenger/server/models"
 )
 
-//Group type with build-in model of Group.
+//GroupDBService type with build-in model of Group.
 type GroupDBService struct {
 	models.Group
 }

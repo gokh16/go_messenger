@@ -40,11 +40,9 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 	if ok {
 		groupList := u.groupManager.GetGroupList(&messageIn.User)
 		for _, group := range groupList {
-			groupOut := serviceModels.Group{
-				GroupName: group.GroupName,
-				GroupType: group.GroupType,
-				Members:   u.groupManager.GetMemberList(&group),
-				Messages:  u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
+			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
+				Members:  u.groupManager.GetMemberList(&group),
+				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
@@ -52,6 +50,7 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 	}
 	messageOut.Status = ok
+
 	chanOut <- &messageOut
 }
 
@@ -68,9 +67,7 @@ func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut cha
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User}
 	userList := []models.User{}
 	u.userManager.GetUsers(&userList)
-	for _, user := range userList {
-		messageOut.ContactList = append(messageOut.ContactList, user)
-	}
+	messageOut.ContactList = userList
 	chanOut <- &messageOut
 }
 

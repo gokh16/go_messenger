@@ -35,6 +35,7 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.Status = false
 		chanOut <- &messageOut
 	}
+
 	ok := u.userManager.LoginUser(&messageIn.User)
 	if ok {
 		groupList := u.groupManager.GetGroupList(&messageIn.User)

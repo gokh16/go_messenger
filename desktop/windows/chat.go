@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/ProtonMail/ui"
-	//"github.com/ProtonMail/ui"
 )
 
+//DrawChatWindow is a func which draw window by GTK's help
 func DrawChatWindow(conn net.Conn) *ui.Window {
 	time.Sleep(30 * time.Millisecond)
 	window := ui.NewWindow(config.Login, 800, 500, false)
@@ -30,7 +30,6 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
 
-
 	for _, group := range config.UserGroups {
 		if group != "" && group != config.Login {
 			buttonWithGroup := ui.NewButton(group)
@@ -42,7 +41,6 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		util.ButtonActions(buttonUserSlice[i], conn, output)
 		output.SetText("")
 	}
-
 
 	userHeader.Append(profile, true)
 	userHeader.Append(contacts, true)
@@ -58,10 +56,12 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		for {
 			if status == "chat" { //todo finish THIS PART!
 				msg := util.JSONdecode(conn)
-				if msg.Message.Content != "" && msg.Message.MessageRecipientID == config.GroupID[config.GroupName]{
+				log.Println(msg.Message.Content, msg.Action, "chat window")
+
+				//if msg.Message.Content != "" && msg.Message.MessageRecipientID == config.GroupID[config.GroupName]{
+				if msg.Message.Content != "" {
 					output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
 				}
-				log.Println(msg.Action, "chat window")
 				//todo подтягивать сообщение из базы
 				//todo create update timeout
 

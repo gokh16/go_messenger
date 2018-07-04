@@ -1,15 +1,17 @@
 package windows
 
 import (
-	"net"
-	"github.com/ProtonMail/ui"
-	"go_messenger/desktop/structure"
 	"go_messenger/desktop/config"
+	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
 	"log"
+	"net"
 	"time"
+
+	"github.com/ProtonMail/ui"
 )
 
+//DrawContactsWindow is a func which draw window by GTK's help
 func DrawContactsWindow(conn net.Conn, chatWindow *ui.Window) {
 	window := ui.NewWindow("Contacts", 400, 250, false)
 	usersBox := ui.NewVerticalBox()

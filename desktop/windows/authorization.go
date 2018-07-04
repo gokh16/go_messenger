@@ -10,13 +10,14 @@ import (
 	"github.com/ProtonMail/ui"
 )
 
+//DrawAuthWindow is a func which draw window by GTK's help
 func DrawAuthWindow(conn net.Conn) {
 	window := ui.NewWindow("Chat", 500, 500, false)
 	loginInput := ui.NewEntry()
 	passwordInput := ui.NewPasswordEntry()
 	loginLabel := ui.NewLabel("Login")
 	passwordLabel := ui.NewLabel("Password")
-	signIn := ui.NewButton("Sign in!")
+	signIn := ui.NewButton("Sign in!") //asd
 	signUp := ui.NewButton("Sign up!")
 	topBox := ui.NewHorizontalBox()
 	botBox := ui.NewHorizontalBox()

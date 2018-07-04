@@ -5,7 +5,7 @@ import (
 	"go_messenger/server/models"
 )
 
-//User type with build-in model of User.
+//UserDBService type with build-in model of User.
 type UserDBService struct {
 	models *models.User
 }
@@ -62,7 +62,7 @@ func (u *UserDBService) GetContactList(user *models.User) []models.User {
 	temp := []models.UserRelation{}
 	dbConn.Where("login = ?", user.Login).First(&user)
 	dbConn.Where("relating_user=?", user.ID).Find(&temp)
-	for i, _ := range temp {
+	for i := range temp {
 		contact := models.User{}
 		dbConn.Where("id=?", temp[i].RelatedUser).First(&contact)
 		contactList = append(contactList, contact)

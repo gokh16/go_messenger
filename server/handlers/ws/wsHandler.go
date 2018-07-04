@@ -47,7 +47,7 @@ func Handler(str HandlerWS) {
 	log.Println("HTTP server started on :12345")
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 }
 
@@ -89,7 +89,7 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to util
 func SendJSON(conns []*websocket.Conn, str *serviceModels.MessageOut) {
-	fmt.Println("send",str.Message.Content)
+	fmt.Println("send", str.Message.Content)
 	for _, conn := range conns {
 		err := conn.WriteJSON(str)
 		if err != nil {

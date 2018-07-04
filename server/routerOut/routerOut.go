@@ -71,7 +71,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 	fmt.Println("ONLINE WS connects -> ", len(mapWS))
 	var sliceWS []*websocket.Conn
 
-	if msg.Action == r.getAction(msg) { //LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error
+	if msg.Action == r.getAction(msg) { //LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error"
 		for conn, onlineUser := range mapWS {
 			if onlineUser == msg.User.Username {
 				sliceWS = append(sliceWS, conn)
@@ -92,7 +92,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 func (r *RouterOut) getAction(msg *serviceModels.MessageOut) string {
 
 	switch msg.Action {
-	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error":
+	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error", "SendMessageTo":
 		return msg.Action
 	default:
 		return "Not an Action"

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Humble</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/emojione/2.2.6/assets/css/emojione.min.css"/>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="blue-grey darken-4">
+<header>
+    <nav class="blue-grey darken-3">
+        <div class="nav-wrapper">
+            <img src="go_icon.png" alt="ss" height="50px">
+            <a href="/" class="brand-logo"> go-messenger</a>
+        </div>
+    </nav>
+</header>
+<main id="app">
+    <div class="row .align-middle" id="signup" v-if="!joined">
+        <div class="input-field white-text col s12">
+            <input type="text" v-model.trim="MessageIn.User.Login">
+            <label for="MessageIn.User.Login">Login</label>
+        </div>
+        <div class="input-field white-text col s12">
+            <input type="text" v-model.trim="MessageIn.User.Password">
+            <label for="MessageIn.User.Password">Password</label>
+        </div>
+        <div class="input-field white-text col s12">
+            <input type="text" v-model.trim="MessageIn.User.Username">
+            <label for="MessageIn.User.Password">Username</label>
+        </div>
+        <div class="input-field white-text col s12">
+            <input type="text" v-model.trim="MessageIn.User.Email">
+            <label for="MessageIn.User.Password">Email</label>
+        </div>
+
+        <div class="input-field col s12">
+            <button class="waves-effect waves-light btn col s12" @click="signUp()">
+                Sign up
+            </button>
+        </div>
+        <div class="input-field col s12">
+            <button class="waves-effect waves-light btn col s12"  onClick='location.href="index.html"'>
+                Sign in
+            </button>
+        </div>
+    </div>
+    </div>
+
+</main>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/emojione/2.2.6/lib/js/emojione.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="app.js"></script>
+</body>
+
+</html>

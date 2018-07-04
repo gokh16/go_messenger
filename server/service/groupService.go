@@ -1,10 +1,10 @@
 package service
 
 import (
+	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 	"log"
-	"go_messenger/server/service/interfaces"
 )
 
 //GroupService ...

@@ -30,10 +30,13 @@ func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut c
 //LoginUser - user's auth.
 func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	if messageIn.User.Password == "" || messageIn.User.Login == "" {
+		messageOut.Err = "Emty Login or Password"
+		messageOut.Status = false
+		chanOut <- &messageOut
+	}
 	ok := u.userManager.LoginUser(&messageIn.User)
 	if ok {
-		messageOut.User = u.userManager.GetUser(&messageIn.User)
-		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 		groupList := u.groupManager.GetGroupList(&messageIn.User)
 		for _, group := range groupList {
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
@@ -42,8 +45,11 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
+		messageOut.User = u.userManager.GetUser(&messageIn.User)
+		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 	}
 	messageOut.Status = ok
+
 	chanOut <- &messageOut
 }
 
@@ -60,9 +66,7 @@ func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut cha
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User}
 	userList := []models.User{}
 	u.userManager.GetUsers(&userList)
-	for _, user := range userList {
-		messageOut.ContactList = append(messageOut.ContactList, user)
-	}
+	messageOut.ContactList = userList
 	chanOut <- &messageOut
 }
 

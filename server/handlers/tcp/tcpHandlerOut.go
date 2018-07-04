@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-//WaitJSON is waiting for data from route out, parsing data into json format and write to util
+//WaitJSON is waiting for data from route out, parsing data into json format and write to util(linter)
 func WaitJSON(conns []net.Conn, str *serviceModels.MessageOut) {
 	outComingData, err := json.Marshal(str)
 	if err != nil {

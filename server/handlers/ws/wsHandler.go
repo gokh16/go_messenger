@@ -47,7 +47,7 @@ func Handler(str HandlerWS) {
 	log.Println("HTTP server started on :12345")
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 }
 

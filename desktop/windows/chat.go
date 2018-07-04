@@ -1,15 +1,17 @@
 package windows
 
 import (
-	"net"
-	"github.com/ProtonMail/ui"
-	"log"
+	"go_messenger/desktop/config"
 	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
-	"go_messenger/desktop/config"
+	"log"
+	"net"
 	"time"
+
+	"github.com/ProtonMail/ui"
 )
 
+//DrawChatWindow is a func which draw window by GTK's help
 func DrawChatWindow(conn net.Conn) *ui.Window {
 	time.Sleep(30 * time.Millisecond)
 	window := ui.NewWindow(config.Login, 800, 500, false)
@@ -28,7 +30,6 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
 
-
 	for _, group := range config.UserGroups {
 		if group != "" && group != config.Login {
 			buttonWithGroup := ui.NewButton(group)
@@ -40,7 +41,6 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		util.ButtonActions(buttonUserSlice[i], conn, output)
 		output.SetText("")
 	}
-
 
 	userHeader.Append(profile, true)
 	userHeader.Append(contacts, true)

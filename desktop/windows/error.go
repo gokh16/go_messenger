@@ -4,6 +4,7 @@ import (
 	"github.com/ProtonMail/ui"
 )
 
+//DrawErrorWindow is a func which draw window by GTK's help
 func DrawErrorWindow(errorText string) {
 	window := ui.NewWindow("Error", 100, 50, false)
 	errorLabel := ui.NewLabel(errorText)

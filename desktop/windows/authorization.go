@@ -1,21 +1,23 @@
 package windows
 
 import (
-	"net"
-	"github.com/ProtonMail/ui"
-	"go_messenger/desktop/structure"
-	"log"
-	"go_messenger/desktop/util"
 	"go_messenger/desktop/config"
+	"go_messenger/desktop/structure"
+	"go_messenger/desktop/util"
+	"log"
+	"net"
+
+	"github.com/ProtonMail/ui"
 )
 
+//DrawAuthWindow is a func which draw window by GTK's help
 func DrawAuthWindow(conn net.Conn) {
 	window := ui.NewWindow("Chat", 500, 500, false)
 	loginInput := ui.NewEntry()
 	passwordInput := ui.NewPasswordEntry()
 	loginLabel := ui.NewLabel("Login")
 	passwordLabel := ui.NewLabel("Password")
-	signIn := ui.NewButton("Sign in!")
+	signIn := ui.NewButton("Sign in!") //asd
 	signUp := ui.NewButton("Sign up!")
 	topBox := ui.NewHorizontalBox()
 	botBox := ui.NewHorizontalBox()
@@ -49,14 +51,14 @@ func DrawAuthWindow(conn net.Conn) {
 		config.Login = loginInput.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-		user:=util.NewUser(config.Login,passwordInput.Text(),config.Login, "test@test.com", true, "testUserIcon")
-		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1,0,"LoginUser")
+		user := util.NewUser(config.Login, passwordInput.Text(), config.Login, "test@test.com", true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "LoginUser")
 
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println(err)
 		}
-		if config.ErrorStatus{
+		if config.ErrorStatus {
 			DrawErrorWindow("Wrong login or password!")
 		} else {
 			window.Hide()
@@ -68,8 +70,8 @@ func DrawAuthWindow(conn net.Conn) {
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 		config.Login = loginInput.Text()
-		user:=util.NewUser(config.Login,passwordInput.Text(),config.Login, "test@test.com", true, "testUserIcon")
-		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1,0,"CreateUser")
+		user := util.NewUser(config.Login, passwordInput.Text(), config.Login, "test@test.com", true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "CreateUser")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println(err)
@@ -77,7 +79,6 @@ func DrawAuthWindow(conn net.Conn) {
 		window.Hide()
 		DrawChatWindow(conn)
 	})
-
 
 	go func() {
 		for {

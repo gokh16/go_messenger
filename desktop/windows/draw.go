@@ -1,8 +1,9 @@
 package windows
 
 import (
-	"net"
 	"log"
+	"net"
+
 	"github.com/ProtonMail/ui"
 )
 
@@ -14,8 +15,8 @@ func Draw() {
 		log.Fatal(err)
 	}
 	defer func() {
-		err := conn.Close()
-		if err != nil {
+		er := conn.Close()
+		if er != nil {
 			log.Println(err)
 		}
 	}()

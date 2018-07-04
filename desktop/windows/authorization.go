@@ -85,7 +85,7 @@ func DrawAuthWindow(conn net.Conn) {
 			msg := util.JSONdecode(conn)
 			config.ErrorStatus = msg.Status
 			log.Println(config.ErrorStatus)
-			if config.ErrorStatus {
+			if !config.ErrorStatus {
 				DrawErrorWindow("Wrong login or password!")
 			}
 			for _, contacts := range msg.GroupList {

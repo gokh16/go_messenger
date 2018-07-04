@@ -70,7 +70,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	}()
 	send.OnClicked(func(*ui.Button) {
 		//FIX SLICEMEMBER
-		output.Append(config.Login + ": " + input.Text() + "\n")
+		//output.Append(config.Login + ": " + input.Text() + "\n")
 		id := config.GroupID[config.GroupName]
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.

@@ -206,10 +206,10 @@ var test = new Vue({
 
             this.MessageIn.Action = "LoginUser";
 
-            this.User.Username = this.MessageIn.User.Username;
             this.User.Login = this.MessageIn.User.Login;
 
             this.ws.send(JSON.stringify(this.MessageIn));
+            document.title = this.User.Login;
             this.joined = true;
         },
         signUp: function () {

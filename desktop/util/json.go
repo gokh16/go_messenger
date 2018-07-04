@@ -8,7 +8,7 @@ import (
 	"net"
 )
 
-//Message is a structure which has fields with data for send
+//MessageOut is a structure which has fields with data for send
 //to the server
 type MessageOut struct {
 	User         structure.User
@@ -32,7 +32,7 @@ type MessageIn struct {
 	Action      string
 	Err         string
 }
-
+//Group is a group structure
 type Group struct {
 	ID        uint
 	GroupName string

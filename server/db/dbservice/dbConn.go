@@ -11,7 +11,7 @@ import (
 
 var dbConn *gorm.DB
 
-// OpenConnDB opens a connection eith DB it returns a *DB object for closing the connection in main
+// OpenConnDB opens a connection either DB it returns a *DB object for closing the connection in main
 func OpenConnDB() *gorm.DB {
 	var err error
 	dbinfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", db.HostDB, db.PortDB, db.UserDB, db.NameDB, db.PasswordDB, db.SSLModeDB)

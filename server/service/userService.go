@@ -5,7 +5,6 @@ import (
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	"log"
 )
 
 //UserService ...
@@ -50,10 +49,7 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 	}
 	messageOut.Status = ok
-	log.Println(messageOut.Status)
-	for _, asd := range messageOut.GroupList {
-		log.Println(asd.GroupName)
-	}
+
 	chanOut <- &messageOut
 }
 

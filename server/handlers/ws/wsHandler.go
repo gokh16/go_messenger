@@ -89,9 +89,7 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to util
 func SendJSON(conns []*websocket.Conn, str *serviceModels.MessageOut) {
-	//for _, as := range str.GroupList {
-	//	log.Println(as.GroupName, "sender")
-	//}
+	//for _, as := range str.Group
 	for _, conn := range conns {
 		err := conn.WriteJSON(str)
 		if err != nil {

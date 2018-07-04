@@ -70,9 +70,6 @@ func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut cha
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User}
 	userList := []models.User{}
 	u.userManager.GetUsers(&userList)
-	//for _, user := range userList {
-	//	messageOut.ContactList = append(messageOut.ContactList, user)
-	//}
 	messageOut.ContactList = userList
 	chanOut <- &messageOut
 }

@@ -92,7 +92,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 func (r *RouterOut) getAction(msg *serviceModels.MessageOut) string {
 
 	switch msg.Action {
-	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error", "SendMessageTo":
+	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error":
 		return msg.Action
 	default:
 		return "Not an Action"

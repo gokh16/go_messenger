@@ -19,9 +19,22 @@ nav img {
 
 #chat-messages {
     min-height: 10vh;
-    height: 60vh;
+    height: 65vh;
     width: 100%;
     overflow-y: auto;
 
 }
+#userList{
+    margin-top: 20px;
+    min-height: 10vh;
+    height: 45vh;
+    width: 100%;
+    overflow-y: auto;
+}
+
+#signup{
+    height: 60vh;
+    width: 20%;
+}
+
 

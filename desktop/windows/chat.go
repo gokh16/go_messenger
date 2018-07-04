@@ -56,10 +56,12 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		for {
 			if status == "chat" { //todo finish THIS PART!
 				msg := util.JSONdecode(conn)
-				if msg.Message.Content != "" && msg.Message.MessageRecipientID == config.GroupID[config.GroupName]{
+				log.Println(msg.Message.Content, msg.Action, "chat window")
+
+				//if msg.Message.Content != "" && msg.Message.MessageRecipientID == config.GroupID[config.GroupName]{
+				if msg.Message.Content != "" {
 					output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
 				}
-				log.Println(msg.Action, "chat window")
 				//todo подтягивать сообщение из базы
 				//todo create update timeout
 

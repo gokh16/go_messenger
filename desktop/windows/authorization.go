@@ -58,7 +58,7 @@ func DrawAuthWindow(conn net.Conn) {
 		if err != nil {
 			log.Println(err)
 		}
-		if config.ErrorStatus {
+		if config.ErrorStatus || passwordInput.Text() == "" {
 			DrawErrorWindow("Wrong login or password!")
 		} else {
 			window.Hide()

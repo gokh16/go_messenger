@@ -16,34 +16,31 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 	button.OnClicked(func(*ui.Button) {
 		output.SetText("")
 
-		go func() {
-			users := make(map[uint]string)
-			members := make([]structure.User, 0)
-			for {
-				msg := JSONdecode(conn)
-				for _, group := range msg.GroupList {
-					if group.GroupName == button.Text() {
-						config.MessagesInGroup = group.Messages
-						members = group.Members
-						break
-					}
-				}
-				for _, user := range members {
-					users[user.ID] = user.Login
-				}
-				break
-			}
-			for _, message := range config.MessagesInGroup {
-				var login string
-				for id, name := range users {
-					if message.MessageSenderID == id {
-						login = name
-					}
-				}
-				output.Append(login + ": " + message.Content + "\n")
-			}
-			config.MarkForRead <- "chat"
-		}()
+		//go func() {
+		//	users := make(map[uint]string)
+		//	members := make([]structure.User, 0)
+		//	for _, group := range data.GroupList {
+		//		if group.GroupName == button.Text() {
+		//			config.MessagesInGroup = group.Messages
+		//			members = group.Members
+		//			break
+		//		}
+		//	}
+		//	for _, user := range members {
+		//		users[user.ID] = user.Login
+		//	}
+		//
+		//	for _, message := range config.MessagesInGroup {
+		//		var login string
+		//		for id, name := range users {
+		//			if message.MessageSenderID == id {
+		//				login = name
+		//			}
+		//		}
+		//		output.Append(login + ": " + message.Content + "\n")
+		//	}
+		//	config.MarkForRead <- "chat"
+		//}()
 
 		var members []structure.User
 		members = append(members, structure.User{
@@ -101,7 +98,7 @@ func ContactsAction(button *ui.Button, conn net.Conn, contacts *ui.Window, chat 
 			for {
 				if status == "contacts" {
 					msg := JSONdecode(conn)
-					if msg.Status{
+					if msg.Status {
 						config.MarkForRedrawChatWindow <- "groups are accepted"
 					}
 				}

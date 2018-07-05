@@ -1,6 +1,8 @@
 package config
 
-import "go_messenger/desktop/structure"
+import (
+	"go_messenger/desktop/structure"
+)
 
 var UserGroups []string
 var Login string

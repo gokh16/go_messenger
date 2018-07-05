@@ -6,14 +6,12 @@ import (
 	"go_messenger/desktop/util"
 	"log"
 	"net"
-	"time"
 
 	"github.com/ProtonMail/ui"
 )
 
 //DrawChatWindow is a func which draw window by GTK's help
 func DrawChatWindow(conn net.Conn) *ui.Window {
-	time.Sleep(30 * time.Millisecond)
 	window := ui.NewWindow(config.Login, 800, 500, false)
 	input := ui.NewEntry()
 	input.SetText("message")
@@ -29,7 +27,6 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	usersBox := ui.NewVerticalBox()
 	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
-
 	for _, group := range config.UserGroups {
 		if group != "" && group != config.Login {
 			buttonWithGroup := ui.NewButton(group)
@@ -52,21 +49,11 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	mainBox.Append(usersBox, false)
 	mainBox.Append(messageBox, true)
 	go func() {
-		status := <-config.MarkForRead
-		for {
-			if status == "chat" { //todo finish THIS PART!
-				msg := util.JSONdecode(conn)
-				log.Println(msg.Message.Content, msg.Action, "chat window")
-
-				//if msg.Message.Content != "" && msg.Message.MessageRecipientID == config.GroupID[config.GroupName]{
-				if msg.Message.Content != "" {
-					output.Append(msg.User.Login + ": " + msg.Message.Content + "\n")
-				}
-				//todo подтягивать сообщение из базы
-				//todo create update timeout
-
-			}
+		json := <-InputData
+		if json.Action == "SendMessageTo" && json.Message.Content != "" {
+			output.Append(json.User.Login + ": " + json.Message.Content + "\n")
 		}
+
 	}()
 	send.OnClicked(func(*ui.Button) {
 		//FIX SLICEMEMBER

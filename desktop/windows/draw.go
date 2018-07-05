@@ -11,6 +11,9 @@ import (
 //with further hierarchy
 func Draw() {
 	conn, err := net.Dial("tcp", ":8080")
+	go func() {
+		Reader(conn)
+	}()
 	if err != nil {
 		log.Fatal(err)
 	}

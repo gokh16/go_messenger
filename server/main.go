@@ -17,6 +17,7 @@ func init() {
 }
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// init connections struct
 	connectionList := userConnections.InitConnections()
@@ -26,9 +27,6 @@ func main() {
 
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)
-
-	//init services
-	routerIn.InitServices(&dbservice.UserDBService{}, &dbservice.GroupDBService{}, &dbservice.MessageDBService{})
 
 	ws.NewHandlerWS(connectionList)
 	fmt.Println("WS started : Ok!")

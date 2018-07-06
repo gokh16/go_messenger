@@ -12,6 +12,7 @@ import (
 
 //DrawChatWindow is a func which draw window by GTK's help
 func DrawChatWindow(conn net.Conn) *ui.Window {
+	log.Println("Opened DrawChatWindow")
 	window := ui.NewWindow(config.Login, 800, 500, false)
 	input := ui.NewEntry()
 	input.SetText("message")
@@ -34,11 +35,6 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 			buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
 		}
 	}
-	for i := 0; i < len(buttonUserSlice); i++ {
-		util.ButtonActions(buttonUserSlice[i], conn, output)
-		output.SetText("")
-	}
-
 	userHeader.Append(profile, true)
 	userHeader.Append(contacts, true)
 	messageBox := ui.NewVerticalBox()
@@ -49,13 +45,24 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	mainBox.Append(usersBox, false)
 	mainBox.Append(messageBox, true)
 	go func() {
+		log.Println("Routine for accept, hang listeners and show data")
 		json := <-InputData
-		if json.Action == "SendMessageTo" && json.Message.Content != "" {
-			output.Append(json.User.Login + ": " + json.Message.Content + "\n")
+		for i := 0; i < len(buttonUserSlice); i++ {
+			util.ButtonActions(buttonUserSlice[i], conn, output, json)
+			output.SetText("")
 		}
-
+	}()
+	go func() {
+		log.Println("Routine whis is printing input messages from server")
+		for {
+			json := <-InputData
+			if json.Action == "SendMessageTo" && json.Message.Content != "" {
+				output.Append(json.User.Login + ": " + json.Message.Content + "\n")
+			}
+		}
 	}()
 	send.OnClicked(func(*ui.Button) {
+		log.Println("Button Send clicked")
 		//FIX SLICEMEMBER
 		output.Append(config.Login + ": " + input.Text() + "\n")
 		id := config.GroupID[config.GroupName]
@@ -75,6 +82,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		}
 	})
 	contacts.OnClicked(func(*ui.Button) {
+		log.Println("Button Contacts clicked")
 		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
 		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "GetUsers")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))

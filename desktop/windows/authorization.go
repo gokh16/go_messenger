@@ -12,6 +12,7 @@ import (
 
 //DrawAuthWindow is a func which draw window by GTK's help
 func DrawAuthWindow(conn net.Conn) {
+	log.Println("Opened DrawAuthWindow")
 	window := ui.NewWindow("Chat", 500, 500, false)
 	loginInput := ui.NewEntry()
 	passwordInput := ui.NewPasswordEntry()
@@ -48,6 +49,7 @@ func DrawAuthWindow(conn net.Conn) {
 	//обработчик кнопки входа, который отправляет запрос на получение всех юзеров в базе
 	//для вывода и создание кнопок с ними
 	signIn.OnClicked(func(*ui.Button) {
+		log.Println("Button SignIn clicked")
 		config.Login = loginInput.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
@@ -63,9 +65,10 @@ func DrawAuthWindow(conn net.Conn) {
 			window.Hide()
 			DrawChatWindow(conn)
 		}
-
+		InputData <- json
 	})
 	signUp.OnClicked(func(*ui.Button) {
+		log.Println("Button SignUp clicked")
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 		config.Login = loginInput.Text()

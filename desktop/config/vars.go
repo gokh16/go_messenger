@@ -10,6 +10,5 @@ var GroupName string
 var UserID uint
 var MessagesInGroup []structure.Message
 var GroupID = make(map[string]uint)
-var ErrorStatus bool
-var MarkForRead = make(chan string)
-var MarkForRedrawChatWindow = make(chan string)
+var UsersInGroup = make(map[uint]string)
+var MembersInGroup []structure.User

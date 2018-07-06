@@ -34,7 +34,6 @@ func (r *RouterOut) Handler() {
 			tcp.WaitJSON(sliceTCPCon, msg)
 		}
 		if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
-			fmt.Println("fmt",msg.User.Username)
 			ws.SendJSON(sliceWSCon, msg)
 		}
 	}

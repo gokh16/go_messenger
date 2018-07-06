@@ -12,53 +12,39 @@ import (
 )
 
 //ButtonActions is hanging listeners for group buttons
-func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
+func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry, data MessageIn) string {
 	button.OnClicked(func(*ui.Button) {
+		log.Println("Groups button listener function opened")
 		output.SetText("")
 
-		//go func() {
-		//	users := make(map[uint]string)
-		//	members := make([]structure.User, 0)
-		//	for _, group := range data.GroupList {
-		//		if group.GroupName == button.Text() {
-		//			config.MessagesInGroup = group.Messages
-		//			members = group.Members
-		//			break
-		//		}
-		//	}
-		//	for _, user := range members {
-		//		users[user.ID] = user.Login
-		//	}
-		//
-		//	for _, message := range config.MessagesInGroup {
-		//		var login string
-		//		for id, name := range users {
-		//			if message.MessageSenderID == id {
-		//				login = name
-		//			}
-		//		}
-		//		output.Append(login + ": " + message.Content + "\n")
-		//	}
-		//	config.MarkForRead <- "chat"
-		//}()
+		go func() {
+			log.Println("Routine which is getting messages and opening group")
+
+			for _, group := range data.GroupList {
+				if group.GroupName == button.Text() {
+					config.MessagesInGroup = group.Messages
+					config.MembersInGroup = group.Members
+					break
+				}
+			}
+			for _, user := range config.MembersInGroup {
+				config.UsersInGroup[user.ID] = user.Login
+			}
+
+			for _, message := range config.MessagesInGroup {
+				var login string
+				for id, name := range config.UsersInGroup {
+					if message.MessageSenderID == id {
+						login = name
+					}
+				}
+				output.Append(login + ": " + message.Content + "\n")
+			}
+		}()
 
 		var members []structure.User
-		members = append(members, structure.User{
-			Login:    config.Login,
-			Password: "testPassword",
-			Username: config.Login,
-			Email:    "test@test.com",
-			Status:   true,
-			UserIcon: "testUserIcon",
-		})
-		members = append(members, structure.User{
-			Login:    button.Text(),
-			Password: "testPassword",
-			Username: button.Text(),
-			Email:    "test@test.com",
-			Status:   true,
-			UserIcon: "testUserIcon",
-		})
+		members = append(members, *NewUser(config.Login, "testPassword", config.Login, "test@test.com", true, "testUserIcon"))
+		members = append(members, *NewUser(button.Text(), "testPassword", button.Text(), "test@test.com", true, "testUserIcon"))
 
 		config.GroupName = button.Text()
 		//формирование новой структуры на отправку на сервер,
@@ -79,8 +65,6 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) 
 //ContactsAction is hanging listeners for contacts buttons
 func ContactsAction(button *ui.Button, conn net.Conn, contacts *ui.Window, chat *ui.Window) {
 	button.OnClicked(func(*ui.Button) {
-		config.MarkForRead <- "contacts"
-
 		var members []structure.User
 		members = append(members, *NewUser(config.Login, "", config.Login, "", true, ""))
 		members = append(members, *NewUser(button.Text(), "", button.Text(), "", true, ""))
@@ -93,18 +77,18 @@ func ContactsAction(button *ui.Button, conn net.Conn, contacts *ui.Window, chat 
 		if err != nil {
 			log.Println(err)
 		}
-		go func() {
-			status := <-config.MarkForRead
-			for {
-				if status == "contacts" {
-					msg := JSONdecode(conn)
-					if msg.Status {
-						config.MarkForRedrawChatWindow <- "groups are accepted"
-					}
-				}
-
-			}
-		}()
+		//go func() {
+		//	status := <-config.MarkForRead
+		//	for {
+		//		if status == "contacts" {
+		//			msg := JSONdecode(conn)
+		//			if msg.Status {
+		//				config.MarkForRedrawChatWindow <- "groups are accepted"
+		//			}
+		//		}
+		//
+		//	}
+		//}()
 
 	})
 }

@@ -13,11 +13,13 @@ import (
 
 //DrawContactsWindow is a func which draw window by GTK's help
 func DrawContactsWindow(conn net.Conn, chatWindow *ui.Window) {
+	log.Println("Opened DrawChatWindow")
 	window := ui.NewWindow("Contacts", 400, 250, false)
 	usersBox := ui.NewVerticalBox()
 	channelForDrawUsers := make(chan []structure.User)
 	users := make([]structure.User, 0)
 	go func() {
+		log.Println("Routine for read and show contacts (NEED TO BE FIXED)")
 		for {
 			log.Println("wow")
 			msg := util.JSONdecode(conn)
@@ -49,13 +51,11 @@ func DrawContactsWindow(conn net.Conn, chatWindow *ui.Window) {
 	}()
 
 	go func() {
+		log.Println("Routine for check and redraw chat window (NEED TO BE FIXED)")
 		for {
-			status := <-config.MarkForRedrawChatWindow
-			if status == "groups are accepted" {
-				window.Hide()
-				chatWindow.Show()
-				DrawChatWindow(conn)
-			}
+			window.Hide()
+			chatWindow.Show()
+			DrawChatWindow(conn)
 		}
 	}()
 

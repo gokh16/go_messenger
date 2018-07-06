@@ -105,8 +105,21 @@ func CreateDatabase() {
 	err = m.Migrate()
 	if err == nil {
 		log.Printf("Migration did run successfully")
+
 	} else {
 		log.Printf("Could not migrate: %v", err)
 	}
+	//initGroupType(db)
 }
+
+//func initGroupType(db *gorm.DB) {
+//	private := models.GroupType{Type: "private"}
+//	public := models.GroupType{Type: "public"}
+//	if !db.NewRecord(&private) {
+//		db.Create(&private)
+//	}
+//	if !db.NewRecord(&public) {
+//		db.Create(&public)
+//	}
+//}
 

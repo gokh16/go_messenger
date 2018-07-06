@@ -11,6 +11,11 @@ import (
 //with further hierarchy
 func Draw() {
 	conn, err := net.Dial("tcp", ":8080")
+	log.Println("Creating connection")
+	go func() {
+		log.Println("Routine which is initializating reader")
+		Reader(conn)
+	}()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -21,6 +26,7 @@ func Draw() {
 		}
 	}()
 	err = ui.Main(func() {
+		log.Println("Main func which create and draw the first window!")
 		DrawAuthWindow(conn)
 	})
 	if err != nil {

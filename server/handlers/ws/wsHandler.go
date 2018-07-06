@@ -2,7 +2,6 @@ package ws
 
 import (
 	"encoding/json"
-	"fmt"
 	"go_messenger/server/routerIn"
 	"go_messenger/server/userConnections"
 	"log"
@@ -83,7 +82,6 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 		log.Println("Unmarshal error")
 	}
 	str.Connection.AddWSConn(conn, message.User.Login)
-	fmt.Println("gn", message.Group.GroupName)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 	//return str.Connection.outChan
 }

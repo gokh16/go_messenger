@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 	//ignoring init from package below
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"log"
 )
 
 var dbConn *gorm.DB
@@ -19,6 +20,6 @@ func OpenConnDB() *gorm.DB {
 	if err != nil {
 		fmt.Println("gorm Open connection error: ", err)
 	}
-	fmt.Println("db open ok")
+	log.Println("DB opened ok")
 	return dbConn
 }

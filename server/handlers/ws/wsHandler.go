@@ -53,6 +53,7 @@ func Handler(str HandlerWS) {
 
 //ReadMessage is a func for reading data from ws connection
 func ReadMessage(conn *websocket.Conn, str HandlerWS) {
+	defer conn.Close()
 	for {
 		messageType, data, err := conn.ReadMessage()
 		if err != nil {

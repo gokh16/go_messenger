@@ -1,7 +1,6 @@
 package routerOut
 
 import (
-	"fmt"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
 	"go_messenger/server/userConnections"
@@ -10,6 +9,7 @@ import (
 	"go_messenger/server/service/serviceModels"
 
 	"github.com/gorilla/websocket"
+	"log"
 )
 
 //RouterOut is a structure which has attribute to connect with source structure in userConnections
@@ -27,27 +27,24 @@ func InitRouterOut(conn *userConnections.Connections) {
 // Handler is a main func which is establish connections and call func for reading data from
 //connection
 func (r *RouterOut) Handler() {
-
 	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 			tcp.WaitJSON(sliceTCPCon, msg)
 		}
 		if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
-			fmt.Println("fmt",msg.User.Username)
 			ws.SendJSON(sliceWSCon, msg)
 		}
 	}
 }
 
 func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
-
 	//get current TCP connections
 	mapTCP := r.Connection.GetAllTCPConnections()
-	fmt.Println("ONLINE TCP connects -> ", len(mapTCP))
+	log.Printf("ONLINE TCP connects -> %d", len(mapTCP))
 	var sliceTCP []net.Conn
 
-	if msg.Action == r.getAction(msg) { //LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error
+	if msg.Action == r.getAction(msg) {				//LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error
 		for conn, onlineUser := range mapTCP {
 			if onlineUser == msg.User.Username {
 				sliceTCP = append(sliceTCP, conn)
@@ -66,13 +63,12 @@ func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 }
 
 func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Conn {
-
 	//get current WS connections
 	mapWS := r.Connection.GetAllWSConnections()
-	fmt.Println("ONLINE WS connects -> ", len(mapWS))
+	log.Printf("ONLINE WS connects -> %d", len(mapWS))
 	var sliceWS []*websocket.Conn
 
-	if msg.Action == r.getAction(msg) { //LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error"
+	if msg.Action == r.getAction(msg) {				//LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error"
 		for conn, onlineUser := range mapWS {
 			if onlineUser == msg.User.Login {
 				sliceWS = append(sliceWS, conn)
@@ -91,11 +87,10 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 }
 
 func (r *RouterOut) getAction(msg *serviceModels.MessageOut) string {
-
 	switch msg.Action {
 	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error":
 		return msg.Action
 	default:
-		return "Not an Action"
+		return "No matches found"
 	}
 }

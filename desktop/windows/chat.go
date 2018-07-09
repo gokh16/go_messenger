@@ -28,13 +28,24 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	usersBox := ui.NewVerticalBox()
 	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
-	for _, group := range config.UserGroups {
-		if group != "" && group != config.Login {
-			buttonWithGroup := ui.NewButton(group)
-			usersBox.Append(buttonWithGroup, false)
-			buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
+	go func() {
+		json := <-SignIn
+		log.Println("Routine for accept, hang listeners and show data")
+		for _, group := range config.UserGroups {
+			if group != "" && group != config.Login {
+				buttonWithGroup := ui.NewButton(group)
+				usersBox.Append(buttonWithGroup, false)
+				buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
+			}
 		}
-	}
+		for i := 0; i < len(buttonUserSlice); i++ {
+			util.ButtonActions(buttonUserSlice[i], conn, output, json)
+			output.SetText("")
+		}
+		close(SignIn)
+		return
+	}()
+
 	userHeader.Append(profile, true)
 	userHeader.Append(contacts, true)
 	messageBox := ui.NewVerticalBox()
@@ -45,17 +56,9 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	mainBox.Append(usersBox, false)
 	mainBox.Append(messageBox, true)
 	go func() {
-		log.Println("Routine for accept, hang listeners and show data")
-		json := <-InputData
-		for i := 0; i < len(buttonUserSlice); i++ {
-			util.ButtonActions(buttonUserSlice[i], conn, output, json)
-			output.SetText("")
-		}
-	}()
-	go func() {
 		log.Println("Routine whis is printing input messages from server")
 		for {
-			json := <-InputData
+			json := <-Send
 			if json.Action == "SendMessageTo" && json.Message.Content != "" {
 				output.Append(json.User.Login + ": " + json.Message.Content + "\n")
 			}

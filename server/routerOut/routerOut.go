@@ -9,6 +9,8 @@ import (
 
 	"go_messenger/server/service/serviceModels"
 
+	"log"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -30,8 +32,9 @@ func (r *RouterOut) Handler() {
 
 	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
+		log.Println(msg.Message.Content)
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
-			tcp.WaitJSON(sliceTCPCon, msg)
+			tcp.SendJSON(sliceTCPCon, msg)
 		}
 		if sliceWSCon := r.getSliceOfWS(msg); sliceWSCon != nil {
 			ws.SendJSON(sliceWSCon, msg)

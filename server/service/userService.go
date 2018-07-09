@@ -5,6 +5,7 @@ import (
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
+	"log"
 )
 
 //UserService ...
@@ -22,8 +23,13 @@ func (u *UserService) InitUserService(ui interfaces.UserManager, gi interfaces.G
 
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action,
-		Status: u.userManager.CreateUser(&messageIn.User)}
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	var err error
+	messageOut.Status, err = u.userManager.CreateUser(&messageIn.User)
+	log.Println(err)
+	if err != nil {
+		messageOut.Err = "DBError when CreateUser. " + err.Error()
+	}
 	chanOut <- &messageOut
 }
 

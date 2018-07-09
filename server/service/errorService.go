@@ -8,7 +8,7 @@ import (
 )
 
 type ErrorService struct {
-	err error //a
+	err error
 }
 
 func (e *ErrorService) Error() string {
@@ -20,6 +20,6 @@ func (e *ErrorService) UnknownActionError(messageIn *userConnections.MessageIn, 
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: "Error"}
 	messageOut.Err = e.err.Error()
 
-	log.Println(messageOut.Err, " :ERROR SERVICE")
+	log.Println(messageOut.Err)
 	chanOut <- &messageOut
 }

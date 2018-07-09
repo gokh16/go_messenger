@@ -2,7 +2,6 @@ package ws
 
 import (
 	"encoding/json"
-	"fmt"
 	"go_messenger/server/routerIn"
 	"go_messenger/server/userConnections"
 	"log"
@@ -53,6 +52,7 @@ func Handler(str HandlerWS) {
 
 //ReadMessage is a func for reading data from ws connection
 func ReadMessage(conn *websocket.Conn, str HandlerWS) {
+	defer conn.Close()
 	for {
 		messageType, data, err := conn.ReadMessage()
 		if err != nil {
@@ -82,7 +82,7 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 		log.Println("Unmarshal error")
 	}
 	str.Connection.AddWSConn(conn, message.User.Login)
-	fmt.Println("gn", message.Group.GroupName)
+	log.Println("Group Name", message.Group.GroupName)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 	//return str.Connection.outChan
 }

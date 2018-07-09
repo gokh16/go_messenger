@@ -12,6 +12,7 @@ import (
 
 //DrawAuthWindow is a func which draw window by GTK's help
 func DrawAuthWindow(conn net.Conn) {
+	log.Println("Opened DrawAuthWindow")
 	window := ui.NewWindow("Chat", 500, 500, false)
 	loginInput := ui.NewEntry()
 	passwordInput := ui.NewPasswordEntry()
@@ -48,6 +49,7 @@ func DrawAuthWindow(conn net.Conn) {
 	//обработчик кнопки входа, который отправляет запрос на получение всех юзеров в базе
 	//для вывода и создание кнопок с ними
 	signIn.OnClicked(func(*ui.Button) {
+		log.Println("Button SignIn clicked")
 		config.Login = loginInput.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
@@ -58,15 +60,15 @@ func DrawAuthWindow(conn net.Conn) {
 		if err != nil {
 			log.Println(err)
 		}
-		if config.ErrorStatus {
-			DrawErrorWindow("Wrong login or password!")
-		} else {
+		json := <-InputData
+		if json.Action == "LoginUser" && json.Status {
 			window.Hide()
 			DrawChatWindow(conn)
-			log.Println(config.UserGroups)
 		}
+		InputData <- json
 	})
 	signUp.OnClicked(func(*ui.Button) {
+		log.Println("Button SignUp clicked")
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 		config.Login = loginInput.Text()
@@ -79,22 +81,5 @@ func DrawAuthWindow(conn net.Conn) {
 		window.Hide()
 		DrawChatWindow(conn)
 	})
-
-	go func() {
-		for {
-			msg := util.JSONdecode(conn)
-			config.ErrorStatus = msg.Status
-			log.Println(config.ErrorStatus)
-			if !config.ErrorStatus {
-				DrawErrorWindow("Wrong login or password!")
-			}
-			for _, contacts := range msg.GroupList {
-				config.UserGroups = append(config.UserGroups, contacts.GroupName)
-				config.GroupID[contacts.GroupName] = contacts.ID
-			}
-			config.UserID = msg.User.ID
-			break
-		}
-	}()
 
 }

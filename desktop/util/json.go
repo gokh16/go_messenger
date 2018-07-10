@@ -32,6 +32,7 @@ type MessageIn struct {
 	Action      string
 	Err         string
 }
+
 //Group is a group structure
 type Group struct {
 	ID        uint
@@ -62,7 +63,7 @@ func JSONdecode(conn net.Conn) MessageIn {
 		log.Println(jsonError, "unmarshaling")
 	}
 	if message.Err != "" {
-		log.Println(message.Err,  " :CLIENT")
+		log.Println(message.Err, " :CLIENT")
 	}
 	return message
 }

@@ -77,18 +77,6 @@ func ContactsAction(button *ui.Button, conn net.Conn, contacts *ui.Window, chat 
 		if err != nil {
 			log.Println(err)
 		}
-		//go func() {
-		//	status := <-config.MarkForRead
-		//	for {
-		//		if status == "contacts" {
-		//			msg := JSONdecode(conn)
-		//			if msg.Status {
-		//				config.MarkForRedrawChatWindow <- "groups are accepted"
-		//			}
-		//		}
-		//
-		//	}
-		//}()
 
 	})
 }

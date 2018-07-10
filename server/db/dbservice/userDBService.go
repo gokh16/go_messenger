@@ -21,22 +21,22 @@ func (u *UserDBService) CreateUser(user *models.User) (bool, error) {
 }
 
 //LoginUser - user's auth.
-func (u *UserDBService) LoginUser(user *models.User) bool {
+func (u *UserDBService) LoginUser(user *models.User) (bool, error) {
 	model := models.User{}
 	dbConn.Where("password = ?", user.Password).Where("login = ?", user.Login).Take(&model)
-	return model.Status
+	return model.Status, dbConn.Error
 }
 
 //AddContact add spesial user to contact list of special User
-func (u *UserDBService) AddContact(user, contact *models.User, relationType uint) bool {
+func (u *UserDBService) AddContact(user, contact *models.User, relationType uint) (bool, error) {
 	dbConn.Where("login = ?", user.Login).First(&user)
 	dbConn.Where("login = ?", contact.Login).First(&contact)
 	relation := models.UserRelation{RelatingUser: user.ID, RelatedUser: contact.ID, RelationTypeID: relationType}
 	if dbConn.NewRecord(relation) {
 		dbConn.Create(&relation)
-		return true
+		return true, dbConn.Error
 	}
-	return false
+	return false, dbConn.Error
 
 }
 

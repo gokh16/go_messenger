@@ -5,7 +5,6 @@ import (
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	"log"
 )
 
 //UserService ...
@@ -24,12 +23,11 @@ func (u *UserService) InitUserService(ui interfaces.UserManager, gi interfaces.G
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
-	var err error
-	messageOut.Status, err = u.userManager.CreateUser(&messageIn.User)
-	log.Println(err)
+	ok, err := u.userManager.CreateUser(&messageIn.User)
 	if err != nil {
 		messageOut.Err = "DBError when CreateUser. " + err.Error()
 	}
+	messageOut.Status = ok
 	chanOut <- &messageOut
 }
 
@@ -41,8 +39,10 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.Status = false
 		chanOut <- &messageOut
 	}
-
-	ok := u.userManager.LoginUser(&messageIn.User)
+	ok, err := u.userManager.LoginUser(&messageIn.User)
+	if err != nil {
+		messageOut.Err = "Error when LoginUser. " + err.Error()
+	}
 	if ok {
 		groupList := u.groupManager.GetGroupList(&messageIn.User)
 		for _, group := range groupList {
@@ -62,9 +62,13 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 
 //AddContact add spesial user to contact list of special User
 func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	ok := u.userManager.AddContact(&messageIn.User, &messageIn.Contact, messageIn.RelationType)
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
-		Status: ok, Action: messageIn.Action}
+		Action: messageIn.Action}
+	ok, err := u.userManager.AddContact(&messageIn.User, &messageIn.Contact, messageIn.RelationType)
+	if err != nil {
+		messageOut.Err = "Error when AddContact" + err.Error()
+	}
+	messageOut.Status = ok
 	chanOut <- &messageOut
 }
 

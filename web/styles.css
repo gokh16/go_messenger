@@ -94,4 +94,7 @@ nav img {
 .menu_opened{
     display: block;
 }
+#menuContent{
+    padding-top: 60px;
+}
 

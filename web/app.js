@@ -151,7 +151,7 @@ var test = new Vue({
                             }
                         }
                     }
-            }
+
 
             element.scrollTop = element.scrollHeight;// Auto scroll to the bottom
         });

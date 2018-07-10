@@ -19,7 +19,6 @@ var Groups = make(chan util.MessageIn)
 //Reader method is listening connection and routes data to the next step
 func Reader(conn net.Conn) {
 	for {
-		//todo blocking sendmessageto
 		msg := util.JSONdecode(conn)
 		log.Println(msg.Action)
 		switch msg.Action {
@@ -31,17 +30,12 @@ func Reader(conn net.Conn) {
 				config.GroupID[contacts.GroupName] = contacts.ID
 			}
 			config.UserID = msg.User.ID
-		case "GetGroup":
-			log.Println("get group")
 		case "CreateUser":
-			log.Println("registr")
 			SignUp <- msg
 		case "GetUsers":
-			log.Println("get")
 			log.Println(Contacts)
 			Contacts <- msg.ContactList
 		case "SendMessageTo":
-			log.Println("send")
 			Send <- msg
 		}
 	}

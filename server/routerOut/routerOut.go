@@ -32,7 +32,7 @@ func (r *RouterOut) Handler() {
 
 	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
-		log.Println(msg.Message.Content)
+		log.Println(msg.Action)
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 			tcp.SendJSON(sliceTCPCon, msg)
 		}

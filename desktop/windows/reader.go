@@ -33,7 +33,6 @@ func Reader(conn net.Conn) {
 			config.UserID = msg.User.ID
 		case "GetGroup":
 			log.Println("get group")
-			Groups <- msg
 		case "CreateUser":
 			log.Println("registr")
 			SignUp <- msg

@@ -59,9 +59,8 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		log.Println("Routine whis is printing input messages from server")
 		for {
 			json := <-Send
-			if json.Action == "SendMessageTo" && json.Message.Content != "" {
-				output.Append(json.User.Login + ": " + json.Message.Content + "\n")
-			}
+			output.Append(json.User.Login + ": " + json.Message.Content + "\n")
+
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {

@@ -24,6 +24,12 @@ nav img {
     overflow-y: auto;
 
 }
+#groupList{
+    min-height: 10vh;
+    height: 40vh;
+    width: 100%;
+    overflow-y: auto;
+}
 #userList{
     margin-top: 20px;
     min-height: 10vh;
@@ -36,5 +42,56 @@ nav img {
     height: 60vh;
     width: 20%;
 }
+.searchclass{
+    margin-top: 2vh;
+}
+.burger{
+    left: 70px;
+    width: 55px;
+    height: 5px;
+    background-color: #E6E6E6;
+    position: relative;
+}
+.burger::before, .burger::after{
+    content: '';
+    display: block;
+    position: absolute;
+    width: 55px;
+    height: 5px;
+    background-color: #E6E6E6;
+    left:0;
+    top:13px;
+}
+.burger::after{
+    top: 26px;
+}
 
+.burger_trigger{
+    right: 0;
+    position: absolute;
+    top: 80px;
+    height: 45px;
+    width: 55px;
+    cursor: pointer;
+
+}
+.menu,.menu_opened{
+    display: none;
+    padding-top: 35px;
+    cursor: pointer;
+
+}
+.menu_opened li{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    background-color:#73A0E8;
+}
+.menu_opened li:hover{
+    background-color: white;
+    color: black;
+}
+.menu_opened{
+    display: block;
+}
 

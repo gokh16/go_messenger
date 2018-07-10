@@ -52,6 +52,8 @@ var test = new Vue({
         joined: false, // True if email and username have been filled in
         OnlineUsers: '',
         MyGroups: '',
+        searchUser: '',
+        typeOfAction: null,
     },
 
 
@@ -126,37 +128,29 @@ var test = new Vue({
                     self.RecContent = self.RecContents[msg.Message.Group.GroupName];
                 }
             }else if(msg.Action =="GetUsers"){
-                //this.User = msg.User;
-                self.OnlineUsers = '';
-                if(typeof msg.ContactList != "undefined") {
-                    for (var i = 0; i < msg.ContactList.length; i++) {
-                        if (test.User.Login != msg.ContactList[i].Login) {
-                            var gName = test.User.Login + msg.ContactList[i].Login;
-                            //var rgName = msg.ContactList[i].Login+test.User.Login;
-                            // var dex = true;
-                            // if(typeof test.GroupList != "undefined" && test.GroupList != null) {
-                            //     for(var g =0; g< test.GroupList.length;g++){
-                            //         if(gName == test.GroupList[g] || rgName == test.GroupList[g]){
-                            //             dex = false;
-                            //         }
-                            //     }
-                            // }
-                            test.UsersFromServer[gName] = msg.ContactList[i];
-                            self.OnlineUsers +=
-                                '<div class="input-field col s12">' +
-                                '<button class="waves-effect waves-light btn col s12" onclick=createGroup(this) id = ' +
-                                gName + '>' +
-                                msg.ContactList[i].Username +
-                                '</button></div>' +
-                                '<br/>';
 
+                //this.User = msg.User;
+                var element2 = document.getElementById('menuContent');
+                    self.OnlineUsers = '';
+                    if (typeof msg.ContactList != "undefined") {
+                        for (var i = 0; i < msg.ContactList.length; i++) {
+                            if (test.User.Login != msg.ContactList[i].Login) {
+                                var gName = test.User.Login + msg.ContactList[i].Login;
+                                test.UsersFromServer[gName] = msg.ContactList[i];
+                                    element2.innerHTML +=
+                                        '<div class="input-field col s12">' +
+                                        '<button class="waves-effect waves-light btn col s12" onclick=createGroup(this) id = ' +
+                                        gName + '>' +
+                                        msg.ContactList[i].Username +
+                                        '</button></div>' +
+                                        '<br/>';
+
+
+
+                                }
+                            }
                         }
                     }
-                }
-
-
-
-
             }
 
             element.scrollTop = element.scrollHeight;// Auto scroll to the bottom
@@ -234,13 +228,40 @@ var test = new Vue({
             location.href="index.html"
         },
         showUsers: function (){
-
+            this.typeOfAction = 1;
             this.MessageIn.User.Login = this.User.Login;
             this.MessageIn.User.Username = this.User.Username;
 
             this.MessageIn.Action = "GetUsers";
             this.ws.send(JSON.stringify(this.MessageIn))
         },
+        search: function(){
+            this.typeOfAction = 2;
+            this.MessageIn.Action = "GetUsers";
+            this.ws.send(JSON.stringify(this.MessageIn))
+        },
+        burger: function () {
+            $('.menu').toggleClass('menu_opened');
+            $(document).click(function(event) {
+                if ($(event.target).closest(".burger_trigger").length ) return;
+                $('.menu').removeClass('menu_opened');
+                event.stopPropagation();
+            });
+
+        },
+        showContacts: function(){
+            var element = document.getElementById('menuContent');
+            this.typeOfAction = 1;
+            this.MessageIn.User.Login = this.User.Login;
+            this.MessageIn.User.Username = this.User.Username;
+
+            this.MessageIn.Action = "GetUsers";
+            this.ws.send(JSON.stringify(this.MessageIn))
+        },
+        exit: function () {
+            this.joined = false;
+            location.reload();
+        }
     }
 });
 
@@ -272,7 +293,7 @@ function createGroup(el) {
         el.remove();
         var a = document.getElementById(el.id);
         if (a == null) {
-            var element = document.getElementById('chat-messages');
+            var element = document.getElementById('groupList');
             element.innerHTML += '<div class="input-field col s12">' +
                 '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
                 test.MessageIn.Group.GroupName + '>' +

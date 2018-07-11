@@ -60,12 +60,11 @@ func DrawAuthWindow(conn net.Conn) {
 		if err != nil {
 			log.Println(err)
 		}
-		json := <-InputData
-		if json.Action == "LoginUser" && json.Status {
+		if passwordInput.Text() != "" {
 			window.Hide()
 			DrawChatWindow(conn)
 		}
-		InputData <- json
+		return
 	})
 	signUp.OnClicked(func(*ui.Button) {
 		log.Println("Button SignUp clicked")
@@ -80,6 +79,7 @@ func DrawAuthWindow(conn net.Conn) {
 		}
 		window.Hide()
 		DrawChatWindow(conn)
+		return
 	})
 
 }

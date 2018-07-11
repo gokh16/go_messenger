@@ -42,6 +42,8 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go groupService.GetGroup(messageIn, chanOut)
 	case "GetGroupList":
 		go groupService.GetGroupList(messageIn, chanOut)
+	case "DeleteUser":
+		go groupService.GetGroupList(messageIn, chanOut)
 
 	default:
 		var errorService = service.ErrorService{}

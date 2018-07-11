@@ -67,3 +67,8 @@ func (u *UserDBService) GetContactList(user *models.User) []models.User {
 	}
 	return contactList
 }
+
+func (u *UserDBService) DeleteUser(user *models.User) bool {
+	dbConn.Where("login = ?", user.Login).Delete(&user)
+	return true
+}

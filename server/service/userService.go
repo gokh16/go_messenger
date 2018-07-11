@@ -23,6 +23,11 @@ func (u *UserService) InitUserService(ui interfaces.UserManager, gi interfaces.G
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	if messageIn.User.Password == "" || messageIn.User.Login == "" {
+		messageOut.Err = "Emty Login or Password"
+		messageOut.Status = false
+		chanOut <- &messageOut
+	}
 	ok, err := u.userManager.CreateUser(&messageIn.User)
 	if err != nil {
 		messageOut.Err = "DBError when CreateUser. " + err.Error()
@@ -88,14 +93,10 @@ func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan
 	chanOut <- &messageOut
 }
 
-//EditUser method edit own client's user and saves it in DB.
-func (u *UserService) EditUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
-	chanOut <- &messageOut
-}
-
 //DeleteUser method delete own account user from DB.
 func (u *UserService) DeleteUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	messageOut := serviceModels.MessageOut{
+		Action: messageIn.Action,
+		Status: u.userManager.DeleteUser(&messageIn.User)}
 	chanOut <- &messageOut
 }

@@ -10,4 +10,5 @@ type UserManager interface {
 	GetUsers(users *[]models.User)
 	GetUser(user *models.User) models.User
 	GetContactList(user *models.User) []models.User
+	EditUser(user *models.User) models.User
 }

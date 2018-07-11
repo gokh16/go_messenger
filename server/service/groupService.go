@@ -83,7 +83,8 @@ func (g *GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanO
 
 //EditGroup method edit owner's special group and saves changes.
 func (g *GroupService) EditGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	ok := g.groupManager.EditGroup(&messageIn.Group)
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User, Status: ok}
 	chanOut <- &messageOut
 }
 

@@ -3,6 +3,7 @@ package dbservice
 import (
 	"fmt"
 	"go_messenger/server/models"
+	"log"
 )
 
 //UserDBService type with build-in model of User.
@@ -68,4 +69,22 @@ func (u *UserDBService) GetContactList(user *models.User) []models.User {
 		contactList = append(contactList, contact)
 	}
 	return contactList
+}
+
+//EditUser method updates fields of the table Users in the DB
+//It returns updated user instance with status of update
+func (u *UserDBService) EditUser(user *models.User) models.User {
+	userInstance := models.User{}
+	dbConn.Where("login = ?", user.Login).Take(&userInstance)
+	userInstance.Username = user.Username
+	userInstance.Email = user.Email
+	if user.Password != "" {
+		userInstance.Password = user.Password
+	}
+	dbConn.Save(&userInstance)
+	if userInstance.Status {
+		log.Printf("User with login %s was updated", userInstance.Login)
+		return userInstance
+	}
+	return userInstance
 }

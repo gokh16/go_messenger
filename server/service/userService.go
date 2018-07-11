@@ -31,7 +31,7 @@ func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut c
 func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	if messageIn.User.Password == "" || messageIn.User.Login == "" {
-		messageOut.Err = "Emty Login or Password"
+		messageOut.Err = "Empty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
 	}

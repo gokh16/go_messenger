@@ -54,7 +54,7 @@ func HandleJSON(conn net.Conn, str *HandlerTCP) {
 	for {
 		data, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			log.Printf("Client %v is gone!\n", str.Connection.GetUserNameByTCPConnection(conn))
+			log.Printf("Client %v is gone!\n", str.Connection.GetUserLoginByTCPConnection(conn))
 			str.Connection.DeleteTCPConn(conn)
 			log.Printf("ONLINE TCP CONNECTS AFTER DISCONNECT: -> %v", len(str.Connection.GetAllTCPConnections()))
 			return
@@ -71,6 +71,6 @@ func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	str.Connection.AddTCPConn(conn, message.User.Username)
+	str.Connection.AddTCPConn(conn, message.User.Login)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 }

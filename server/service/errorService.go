@@ -18,7 +18,7 @@ func (e *ErrorService) Error() string {
 func (e *ErrorService) UnknownActionError(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	e.err = errors.New(e.Error())
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: "Error"}
-	messageOut.Err = e.Error()
+	messageOut.Err = e.err.Error()
 
 	log.Println(messageOut.Err)
 	chanOut <- &messageOut

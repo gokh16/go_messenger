@@ -71,7 +71,7 @@ func (g *GroupDBService) EditGroup(group *models.Group) bool {
 	if group.GroupName != "" {
 		groupInstance.GroupName = group.GroupName
 		dbConn.Save(&groupInstance)
-		log.Printf("Group: ID %d, Name %s was updated on %s", groupInstance.ID, groupInstance.GroupName, group.GroupName)
+		log.Printf("EDIT GROUP: ID %d, Name %s was updated on %s", groupInstance.ID, groupInstance.GroupName, group.GroupName)
 		return true
 	}
 	return false

@@ -85,7 +85,6 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 			}
 		}
 	}
-
 	return sliceWS
 }
 

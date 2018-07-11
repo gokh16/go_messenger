@@ -68,6 +68,9 @@ var test = new Vue({
                 if (typeof msg.User != "undefined") {
                     test.User = msg.User;
                 }
+                if (typeof msg.ContactList != "undefined"){
+                    test.ContactList = msg.ContactList;
+                }
                 if(typeof msg.GroupList != "undefined" && msg.GroupList != null) {
                     test.GroupList = msg.GroupList;
                     for (var i = 0; i < msg.GroupList.length; i++) {
@@ -133,6 +136,7 @@ var test = new Vue({
                 var element2 = document.getElementById('menuContent');
                     self.OnlineUsers = '';
                     if (typeof msg.ContactList != "undefined") {
+                        test.ContactList = msg.ContactList;
                         for (var i = 0; i < msg.ContactList.length; i++) {
                             if (test.User.Login != msg.ContactList[i].Login) {
                                 var gName = test.User.Login + msg.ContactList[i].Login;
@@ -144,13 +148,12 @@ var test = new Vue({
                                         msg.ContactList[i].Username +
                                         '</button></div>' +
                                         '<br/>';
-
-
-
                                 }
                             }
                         }
-                    }
+
+
+            }
 
 
             element.scrollTop = element.scrollHeight;// Auto scroll to the bottom
@@ -235,6 +238,36 @@ var test = new Vue({
             this.MessageIn.Action = "GetUsers";
             this.ws.send(JSON.stringify(this.MessageIn))
         },
+        createPublicGroup: function(){
+            var newWin = window.open('/', 'example', 'width=600,height=400');
+
+
+            newWin.onload = function() {
+                var body = newWin.document.body;
+                body.innerHTML = '';
+                body.innerHTML = ' <div class="row">' +
+                    '<div class="col s 12">' +
+                    '<div class="card horizontal">' +
+                    ' <div class="card-content blue-grey darken-3">' +
+                    "Создать группу"+
+                '</div><div class = "card-content blue-grey darken-3">';
+                if (typeof test.ContactList != "undefined") {
+                    for (var i = 0; i < test.ContactList.length; i++) {
+                        if (test.User.Login != test.ContactList[i].Login) {
+                            test.UsersFromServer[gName] = test.ContactList[i];
+                            body.innerHTML +=
+                                '<div class="input-field col s12">' +
+                                '<button class="waves-effect waves-light btn col s12" onclick=addGroupMember(this) id = ' +
+                                test.ContactList[i].Login + '>' +
+                                test.ContactList[i].Username +
+                                '</button></div>' +
+                                '<br/>';
+                        }
+                    }
+                }
+                body.innerHTML+=' </div> </div></div></div>'
+            }
+        },
         search: function(){
             this.typeOfAction = 2;
             this.MessageIn.Action = "GetUsers";
@@ -302,4 +335,9 @@ function createGroup(el) {
                 '<br/>';
         }
     }
+}
+
+function addGroupMember(el){
+    test.MessageIn.Action = "AddGroupMember"
+    test.ws.send(JSON.stringify(test.MessageIn))
 }

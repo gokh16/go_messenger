@@ -41,13 +41,12 @@
             </div>
         </div>
         <div class="col s1">
-            <div class = "burger"  @click="burger">
-            </div>
-            <div class="burger_trigger" @click="burger"> </div>
+            <img src="menuIcon.png"  class = "burger_trigger" alt="" @click="burger">
             <ul class="menu"  @click="burger">
                 <li>Профиль</li>
-                <li>Поиск пользователя</li>
+                <li @click = "createPublicGroup">Создать группу</li>
                 <li @click ="showContacts">Контакты</li>
+                <li>Поиск пользователя</li>
                 <li @click="exit">Выйти</li>
             </ul>
             <div id="menuContent"></div>

@@ -22,9 +22,16 @@ func (u *UserService) InitUserService(ui interfaces.UserManager, gi interfaces.G
 
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action,
-		Status: u.userManager.CreateUser(&messageIn.User)}
-	chanOut <- &messageOut
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	if messageIn.User.Password == "" || messageIn.User.Login == "" {
+		messageOut.Err = "Empty Login or Password"
+		messageOut.Status = false
+		chanOut <- &messageOut
+	} else {
+		ok := u.userManager.CreateUser(&messageIn.User)
+		messageOut.Status = ok
+		chanOut <- &messageOut
+	}
 }
 
 //LoginUser - user's auth.
@@ -34,24 +41,23 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.Err = "Empty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
-	} else {
-		ok := u.userManager.LoginUser(&messageIn.User)
-		if ok {
-			groupList := u.groupManager.GetGroupList(&messageIn.User)
-			for _, group := range groupList {
-				groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-					Members:  u.groupManager.GetMemberList(&group),
-					Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
-				}
-				messageOut.GroupList = append(messageOut.GroupList, groupOut)
-			}
-			messageOut.User = u.userManager.GetUser(&messageIn.User)
-			messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
-		}
-		messageOut.User = messageIn.User
-		messageOut.Status = ok
-		chanOut <- &messageOut
 	}
+	ok := u.userManager.LoginUser(&messageIn.User)
+	if ok {
+		groupList := u.groupManager.GetGroupList(&messageIn.User)
+		for _, group := range groupList {
+			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
+				Members:  u.groupManager.GetMemberList(&group),
+				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
+			}
+			messageOut.GroupList = append(messageOut.GroupList, groupOut)
+		}
+		messageOut.User = u.userManager.GetUser(&messageIn.User)
+		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
+	}
+	messageOut.User = messageIn.User
+	messageOut.Status = ok
+	chanOut <- &messageOut
 }
 
 //AddContact add spesial user to contact list of special User
@@ -78,9 +84,10 @@ func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan
 	chanOut <- &messageOut
 }
 
-//EditUser method edit own client's user and saves it in DB.
+//EditUser method edit own client's user and saves it in DB..
 func (u *UserService) EditUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	updatedUser := u.userManager.EditUser(&messageIn.User)
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User, Status: updatedUser.Status}
 	chanOut <- &messageOut
 }
 

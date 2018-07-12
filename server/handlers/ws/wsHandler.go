@@ -56,7 +56,7 @@ func ReadMessage(conn *websocket.Conn, str HandlerWS) {
 	for {
 		messageType, data, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Client %v is gone!\n", str.Connection.GetUserNameByWSConnection(conn))
+			log.Printf("Client %v is gone!\n", str.Connection.GetUserLoginByWSConnection(conn))
 			str.Connection.DeleteWSConnection(conn)
 			log.Printf("ONLINE WS CONNECTS AFTER DISCONNECT: -> %v", len(str.Connection.GetAllWSConnections()))
 			return

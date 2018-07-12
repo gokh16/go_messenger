@@ -32,8 +32,12 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go userService.CreateUser(messageIn, chanOut)
 	case "LoginUser":
 		go userService.LoginUser(messageIn, chanOut)
+	case "EditUser":
+		go userService.EditUser(messageIn, chanOut)
 	case "CreateGroup":
 		go groupService.CreateGroup(messageIn, chanOut)
+	case "EditGroup":
+		go groupService.EditGroup(messageIn, chanOut)
 	case "AddGroupMember":
 		go groupService.AddGroupMember(messageIn, chanOut)
 	case "GetUsers":

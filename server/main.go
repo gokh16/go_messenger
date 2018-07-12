@@ -5,10 +5,10 @@ import (
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
-	"go_messenger/server/routerIn"
 	"go_messenger/server/routerOut"
 	"go_messenger/server/userConnections"
 	"log"
+	"go_messenger/server/routerIn"
 )
 
 func init() {
@@ -21,11 +21,11 @@ func main() {
 	// init connections struct
 	connectionList := userConnections.InitConnections()
 
-	// init routerOut
-	routerOut.InitRouterOut(connectionList)
-
 	// init services
 	routerIn.InitServices(&dbservice.UserDBService{}, &dbservice.GroupDBService{}, &dbservice.MessageDBService{})
+
+	// init routerOut
+	routerOut.InitRouterOut(connectionList)
 
 	// run WS server
 	ws.NewHandlerWS(connectionList)

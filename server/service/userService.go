@@ -55,11 +55,10 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 			messageOut.User = u.userManager.GetUser(&messageIn.User)
 			messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 		}
+		messageOut.User = messageIn.User
 		messageOut.Status = ok
-
 		chanOut <- &messageOut
 	}
-
 }
 
 //AddContact add spesial user to contact list of special User

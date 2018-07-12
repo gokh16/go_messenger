@@ -25,6 +25,7 @@ func (u *UserDBService) CreateUser(user *models.User) bool {
 func (u *UserDBService) LoginUser(user *models.User) bool {
 	model := models.User{}
 	dbConn.Where("password = ?", user.Password).Where("login = ?", user.Login).Take(&model)
+	log.Println(model.Status)
 	return model.Status
 }
 

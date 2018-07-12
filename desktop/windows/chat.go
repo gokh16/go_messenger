@@ -11,7 +11,12 @@ import (
 )
 
 //DrawChatWindow is a func which draw window by GTK's help
-func DrawChatWindow(conn net.Conn) *ui.Window {
+func DrawChatWindow(conn net.Conn) {
+	//status := <-StatusForLogin
+	//if !status {
+	//	DrawErrorWindow("Wrong password or login!", conn)
+	//	return
+	//}
 	log.Println("Opened DrawChatWindow")
 	window := ui.NewWindow(config.Login, 800, 500, false)
 	input := ui.NewEntry()
@@ -29,21 +34,28 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
 	go func() {
-		json := <-SignIn
 		log.Println("Routine for accept, hang listeners and show data")
-		for _, group := range config.UserGroups {
-			if group != "" && group != config.Login {
-				buttonWithGroup := ui.NewButton(group)
-				usersBox.Append(buttonWithGroup, false)
-				buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
+		json := <-SignIn
+		log.Println(json.Status)
+		if !json.Status {
+			window.Hide()
+			DrawErrorWindow("Wrong login or password", conn)
+		}
+		if json.Status {
+			for _, group := range config.UserGroups {
+				if group != "" && group != config.Login {
+					buttonWithGroup := ui.NewButton(group)
+					usersBox.Append(buttonWithGroup, false)
+					buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
+				}
 			}
+			for i := 0; i < len(buttonUserSlice); i++ {
+				util.ButtonActions(buttonUserSlice[i], conn, output, json)
+				output.SetText("")
+			}
+			close(SignIn)
+			return
 		}
-		for i := 0; i < len(buttonUserSlice); i++ {
-			util.ButtonActions(buttonUserSlice[i], conn, output, json)
-			output.SetText("")
-		}
-		close(SignIn)
-		return
 	}()
 
 	userHeader.Append(profile, true)
@@ -99,5 +111,5 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		return true
 	})
 	window.Show()
-	return window
+	return
 }

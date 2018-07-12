@@ -63,6 +63,9 @@ func DrawAuthWindow(conn net.Conn) {
 		if passwordInput.Text() != "" {
 			window.Hide()
 			DrawChatWindow(conn)
+		} else {
+			window.Hide()
+			DrawErrorWindow("Enter the password!", conn)
 		}
 		return
 	})
@@ -77,8 +80,14 @@ func DrawAuthWindow(conn net.Conn) {
 		if err != nil {
 			log.Println(err)
 		}
-		window.Hide()
-		DrawChatWindow(conn)
+		if passwordInput.Text() != "" {
+			window.Hide()
+			DrawAuthWindow(conn)
+		} else {
+			window.Hide()
+			DrawErrorWindow("Enter the password!", conn)
+		}
+
 		return
 	})
 

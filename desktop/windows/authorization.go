@@ -60,7 +60,7 @@ func DrawAuthWindow(conn net.Conn) {
 		if err != nil {
 			log.Println(err)
 		}
-		if passwordInput.Text() != "" {
+		if passwordInput.Text() != "" || loginInput.Text() != "" {
 			window.Hide()
 			DrawChatWindow(conn)
 		} else {

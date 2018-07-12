@@ -33,6 +33,7 @@ func DrawChatWindow(conn net.Conn) {
 	usersBox := ui.NewVerticalBox()
 	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
+	status := make(chan bool)
 	go func() {
 		log.Println("Routine for accept, hang listeners and show data")
 		json := <-SignIn
@@ -40,6 +41,8 @@ func DrawChatWindow(conn net.Conn) {
 		if !json.Status {
 			window.Hide()
 			DrawErrorWindow("Wrong login or password", conn)
+			status <- json.Status
+			return
 		}
 		if json.Status {
 			for _, group := range config.UserGroups {
@@ -53,6 +56,7 @@ func DrawChatWindow(conn net.Conn) {
 				util.ButtonActions(buttonUserSlice[i], conn, output, json)
 				output.SetText("")
 			}
+			status <- json.Status
 			close(SignIn)
 			return
 		}
@@ -72,7 +76,6 @@ func DrawChatWindow(conn net.Conn) {
 		for {
 			json := <-Send
 			output.Append(json.User.Login + ": " + json.Message.Content + "\n")
-
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {
@@ -110,6 +113,8 @@ func DrawChatWindow(conn net.Conn) {
 		ui.Quit()
 		return true
 	})
-	window.Show()
+	if a := <-status; a {
+		window.Show()
+	}
 	return
 }

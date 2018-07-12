@@ -34,23 +34,24 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.Err = "Empty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
-	}
-	ok := u.userManager.LoginUser(&messageIn.User)
-	if ok {
-		groupList := u.groupManager.GetGroupList(&messageIn.User)
-		for _, group := range groupList {
-			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-				Members:  u.groupManager.GetMemberList(&group),
-				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
+	} else {
+		ok := u.userManager.LoginUser(&messageIn.User)
+		if ok {
+			groupList := u.groupManager.GetGroupList(&messageIn.User)
+			for _, group := range groupList {
+				groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
+					Members:  u.groupManager.GetMemberList(&group),
+					Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
+				}
+				messageOut.GroupList = append(messageOut.GroupList, groupOut)
 			}
-			messageOut.GroupList = append(messageOut.GroupList, groupOut)
+			messageOut.User = u.userManager.GetUser(&messageIn.User)
+			messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 		}
-		messageOut.User = u.userManager.GetUser(&messageIn.User)
-		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
+		messageOut.User = messageIn.User
+		messageOut.Status = ok
+		chanOut <- &messageOut
 	}
-	messageOut.Status = ok
-
-	chanOut <- &messageOut
 }
 
 //AddContact add spesial user to contact list of special User

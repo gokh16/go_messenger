@@ -22,9 +22,16 @@ func (u *UserService) InitUserService(ui interfaces.UserManager, gi interfaces.G
 
 //CreateUser function creats a special User and makes a record in DB. It returns bool value
 func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action,
-		Status: u.userManager.CreateUser(&messageIn.User)}
-	chanOut <- &messageOut
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	if messageIn.User.Password == "" || messageIn.User.Login == "" {
+		messageOut.Err = "Empty Login or Password"
+		messageOut.Status = false
+		chanOut <- &messageOut
+	} else {
+		ok := u.userManager.CreateUser(&messageIn.User)
+		messageOut.Status = ok
+		chanOut <- &messageOut
+	}
 }
 
 //LoginUser - user's auth.
@@ -80,7 +87,8 @@ func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan
 
 //EditUser method edit own client's user and saves it in DB.
 func (u *UserService) EditUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	updatedUser := u.userManager.EditUser(&messageIn.User)
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User, Status: updatedUser.Status}
 	chanOut <- &messageOut
 }
 

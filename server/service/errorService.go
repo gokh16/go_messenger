@@ -1,10 +1,10 @@
 package service
 
 import (
-	"errors"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
 	"log"
+	"errors"
 )
 
 type ErrorService struct {

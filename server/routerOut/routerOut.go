@@ -48,16 +48,16 @@ func (r *RouterOut) getSliceOfTCP(msg *serviceModels.MessageOut) []net.Conn {
 
 	if msg.Action == r.getAction(msg) { //LoginUser", "GetUsers", "GetGroupList", "GetGroup", "Error
 		for conn, onlineUser := range mapTCP {
-			if onlineUser == msg.User.Username {
+			if onlineUser == msg.User.Login {
 				sliceTCP = append(sliceTCP, conn)
 			}
 		}
-	}
-
-	for conn, onlineUser := range mapTCP {
-		for _, user := range msg.Recipients {
-			if onlineUser == user.Username && onlineUser != msg.User.Username {
-				sliceTCP = append(sliceTCP, conn)
+	} else {
+		for conn, onlineUser := range mapTCP {
+			for _, user := range msg.Recipients {
+				if onlineUser == user.Login && onlineUser != msg.User.Login {
+					sliceTCP = append(sliceTCP, conn)
+				}
 			}
 		}
 	}
@@ -76,12 +76,12 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 				sliceWS = append(sliceWS, conn)
 			}
 		}
-	}
-
-	for conn, onlineUser := range mapWS {
-		for _, user := range msg.Recipients {
-			if onlineUser == user.Login && onlineUser != msg.User.Login {
-				sliceWS = append(sliceWS, conn)
+	} else {
+		for conn, onlineUser := range mapWS {
+			for _, user := range msg.Recipients {
+				if onlineUser == user.Login && onlineUser != msg.User.Login {
+					sliceWS = append(sliceWS, conn)
+				}
 			}
 		}
 	}

@@ -22,7 +22,6 @@ func DrawContactsWindow(conn net.Conn, chatWindow *ui.Window) {
 		for {
 			users = <-Contacts
 			log.Println("Routine for read and show contacts (NEED TO BE FIXED)")
-			log.Println(Contacts)
 			for _, user := range users {
 				buttonWithUser := ui.NewButton(user.Login)
 				usersBox.Append(buttonWithUser, false)

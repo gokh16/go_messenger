@@ -1,7 +1,6 @@
 package dbservice
 
 import (
-	"fmt"
 	"go_messenger/server/models"
 	"log"
 )
@@ -17,7 +16,6 @@ func (u *UserDBService) CreateUser(user *models.User) bool {
 	dbConn.Where("login = ?", user.Login).First(&user)
 	if dbConn.NewRecord(user) {
 		dbConn.Create(&user)
-		fmt.Println(user.Status)
 		return true
 	}
 	return false
@@ -81,10 +79,12 @@ func (u *UserDBService) EditUser(user *models.User) models.User {
 	if user.Password != "" {
 		userInstance.Password = user.Password
 	}
-	dbConn.Save(&userInstance)
 	if userInstance.Status {
+		dbConn.Save(&userInstance)
 		log.Printf("User with login %s was updated", userInstance.Login)
 		return userInstance
+	} else {
+		userInstance.Status = false
+		return userInstance
 	}
-	return userInstance
 }

@@ -32,7 +32,6 @@ func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut c
 		messageOut.Status = ok
 		chanOut <- &messageOut
 	}
-
 }
 
 //LoginUser - user's auth.

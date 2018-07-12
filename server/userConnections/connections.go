@@ -6,8 +6,6 @@ import (
 
 	"go_messenger/server/service/serviceModels"
 
-	"log"
-
 	"github.com/gorilla/websocket"
 )
 
@@ -50,7 +48,6 @@ func (c *Connections) AddWSConn(conn *websocket.Conn, userLogin string) {
 	c.wsConnectionsMutex.Lock()
 	c.wsConnections[conn] = userLogin
 	c.wsConnectionsMutex.Unlock()
-	log.Println(c.wsConnections[conn], "ADDWS")
 }
 
 //DeleteWSConn method is deleting suitable connection from wsConnections map of Connections struct

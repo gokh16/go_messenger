@@ -55,7 +55,7 @@ func (u *UserDBService) GetUser(user *models.User) models.User {
 
 //GetContactList gets contact list of special user from DB.
 //It returns slice []models.User.
-func (u *UserDBService) GetContactList(user *models.User) []models.User {
+func (u *UserDBService) GetContactList(user *models.User) ([]models.User, error) {
 	contactList := []models.User{}
 	temp := []models.UserRelation{}
 	dbConn.Where("login = ?", user.Login).First(&user)
@@ -65,10 +65,13 @@ func (u *UserDBService) GetContactList(user *models.User) []models.User {
 		dbConn.Where("id=?", temp[i].RelatedUser).First(&contact)
 		contactList = append(contactList, contact)
 	}
-	return contactList
+	return contactList, dbConn.Error
 }
 
-func (u *UserDBService) DeleteUser(user *models.User) bool {
+func (u *UserDBService) DeleteUser(user *models.User) (bool, error) {
 	dbConn.Where("login = ?", user.Login).Delete(&user)
-	return true
+	if dbConn.Error != nil {
+		return false, dbConn.Error
+	}
+	return true, dbConn.Error
 }

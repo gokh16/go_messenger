@@ -86,7 +86,7 @@ func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan
 	chanOut <- &messageOut
 }
 
-//EditUser method edit own client's user and saves it in DB.
+//EditUser method edit own client's user and saves it in DB..
 func (u *UserService) EditUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	updatedUser := u.userManager.EditUser(&messageIn.User)
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User, Status: updatedUser.Status}

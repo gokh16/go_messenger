@@ -43,26 +43,28 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.Err = "Emty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
-	}
-	ok, err := u.userManager.LoginUser(&messageIn.User)
-	if err != nil {
-		messageOut.Err = "Error when LoginUser. " + err.Error()
-	}
-	if ok {
-		groupList := u.groupManager.GetGroupList(&messageIn.User)
-		for _, group := range groupList {
-			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-				Members:  u.groupManager.GetMemberList(&group),
-				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
-			}
-			messageOut.GroupList = append(messageOut.GroupList, groupOut)
+	} else {
+		ok, err := u.userManager.LoginUser(&messageIn.User)
+		if err != nil {
+			messageOut.Err = "Error when LoginUser. " + err.Error()
 		}
-		messageOut.User = u.userManager.GetUser(&messageIn.User)
-		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
-	}
-	messageOut.Status = ok
+		if ok {
+			groupList := u.groupManager.GetGroupList(&messageIn.User)
+			for _, group := range groupList {
+				groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
+					Members:  u.groupManager.GetMemberList(&group),
+					Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
+				}
+				messageOut.GroupList = append(messageOut.GroupList, groupOut)
+			}
+			messageOut.User = u.userManager.GetUser(&messageIn.User)
+			messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
+		}
+		messageOut.User = messageIn.User
+		messageOut.Status = ok
 
-	chanOut <- &messageOut
+		chanOut <- &messageOut
+	}
 }
 
 //AddContact add spesial user to contact list of special User

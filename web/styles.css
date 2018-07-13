@@ -38,12 +38,14 @@ nav img {
     overflow-y: auto;
 }
 
-#signup,#createGroups{
+#signup,#modChange{
     height: 60vh;
     width: 20%;
 }
-#createGroups{
+#modChange{
     width: 70%;
+    border: 2px solid #26a69a;
+    
 }
 .searchclass{
     margin-top: 2vh;

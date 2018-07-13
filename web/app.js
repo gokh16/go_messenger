@@ -242,17 +242,21 @@ var test = new Vue({
         createPublicGroup: function(){
             this.MessageIn.Action = "GetUsers";
             this.ws.send(JSON.stringify(this.MessageIn));
-            var newWin = window.open('index-2.html', 'example', 'width=600,height=400');
-            newWin.onload = function() {
-                var body = newWin.document.getElementById('createGroups');
-                body.innerHTML = '';
+            var modWin = document.getElementById('chat-messages');
+            modWin.innerHTML = '<div id="modChange"></div>';
+            var modWin = document.getElementById('modChange');
+
+            //var newWin = window.open('index-2.html', 'example', 'width=600,height=400');
+           // newWin.onload = function() {
+           //     var body = newWin.document.getElementById('createGroups');
+           //     body.innerHTML = '';
 
                 if (typeof test.ContactList != "undefined") {
-                    body.innerHTML = ' <div class="input-field white-text col s12"><input type="text" v-model.trim="creatingGroup">\n' +
+                    modWin.innerHTML = ' <div class="input-field white-text col s12"><input type="text" id="creatingGroup">\n' +
                         '            <label for="creatingGroup">Название группы</label></div>';
                     for (var i = 0; i < test.ContactList.length; i++) {
                         if (test.User.Login != test.ContactList[i].Login) {
-                            body.innerHTML +=
+                            modWin.innerHTML +=
                                 '<div class="form-check">' +
                                 '<input type="checkbox" class="form-check-input col s12"  id = ' +
                                 test.ContactList[i].Login + '><label class="form-check-label" for=' +
@@ -263,12 +267,12 @@ var test = new Vue({
                         }
                     }
                 }
-                body.innerHTML+= '<div class="input-field col s12">' +
+                modWin.innerHTML+= '<div class="input-field col s12">' +
                     '<button class="waves-effect waves-light btn col s12" onclick=createPubGroup()>' +
                     'Создать группу' +
                     '</button></div>' +
                     '<br/>';
-            }
+            
         },
         search: function(){
             this.typeOfAction = 2;
@@ -344,30 +348,50 @@ function addGroupMember(el){
     test.ws.send(JSON.stringify(test.MessageIn))
 }
 function createPubGroup() {
+    var el1 = document.getElementById('creatingGroup');
+
+    test.MessageIn = {
+            User: user,
+            Contact: user,
+            Group: group,
+            Message: message,
+            Members: [user],
+            RelationType: 0,
+            MessageLimit: 0,
+            Action: '',
+        };
     var chbox=[];
     var cout =0;
-    console.log("1:",test.creatingGroup);
     if (typeof test.ContactList != "undefined") {
         for (var i = 0; i < test.ContactList.length; i++) {
-            chbox[cout]=window.opener.document.getElementById(test.ContactList[i].Login);
-            console.log("c:",chbox);
+            chbox[cout]=document.getElementById(test.ContactList[i].Login);
+            
             if(chbox[cout] != null){
                 cout++;
             }
         }
     }
-
-    console.log("cout:",cout);
-    for(var i =0;i<chbox.length; i++){
+    cout = 0;
+    for(var i =0;i<chbox.length-1; i++){
         if(chbox[i].checked){
-            test.MessageIn.Group.Members[i].Login = chbox[i].id;
+            var user1 = {};
+            user1.Login = chbox[i].id;
+            console.log("sa",user1.Login);
+            test.MessageIn.Members[cout] = user1;
+            //test.MessageIn.Members[cout].Login = chbox[i].id;
+            cout++;
         }
     }
+    test.MessageIn.Members[test.MessageIn.Members.length] = test.User;
+    test.MessageIn.Group.Members = test.MessageIn.Members;
+
     test.MessageIn.Action = "CreateGroup"
     test.MessageIn.Group.GroupTypeID = 2;
     test.MessageIn.Group.User = test.User;
     test.MessageIn.Group.GroupOwnerID = test.User.ID;
-    test.MessageIn.Group.GroupName = test.creatingGroup;
-    test.ws.send(JSON.stringify(test.MessageIn))
+    test.MessageIn.Group.GroupName = el1.value;
+    test.ws.send(JSON.stringify(test.MessageIn));
+    var modWin = document.getElementById('chat-messages');
+    modWin.innerHTML ='';
 
 }

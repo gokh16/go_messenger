@@ -75,8 +75,12 @@ func (u *UserDBService) GetContactList(user *models.User) []models.User {
 func (u *UserDBService) EditUser(user *models.User) models.User {
 	userInstance := models.User{}
 	dbConn.Where("login = ?", user.Login).Take(&userInstance)
-	userInstance.Username = user.Username
-	userInstance.Email = user.Email
+	if user.Username != "" {
+		userInstance.Username = user.Username
+	}
+	if user.Email != "" {
+		userInstance.Email = user.Email
+	}
 	if user.Password != "" {
 		userInstance.Password = user.Password
 	}

@@ -1,18 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"go_messenger/server/db"
 	"go_messenger/server/db/dbservice"
 	"go_messenger/server/handlers/tcp"
 	"go_messenger/server/handlers/ws"
-	"go_messenger/server/routerIn"
 	"go_messenger/server/routerOut"
 	"go_messenger/server/userConnections"
 	"log"
+	"go_messenger/server/routerIn"
 )
 
 func init() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	db.CreateDatabase()
 }
 
@@ -27,12 +27,13 @@ func main() {
 	// init routerOut
 	routerOut.InitRouterOut(connectionList)
 
+	// run WS server
 	ws.NewHandlerWS(connectionList)
-	fmt.Println("WS started : Ok!")
 
+	// run TCP server
 	tcp.NewHandlerTCP(connectionList)
-	fmt.Println("TCP started : Ok!")
 
+	// get DB connection
 	db := dbservice.OpenConnDB()
 	defer func() {
 		err := db.Close()
@@ -40,8 +41,6 @@ func main() {
 			log.Println(err)
 		}
 	}()
-
-	fmt.Println("DB opened : Ok!")
 
 	stop := make(chan bool)
 	<-stop

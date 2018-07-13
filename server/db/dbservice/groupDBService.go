@@ -2,9 +2,10 @@ package dbservice
 
 import (
 	"go_messenger/server/models"
+	"log"
 )
 
-//Group type with build-in model of Group.
+//GroupDBService type with build-in model of Group.
 type GroupDBService struct {
 	models.Group
 }
@@ -60,4 +61,18 @@ func (g *GroupDBService) GetMemberList(group *models.Group) []models.User {
 	dbConn.Where("group_name = ?", group.GroupName).First(&group)
 	dbConn.Joins("join group_members on users.id=group_members.user_id").Where("group_id =?", group.ID).Find(&memberList)
 	return memberList
+}
+
+//EditGroup method updates the relevant entry in the DB
+//It returns bool value
+func (g *GroupDBService) EditGroup(group *models.Group) bool {
+	var groupInstance models.Group
+	dbConn.Where("id = ?", group.ID).Take(&groupInstance)
+	if group.GroupName != "" {
+		groupInstance.GroupName = group.GroupName
+		dbConn.Save(&groupInstance)
+		log.Printf("EDIT GROUP: ID %d, Group %s was updated on %s", groupInstance.ID, groupInstance.GroupName, group.GroupName)
+		return true
+	}
+	return false
 }

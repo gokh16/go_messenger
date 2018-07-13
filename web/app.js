@@ -21,6 +21,7 @@ var group={
     'Messages':[message],
     'Members': [user],
     'ID': null,
+    'GroupTypeID': null,
 };
 
 
@@ -67,7 +68,6 @@ var test = new Vue({
 
             if (msg.Action == "LoginUser") {
                 if(msg.Status == false){
-                    Materialize.toast("Вы ввели не верный пароль",2000);
                     location.reload();
                 }
                 if (typeof msg.User != "undefined") {
@@ -79,6 +79,19 @@ var test = new Vue({
                 if(typeof msg.GroupList != "undefined" && msg.GroupList != null) {
                     test.GroupList = msg.GroupList;
                     for (var i = 0; i < msg.GroupList.length; i++) {
+
+                         if(msg.GroupList[i].GroupTypeID == 2){
+                            self.MyGroups +=
+                                    '<div class="input-field col s12">' +
+                                    '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
+                                    msg.GroupList[i].GroupName + '>' +
+                                    msg.GroupList[i].GroupName +
+                                    '</button></div>' +
+                                    '<br/>';
+                         }
+
+
+                        if(msg.GroupList[i].GroupTypeID == 1){
                         for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
                             if (msg.GroupList[i].Members[c].Login != self.User.Login) {
                                 self.MyGroups +=
@@ -105,6 +118,10 @@ var test = new Vue({
                                     '<br/>';
                             }
                         }
+
+}
+
+
                     }
                 }
             }else if (msg.Action == "SendMessageTo") {

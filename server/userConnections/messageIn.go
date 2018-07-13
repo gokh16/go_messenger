@@ -1,6 +1,8 @@
 package userConnections
 
-import "go_messenger/server/models"
+import (
+	"go_messenger/server/models"
+)
 
 //Message is a main structure which contains fields for interactions util and server
 type MessageIn struct {

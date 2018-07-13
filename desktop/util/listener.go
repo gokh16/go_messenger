@@ -6,127 +6,77 @@ import (
 
 	"go_messenger/desktop/structure"
 
-	"github.com/ProtonMail/ui"
 	"go_messenger/desktop/config"
+
+	"github.com/ProtonMail/ui"
 )
 
-//ButtonActions is hanging listeners for contact button
-func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry) string {
+//ButtonActions is hanging listeners for group buttons
+func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry, data MessageIn) string {
 	button.OnClicked(func(*ui.Button) {
+		log.Println("Groups button listener function opened")
 		output.SetText("")
 
 		go func() {
-			users := make(map[uint]string)
-			members := make([]structure.User, 0)
-			for {
-				msg := JSONdecode(conn)
-				for _, group := range msg.GroupList {
-					if group.GroupName == button.Text() {
-						config.MessagesInGroup = group.Messages
-						members = group.Members
-						break
-					}
+			log.Println("Routine which is getting messages and opening group")
+
+			for _, group := range data.GroupList {
+				if group.GroupName == button.Text() {
+					config.MessagesInGroup = group.Messages
+					config.MembersInGroup = group.Members
+					break
 				}
-				for _, user := range members {
-					users[user.ID] = user.Login
-				}
-				break
 			}
+			for _, user := range config.MembersInGroup {
+				config.UsersInGroup[user.ID] = user.Login
+			}
+
 			for _, message := range config.MessagesInGroup {
 				var login string
-				for id, name := range users {
+				for id, name := range config.UsersInGroup {
 					if message.MessageSenderID == id {
 						login = name
 					}
 				}
 				output.Append(login + ": " + message.Content + "\n")
 			}
-			config.MarkForRead <- true
 		}()
 
 		var members []structure.User
-		members = append(members, structure.User{
-			Login:    config.Login,
-			Password: "testPassword",
-			Username: config.Login,
-			Email:    "test@test.com",
-			Status:   true,
-			UserIcon: "testUserIcon",
-		})
-		members = append(members, structure.User{
-			Login:    button.Text(),
-			Password: "testPassword",
-			Username: button.Text(),
-			Email:    "test@test.com",
-			Status:   true,
-			UserIcon: "testUserIcon",
-		})
+		members = append(members, *NewUser(config.Login, "testPassword", config.Login, "test@test.com", true, "testUserIcon"))
+		members = append(members, *NewUser(button.Text(), "testPassword", button.Text(), "test@test.com", true, "testUserIcon"))
 
 		config.GroupName = button.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
+		user := NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		group := NewGroup(user, "private", config.GroupName, config.UserID, 1)
+		msg := NewMessage(user, group, "", config.UserID, 1, "Text")
+		message := NewMessageOut(user, &structure.User{}, group, msg, members, 1, 0, "GetGroup")
 
-		message := MessageOut{
-			User: structure.User{
-				Login:    config.Login,
-				Password: "testPassword",
-				Username: config.Login,
-				Email:    "test@test.com",
-				Status:   true,
-				UserIcon: "testUserIcon",
-			},
-			Contact: structure.User{},
-			Group: structure.Group{
-				User: structure.User{
-					Login:    config.Login,
-					Password: "testPassword",
-					Username: config.Login,
-					Email:    "test@test.com",
-					Status:   true,
-					UserIcon: "testUserIcon",
-				},
-				GroupType: structure.GroupType{
-					Type: "private",
-				},
-				GroupName: config.GroupName,
-				//GroupOwnerID: 123,
-				GroupTypeID: 1,
-			},
-			Message: structure.Message{
-				User: structure.User{
-					Login:    config.Login,
-					Password: "testPassword",
-					Username: config.Login,
-					Email:    "test@test.com",
-					Status:   true,
-					UserIcon: "testUserIcon",
-				},
-				Group: structure.Group{
-					User: structure.User{
-						Login:    config.Login,
-						Password: "testPassword",
-						Username: config.Login,
-						Email:    "test@test.com",
-						Status:   true,
-						UserIcon: "testUserIcon",
-					},
-					GroupType: structure.GroupType{
-						Type: "private",
-					},
-					GroupName: config.GroupName,
-					//GroupOwnerID: 123,
-					GroupTypeID: 1,
-				},
-			},
-			Members:      members,
-			RelationType: 1,
-			MessageLimit: 10,
-			Action:       "GetGroup",
-		}
-		_, err := conn.Write([]byte(JSONencode(message)))
+		_, err := conn.Write([]byte(JSONencode(*message)))
 		if err != nil {
 			log.Println(err)
 		}
 	})
 	return config.GroupName
+}
+
+//ContactsAction is hanging listeners for contacts buttons
+func ContactsAction(button *ui.Button, conn net.Conn, contacts *ui.Window, chat *ui.Window) {
+	button.OnClicked(func(*ui.Button) {
+		var members []structure.User
+		members = append(members, *NewUser(config.Login, "", config.Login, "", true, ""))
+		members = append(members, *NewUser(button.Text(), "", button.Text(), "", true, ""))
+		config.GroupName = config.Login + button.Text()
+		config.UserGroups = append(config.UserGroups, config.GroupName)
+		user := NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		group := NewGroup(user, "private", config.GroupName, config.UserID, 1)
+		message := NewMessageOut(user, &structure.User{}, group, &structure.Message{}, members, 1, 0, "CreateGroup")
+		_, err := conn.Write([]byte(JSONencode(*message)))
+		if err != nil {
+			log.Println(err)
+		}
+
+	})
 }

@@ -2,7 +2,6 @@ package ws
 
 import (
 	"encoding/json"
-	"fmt"
 	"go_messenger/server/routerIn"
 	"go_messenger/server/userConnections"
 	"log"
@@ -47,16 +46,17 @@ func Handler(str HandlerWS) {
 	log.Println("HTTP server started on :12345")
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 }
 
 //ReadMessage is a func for reading data from ws connection
 func ReadMessage(conn *websocket.Conn, str HandlerWS) {
+	defer conn.Close()
 	for {
 		messageType, data, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Client %v is gone!\n", str.Connection.GetUserNameByWSConnection(conn))
+			log.Printf("Client %v is gone!\n", str.Connection.GetUserLoginByWSConnection(conn))
 			str.Connection.DeleteWSConnection(conn)
 			log.Printf("ONLINE WS CONNECTS AFTER DISCONNECT: -> %v", len(str.Connection.GetAllWSConnections()))
 			return
@@ -82,14 +82,14 @@ func GetJSON(bytes []byte, conn *websocket.Conn, str HandlerWS) {
 		log.Println("Unmarshal error")
 	}
 	str.Connection.AddWSConn(conn, message.User.Login)
-	fmt.Println("gn", message.Group.GroupName)
+	log.Println("Group Name", message.Group.GroupName)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 	//return str.Connection.outChan
 }
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to util
 func SendJSON(conns []*websocket.Conn, str *serviceModels.MessageOut) {
-	fmt.Println("send",str.Message.Content)
+	//for _, as := range str.Group
 	for _, conn := range conns {
 		err := conn.WriteJSON(str)
 		if err != nil {

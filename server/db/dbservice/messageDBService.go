@@ -4,7 +4,7 @@ import (
 	"go_messenger/server/models"
 )
 
-//Message struct
+//MessageDBService struct
 type MessageDBService struct {
 	models.Message
 }

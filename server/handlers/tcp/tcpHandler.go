@@ -29,6 +29,7 @@ func (t *HandlerTCP) Handler() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("TCP server started on :8080")
 	defer func() {
 		err := ln.Close()
 		if err != nil {
@@ -41,19 +42,19 @@ func (t *HandlerTCP) Handler() {
 			log.Print("Connection doesn't accepted: ")
 			log.Fatal(err)
 		}
-
 		go HandleJSON(conn, t)
 	}
 }
 
 //HandleJSON method is handling json and call parser
 func HandleJSON(conn net.Conn, str *HandlerTCP) {
+	defer conn.Close()
 	remoteAddr := conn.RemoteAddr().String()
 	fmt.Println("Client connected from " + remoteAddr)
 	for {
 		data, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			log.Printf("Client %v is gone!\n", str.Connection.GetUserNameByTCPConnection(conn))
+			log.Printf("Client %v is gone!\n", str.Connection.GetUserLoginByTCPConnection(conn))
 			str.Connection.DeleteTCPConn(conn)
 			log.Printf("ONLINE TCP CONNECTS AFTER DISCONNECT: -> %v", len(str.Connection.GetAllTCPConnections()))
 			return
@@ -70,6 +71,6 @@ func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	str.Connection.AddTCPConn(conn, message.User.Username)
+	str.Connection.AddTCPConn(conn, message.User.Login)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 }

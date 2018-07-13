@@ -105,8 +105,8 @@ func CreateDatabase() {
 	err = m.Migrate()
 	if err == nil {
 		log.Printf("Migration did run successfully")
+
 	} else {
 		log.Printf("Could not migrate: %v", err)
 	}
 }
-

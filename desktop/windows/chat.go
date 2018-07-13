@@ -27,6 +27,7 @@ func DrawChatWindow(conn net.Conn) {
 	searchEntry.SetText("Search")
 	usersBox := ui.NewVerticalBox()
 	usersBox.Append(searchEntry, false)
+
 	buttonUserSlice := make([]*ui.Button, 0)
 	status := make(chan bool)
 	go func() {
@@ -96,7 +97,7 @@ func DrawChatWindow(conn net.Conn) {
 	contacts.OnClicked(func(*ui.Button) {
 		log.Println("Button Contacts clicked")
 		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
-		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "GetUsers")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "GetUser")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")

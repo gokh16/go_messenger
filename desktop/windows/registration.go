@@ -13,6 +13,7 @@ import (
 )
 
 func DrawRegistrationWindow(conn net.Conn) {
+	log.Println("Opened DrawRegistrationWindow")
 	window := ui.NewWindow("Humble", 500, 500, false)
 	loginInput := ui.NewEntry()
 	passwordInput := ui.NewPasswordEntry()

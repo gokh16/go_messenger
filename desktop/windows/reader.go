@@ -9,7 +9,6 @@ import (
 )
 
 //var InputData = make(chan util.MessageIn)
-var StatusForLogin chan bool
 var Contacts = make(chan []structure.User)
 var Send = make(chan util.MessageIn)
 var SignIn = make(chan util.MessageIn)
@@ -20,7 +19,6 @@ var Groups = make(chan util.MessageIn)
 func Reader(conn net.Conn) {
 	for {
 		msg := util.JSONdecode(conn)
-		log.Println(msg.Status)
 		switch msg.Action {
 		case "LoginUser":
 			log.Println("login")
@@ -32,8 +30,7 @@ func Reader(conn net.Conn) {
 			config.UserID = msg.User.ID
 		case "CreateUser":
 			SignUp <- msg
-		case "GetUsers":
-			log.Println(Contacts)
+		case "GetUser":
 			Contacts <- msg.ContactList
 		case "SendMessageTo":
 			Send <- msg

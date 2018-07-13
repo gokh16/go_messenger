@@ -8,6 +8,8 @@ import (
 
 	"go_messenger/desktop/util"
 
+	"go_messenger/desktop/config"
+
 	"github.com/ProtonMail/ui"
 )
 
@@ -15,23 +17,33 @@ import (
 func DrawContactsWindow(conn net.Conn, chatWindow *ui.Window) {
 	log.Println("Opened DrawChatWindow")
 	window := ui.NewWindow("Contacts", 400, 250, false)
-	users := make([]structure.User, 0)
+	searchInput := ui.NewEntry()
+	searchButton := ui.NewButton("Find")
+	searchBox := ui.NewHorizontalBox()
+	searchBox.Append(searchInput, true)
+	searchBox.Append(searchButton, false)
 	usersBox := ui.NewVerticalBox()
+	mainBox := ui.NewVerticalBox()
+	mainBox.Append(searchBox, false)
+	users := make([]structure.User, 0)
 	buttonUserSlice := make([]*ui.Button, 0)
 	go func() {
 		for {
 			users = <-Contacts
-			log.Println("Routine for read and show contacts (NEED TO BE FIXED)")
+			log.Println("Routine for read and show contacts")
 			for _, user := range users {
-				buttonWithUser := ui.NewButton(user.Login)
-				usersBox.Append(buttonWithUser, false)
-				buttonUserSlice = append(buttonUserSlice, buttonWithUser)
-				util.ContactsAction(buttonWithUser, conn, window, chatWindow)
+				if user.Login != config.Login {
+					buttonWithUser := ui.NewButton(user.Login)
+					usersBox.Append(buttonWithUser, false)
+					buttonUserSlice = append(buttonUserSlice, buttonWithUser)
+					util.ContactsAction(buttonWithUser, conn, window, chatWindow)
+				}
 			}
-			window.SetChild(usersBox)
+			mainBox.Append(usersBox, true)
 			break
 		}
 	}()
+	window.SetChild(mainBox)
 	window.OnClosing(func(*ui.Window) bool {
 		window.Hide()
 		users = nil

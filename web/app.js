@@ -66,6 +66,10 @@ var test = new Vue({
             var msg = JSON.parse(e.data);
 
             if (msg.Action == "LoginUser") {
+                if(msg.Status == false){
+                    Materialize.toast("Вы ввели не верный пароль",2000);
+                    location.reload();
+                }
                 if (typeof msg.User != "undefined") {
                     test.User = msg.User;
                 }
@@ -194,10 +198,13 @@ var test = new Vue({
 
         join: function () {
             if (!this.MessageIn.User.Login) {
-                Materialize.toast('You must choose a username', 2000);
-                return
+                Materialize.toast('You must choose a login', 2000);
+                return;
             }
-
+            if (!this.MessageIn.User.Password) {
+                Materialize.toast('You must choose a password', 2000);
+                return;
+            }
             this.MessageIn.User.Login = $('<p>').html(this.MessageIn.User.Login).text();
             this.MessageIn.User.Password = $('<p>').html(this.MessageIn.User.Password).text();
             this.MessageIn.User.Status = true;
@@ -212,8 +219,20 @@ var test = new Vue({
         },
         signUp: function () {
             if (!this.MessageIn.User.Login) {
+                Materialize.toast('You must choose a login', 2000);
+                return;
+            }
+            if (!this.MessageIn.User.Username) {
                 Materialize.toast('You must choose a username', 2000);
-                return
+                return;
+            }
+            if (!this.MessageIn.User.Password) {
+                Materialize.toast('You must choose a password', 2000);
+                return;
+            }
+            if (!this.MessageIn.User.Email) {
+                Materialize.toast('You must choose a email', 2000);
+                return;
             }
 
             this.MessageIn.User.Username = $('<p>').html(this.MessageIn.User.Username).text();

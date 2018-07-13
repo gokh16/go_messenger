@@ -34,7 +34,6 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 			// groupType == 2 means group chat
 		case 2:
 			g.groupManager.AddGroupMember(&messageIn.Group.User, &messageIn.Group, &messageIn.Message)
-
 		}
 	}
 	messageOut.Status = ok

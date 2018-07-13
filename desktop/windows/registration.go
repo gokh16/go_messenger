@@ -1,24 +1,27 @@
 package windows
 
 import (
-	"go_messenger/desktop/config"
+	"net"
+
 	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
 	"log"
-	"net"
+
+	"regexp"
 
 	"github.com/ProtonMail/ui"
 )
 
-//DrawAuthWindow is a func which draw window by GTK's help
-func DrawAuthWindow(conn net.Conn) {
-	log.Println("Opened DrawAuthWindow")
+func DrawRegistrationWindow(conn net.Conn) {
 	window := ui.NewWindow("Humble", 500, 500, false)
 	loginInput := ui.NewEntry()
 	passwordInput := ui.NewPasswordEntry()
+	emailInput := ui.NewEntry()
+	usernameInput := ui.NewEntry()
 	loginLabel := ui.NewLabel("Login")
 	passwordLabel := ui.NewLabel("Password")
-	signIn := ui.NewButton("Sign in!") //asd
+	emailLabel := ui.NewLabel("Email")
+	usernameLabel := ui.NewLabel("Username")
 	signUp := ui.NewButton("Sign up!")
 	topBox := ui.NewHorizontalBox()
 	botBox := ui.NewHorizontalBox()
@@ -31,7 +34,10 @@ func DrawAuthWindow(conn net.Conn) {
 	fieldsBox.Append(loginInput, false)
 	fieldsBox.Append(passwordLabel, false)
 	fieldsBox.Append(passwordInput, false)
-	fieldsBox.Append(signIn, false)
+	fieldsBox.Append(emailLabel, false)
+	fieldsBox.Append(emailInput, false)
+	fieldsBox.Append(usernameLabel, false)
+	fieldsBox.Append(usernameInput, false)
 	fieldsBox.Append(signUp, false)
 	middleBox.Append(leftFieldBoxPadding, true)
 	middleBox.Append(fieldsBox, false)
@@ -44,36 +50,29 @@ func DrawAuthWindow(conn net.Conn) {
 		ui.Quit()
 		return true
 	})
-	window.Show()
 
-	//обработчик кнопки входа, который отправляет запрос на получение всех юзеров в базе
-	//для вывода и создание кнопок с ними
-	signIn.OnClicked(func(*ui.Button) {
-		log.Println("Button SignIn clicked")
-		config.Login = loginInput.Text()
+	signUp.OnClicked(func(*ui.Button) {
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-		user := util.NewUser(config.Login, passwordInput.Text(), config.Login, "test@test.com", true, "testUserIcon")
-		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "LoginUser")
-
+		user := util.NewUser(loginInput.Text(), passwordInput.Text(), usernameInput.Text(), emailInput.Text(), true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "CreateUser")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println(err)
 		}
-		if passwordInput.Text() != "" || loginInput.Text() != "" {
+		re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+		if !re.MatchString(emailInput.Text()) {
 			window.Hide()
-			DrawChatWindow(conn)
+			DrawErrorWindow("Invalid email!", conn)
+			return
+		}
+		if passwordInput.Text() != "" || loginInput.Text() != "" || emailInput.Text() != "" {
+			window.Hide()
+			DrawAuthWindow(conn)
 		} else {
 			window.Hide()
-			DrawErrorWindow("Enter the password!", conn)
+			DrawErrorWindow("You need to fill fields first!", conn)
 		}
-		return
 	})
-	signUp.OnClicked(func(*ui.Button) {
-		log.Println("Button SignUp clicked")
-		DrawRegistrationWindow(conn)
-		window.Hide()
-		return
-	})
-
+	window.Show()
 }

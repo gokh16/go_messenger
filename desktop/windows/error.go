@@ -16,7 +16,22 @@ func DrawErrorWindow(errorText string, conn net.Conn) {
 	mainBox.Append(okButton, false)
 	okButton.OnClicked(func(*ui.Button) {
 		window.Destroy()
-		DrawAuthWindow(conn)
+		if errorText == "You need to fill fields first!" {
+			window.Hide()
+			DrawRegistrationWindow(conn)
+		}
+		if errorText == "Enter the password!" {
+			window.Hide()
+			DrawAuthWindow(conn)
+		}
+		if errorText == "Wrong login or password" {
+			window.Hide()
+			DrawAuthWindow(conn)
+		}
+		if errorText == "Invalid email!" {
+			window.Hide()
+			DrawRegistrationWindow(conn)
+		}
 	})
 	window.OnClosing(func(*ui.Window) bool {
 		window.Destroy()

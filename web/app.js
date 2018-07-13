@@ -53,6 +53,7 @@ var test = new Vue({
         OnlineUsers: '',
         MyGroups: '',
         searchUser: '',
+        creatingGroup:'',
         typeOfAction: null,
     },
 
@@ -134,23 +135,23 @@ var test = new Vue({
 
                 //this.User = msg.User;
                 var element2 = document.getElementById('menuContent');
-                    self.OnlineUsers = '';
-                    if (typeof msg.ContactList != "undefined") {
-                        test.ContactList = msg.ContactList;
-                        for (var i = 0; i < msg.ContactList.length; i++) {
-                            if (test.User.Login != msg.ContactList[i].Login) {
-                                var gName = test.User.Login + msg.ContactList[i].Login;
-                                test.UsersFromServer[gName] = msg.ContactList[i];
-                                    element2.innerHTML +=
-                                        '<div class="input-field col s12">' +
-                                        '<button class="waves-effect waves-light btn col s12" onclick=createGroup(this) id = ' +
-                                        gName + '>' +
-                                        msg.ContactList[i].Username +
-                                        '</button></div>' +
-                                        '<br/>';
-                                }
-                            }
+                self.OnlineUsers = '';
+                if (typeof msg.ContactList != "undefined") {
+                    test.ContactList = msg.ContactList;
+                    for (var i = 0; i < msg.ContactList.length; i++) {
+                        if (test.User.Login != msg.ContactList[i].Login) {
+                            var gName = test.User.Login + msg.ContactList[i].Login;
+                            test.UsersFromServer[gName] = msg.ContactList[i];
+                            element2.innerHTML +=
+                                '<div class="input-field col s12">' +
+                                '<button class="waves-effect waves-light btn col s12" onclick=createGroup(this) id = ' +
+                                gName + '>' +
+                                msg.ContactList[i].Username +
+                                '</button></div>' +
+                                '<br/>';
                         }
+                    }
+                }
 
 
             }
@@ -239,33 +240,34 @@ var test = new Vue({
             this.ws.send(JSON.stringify(this.MessageIn))
         },
         createPublicGroup: function(){
-            var newWin = window.open('/', 'example', 'width=600,height=400');
-
-
+            this.MessageIn.Action = "GetUsers";
+            this.ws.send(JSON.stringify(this.MessageIn));
+            var newWin = window.open('index-2.html', 'example', 'width=600,height=400');
             newWin.onload = function() {
-                var body = newWin.document.body;
+                var body = newWin.document.getElementById('createGroups');
                 body.innerHTML = '';
-                body.innerHTML = ' <div class="row">' +
-                    '<div class="col s 12">' +
-                    '<div class="card horizontal">' +
-                    ' <div class="card-content blue-grey darken-3">' +
-                    "Создать группу"+
-                '</div><div class = "card-content blue-grey darken-3">';
+
                 if (typeof test.ContactList != "undefined") {
+                    body.innerHTML = ' <div class="input-field white-text col s12"><input type="text" v-model.trim="creatingGroup">\n' +
+                        '            <label for="creatingGroup">Название группы</label></div>';
                     for (var i = 0; i < test.ContactList.length; i++) {
                         if (test.User.Login != test.ContactList[i].Login) {
-                            test.UsersFromServer[gName] = test.ContactList[i];
                             body.innerHTML +=
-                                '<div class="input-field col s12">' +
-                                '<button class="waves-effect waves-light btn col s12" onclick=addGroupMember(this) id = ' +
-                                test.ContactList[i].Login + '>' +
-                                test.ContactList[i].Username +
-                                '</button></div>' +
+                                '<div class="form-check">' +
+                                '<input type="checkbox" class="form-check-input col s12"  id = ' +
+                                test.ContactList[i].Login + '><label class="form-check-label" for=' +
+                                test.ContactList[i].Login + '>'+
+                                test.ContactList[i].Username +'</label>'+
+                                '</div>' +
                                 '<br/>';
                         }
                     }
                 }
-                body.innerHTML+=' </div> </div></div></div>'
+                body.innerHTML+= '<div class="input-field col s12">' +
+                    '<button class="waves-effect waves-light btn col s12" onclick=createPubGroup()>' +
+                    'Создать группу' +
+                    '</button></div>' +
+                    '<br/>';
             }
         },
         search: function(){
@@ -340,4 +342,32 @@ function createGroup(el) {
 function addGroupMember(el){
     test.MessageIn.Action = "AddGroupMember"
     test.ws.send(JSON.stringify(test.MessageIn))
+}
+function createPubGroup() {
+    var chbox=[];
+    var cout =0;
+    console.log("1:",test.creatingGroup);
+    if (typeof test.ContactList != "undefined") {
+        for (var i = 0; i < test.ContactList.length; i++) {
+            chbox[cout]=window.opener.document.getElementById(test.ContactList[i].Login);
+            console.log("c:",chbox);
+            if(chbox[cout] != null){
+                cout++;
+            }
+        }
+    }
+
+    console.log("cout:",cout);
+    for(var i =0;i<chbox.length; i++){
+        if(chbox[i].checked){
+            test.MessageIn.Group.Members[i].Login = chbox[i].id;
+        }
+    }
+    test.MessageIn.Action = "CreateGroup"
+    test.MessageIn.Group.GroupTypeID = 2;
+    test.MessageIn.Group.User = test.User;
+    test.MessageIn.Group.GroupOwnerID = test.User.ID;
+    test.MessageIn.Group.GroupName = test.creatingGroup;
+    test.ws.send(JSON.stringify(test.MessageIn))
+
 }

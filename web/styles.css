@@ -38,9 +38,12 @@ nav img {
     overflow-y: auto;
 }
 
-#signup{
+#signup,#createGroups{
     height: 60vh;
     width: 20%;
+}
+#createGroups{
+    width: 70%;
 }
 .searchclass{
     margin-top: 2vh;

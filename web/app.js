@@ -21,7 +21,7 @@ var group={
     'Messages':[message],
     'Members': [user],
     'ID': null,
-    'GroupTypeID': null,
+    'GroupType': {},
 };
 
 
@@ -79,8 +79,7 @@ var test = new Vue({
                 if(typeof msg.GroupList != "undefined" && msg.GroupList != null) {
                     test.GroupList = msg.GroupList;
                     for (var i = 0; i < msg.GroupList.length; i++) {
-
-                         if(msg.GroupList[i].GroupTypeID == 2){
+                         if(msg.GroupList[i].Members.length >2){
                             self.MyGroups +=
                                     '<div class="input-field col s12">' +
                                     '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
@@ -91,7 +90,7 @@ var test = new Vue({
                          }
 
 
-                        if(msg.GroupList[i].GroupTypeID == 1){
+                        if(msg.GroupList[i].Members.length == 2){
                         for (var c = 0; c < msg.GroupList[i].Members.length; c++) {
                             if (msg.GroupList[i].Members[c].Login != self.User.Login) {
                                 self.MyGroups +=
@@ -128,20 +127,38 @@ var test = new Vue({
                 if(msg.Message.User.Username != test.User.Username) {
                     if (typeof self.RecContents[msg.Message.Group.GroupName] == "undefined") {
                         self.RecContents[msg.Message.Group.GroupName] = '';
-                        var a = document.getElementById(test.User.Login + msg.Message.User.Login);
-                        console.log(a);
-                        if (a != null) {
-                            a.remove();
-                        }
-                        self.MyGroups +=
-                            '<div class="input-field col s12">' +
-                            '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
-                            msg.Message.Group.GroupName + '>' +
-                            msg.Message.User.Username +
-                            '</button></div>' +
-                            '<br/>';
-                    }
+                        if(msg.Message.Group.GroupTypeID == 1) {
+                            var a = document.getElementById(test.User.Login + msg.Message.User.Login);
+                            console.log(a);
+                            if (a != null) {
+                                a.remove();
+                            }
+                            self.MyGroups +=
+                                '<div class="input-field col s12">' +
+                                '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
+                                msg.Message.Group.GroupName + '>' +
+                                msg.Message.User.Username +
+                                '</button></div>' +
+                                '<br/>';
+                        }else{
+                            var elg = document.getElementById(msg.Message.Group.GroupName);
+                            if(elg ==null) {
 
+                                self.MyGroups +=
+                                    '<div class="input-field col s12">' +
+                                    '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
+                                    msg.Message.Group.GroupName + '>' +
+                                    msg.Message.Group.GroupName +
+                                    '</button></div>' +
+                                    '<br/>';
+                            }
+                        }
+                    }
+                    if (Notification.permission === "granted") {
+                        var notification = new Notification(msg.Message.User.Username+"\n"+msg.Message.Content);
+                        setTimeout(notification.close.bind(notification), 1000);
+                        notification = null;
+                    }
                     self.RecContents[msg.Message.Group.GroupName] +=
                         '<div class="chip">' +
                         msg.Message.User.Username +
@@ -214,6 +231,9 @@ var test = new Vue({
         },
 
         join: function () {
+            if (Notification.permission !== 'denied') {
+                Notification.requestPermission();
+            }
             if (!this.MessageIn.User.Login) {
                 Materialize.toast('You must choose a login', 2000);
                 return;
@@ -339,7 +359,6 @@ var test = new Vue({
         }
     }
 });
-
 function changeUser(el) {
     test.MessageIn.Group.GroupName =el.id;
     test.RecContent = test.RecContents[el.id];
@@ -429,5 +448,12 @@ function createPubGroup() {
     test.ws.send(JSON.stringify(test.MessageIn));
     var modWin = document.getElementById('chat-messages');
     modWin.innerHTML ='';
+    var element = document.getElementById('groupList');
+    element.innerHTML += '<div class="input-field col s12">' +
+        '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
+        test.MessageIn.Group.GroupName + '>' +
+        test.MessageIn.Group.GroupName +
+        '</button></div>' +
+        '<br/>';
 
 }

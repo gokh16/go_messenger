@@ -26,7 +26,7 @@ func (g *GroupDBService) CreateGroup(group *models.Group) bool {
 //AddGroupMember method creates new record in DB GroupMember table.
 // It returns bool value.
 func (g *GroupDBService) AddGroupMember(user *models.User, group *models.Group, message *models.Message) bool {
-	dbConn.Where("username = ?", user.Username).First(&user)
+	dbConn.Where("login = ?", user.Login).First(&user) //login for max
 	dbConn.Where("group_name = ?", group.GroupName).First(&group)
 	dbConn.Where("content = ?", message.Content).First(&message)
 	member := models.GroupMember{UserID: user.ID, GroupID: group.ID, LastReadMessageID: message.ID}

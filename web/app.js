@@ -172,15 +172,18 @@ var test = new Vue({
             }else if(msg.Action =="GetUsers"){
 
                 //this.User = msg.User;
-                var element2 = document.getElementById('menuContent');
-                self.OnlineUsers = '';
+                var modWin = document.getElementById('chat-messages');
+                modWin.innerHTML ='';
+                modWin.innerHTML = '<div id="modChange"></div>';
+                var modWin = document.getElementById('modChange');
+                modWin.innerHTML ='';
                 if (typeof msg.ContactList != "undefined") {
                     test.ContactList = msg.ContactList;
                     for (var i = 0; i < msg.ContactList.length; i++) {
                         if (test.User.Login != msg.ContactList[i].Login) {
                             var gName = test.User.Login + msg.ContactList[i].Login;
                             test.UsersFromServer[gName] = msg.ContactList[i];
-                            element2.innerHTML +=
+                            modWin.innerHTML +=
                                 '<div class="input-field col s12">' +
                                 '<button class="waves-effect waves-light btn col s12" onclick=createGroup(this) id = ' +
                                 gName + '>' +
@@ -190,6 +193,7 @@ var test = new Vue({
                         }
                     }
                 }
+                //modWin.innerHTML ='';
 
 
             }
@@ -288,10 +292,8 @@ var test = new Vue({
             location.href="index.html"
         },
         showUsers: function (){
-            this.typeOfAction = 1;
             this.MessageIn.User.Login = this.User.Login;
             this.MessageIn.User.Username = this.User.Username;
-
             this.MessageIn.Action = "GetUsers";
             this.ws.send(JSON.stringify(this.MessageIn))
         },
@@ -345,13 +347,10 @@ var test = new Vue({
 
         },
         showContacts: function(){
-            var element = document.getElementById('menuContent');
-            this.typeOfAction = 1;
-            this.MessageIn.User.Login = this.User.Login;
-            this.MessageIn.User.Username = this.User.Username;
-
-            this.MessageIn.Action = "GetUsers";
-            this.ws.send(JSON.stringify(this.MessageIn))
+            // this.MessageIn.User.Login = this.User.Login;
+            // this.MessageIn.User.Username = this.User.Username;
+            // this.MessageIn.Action = "GetUsers";
+            // this.ws.send(JSON.stringify(this.MessageIn))
         },
         exit: function () {
             this.joined = false;

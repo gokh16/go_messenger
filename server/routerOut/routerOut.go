@@ -30,7 +30,7 @@ func InitRouterOut(conn *userConnections.Connections) {
 func (r *RouterOut) Handler() {
 	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
-		log.Println("Action: -> ", msg.Action)
+		log.Printf("Action of %s: -> %s", msg.User.Username, msg.Action)
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 			tcp.SendJSON(sliceTCPCon, msg)
 		}

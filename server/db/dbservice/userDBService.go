@@ -94,10 +94,15 @@ func (u *UserDBService) GetContactList(user *models.User) ([]models.User, error)
 
 //DeleteUser delete account from DB.
 //It returns bull and error.
-func (u *UserDBService) DeleteUser(user *models.User) bool {
-	dbConn.Where("login = ?", user.Login).Delete(&user)
-	if dbConn.Error != nil {
-		return false
+func (u *UserDBService) DeleteUser(user *models.User) (bool, error) {
+	record := dbConn.Where("login = ?", user.Login).Take(&user)
+	if record.RecordNotFound() {
+		err := errors.New("User already deleted")
+		return false, err
 	}
-	return true
+	record.Delete(&user)
+	if record.Error != nil {
+		return false, record.Error
+	}
+	return true, nil
 }

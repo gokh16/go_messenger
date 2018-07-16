@@ -28,7 +28,11 @@ func (m *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, cha
 	groupOut := serviceModels.NewGroup(m.groupManager.GetGroup(&messageIn.Group), members, message)
 	messageOut := serviceModels.MessageOut{
 		Recipients: members, Action: messageIn.Action, Message: messageIn.Message}
-	messageOut.User = m.userManager.GetUser(&messageIn.User)
+	var err error
+	messageOut.User, err = m.userManager.GetUser(&messageIn.User)
+	if err != nil {
+		messageOut.Err = "Error when SendMessageTo. " + err.Error()
+	}
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	chanOut <- &messageOut
 }

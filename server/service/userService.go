@@ -59,10 +59,10 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
 		messageOut.User, err = u.userManager.GetAccount(&messageIn.User)
+		messageOut.ContactList, err = u.userManager.GetContactList(&messageIn.User)
 		if err != nil {
 			messageOut.Err = "Error when LoginUser. " + err.Error()
 		}
-		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 	}
 	messageOut.User = messageIn.User
 	messageOut.Status = ok
@@ -94,6 +94,18 @@ func (u *UserService) GetContactList(messageIn *userConnections.MessageIn, chanO
 	chanOut <- &messageOut
 }
 
+func (u *UserService) DeleteContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{
+		Action: messageIn.Action,
+	}
+	var err error
+	messageOut.Status, err = u.userManager.DeleteContact(&messageIn.User, &messageIn.Contact)
+	if err != nil {
+		messageOut.Err = err.Error()
+	}
+	chanOut <- &messageOut
+}
+
 //GetUsers method gets all users from DB.
 func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User}
@@ -114,6 +126,11 @@ func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut cha
 func (u *UserService) DeleteUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{
 		Action: messageIn.Action,
-		Status: u.userManager.DeleteUser(&messageIn.User)}
+	}
+	var err error
+	messageOut.Status, err = u.userManager.DeleteUser(&messageIn.User)
+	if err != nil {
+		messageOut.Err = err.Error()
+	}
 	chanOut <- &messageOut
 }

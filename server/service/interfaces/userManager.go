@@ -9,6 +9,7 @@ type UserManager interface {
 	AddContact(user, contact *models.User, relationType uint) (bool, error)
 	GetUsers(users *[]models.User)
 	GetUser(user *models.User) (models.User, error)
+	GetAccount(user *models.User) (models.User, error)
 	GetContactList(user *models.User) ([]models.User, error)
-	DeleteUser(user *models.User) (bool, error)
+	DeleteUser(user *models.User) bool
 }

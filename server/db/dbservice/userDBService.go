@@ -1,6 +1,7 @@
 package dbservice
 
 import (
+	"errors"
 	"go_messenger/server/models"
 )
 
@@ -22,9 +23,25 @@ func (u *UserDBService) CreateUser(user *models.User) (bool, error) {
 
 //LoginUser - user's auth.
 func (u *UserDBService) LoginUser(user *models.User) (bool, error) {
-	model := models.User{}
-	dbConn.Where("password = ?", user.Password).Where("login = ?", user.Login).Take(&model)
-	return model.Status, dbConn.Error
+	record := dbConn.Where("password = ?", user.Password).Where("login = ?", user.Login).Take(&user)
+	switch {
+	case dbConn.Error != nil:
+		return false, dbConn.Error
+	case record.RecordNotFound():
+		err := errors.New("Login or Password does not correct")
+		return false, err
+	default:
+		return true, dbConn.Error
+
+	}
+}
+
+func (u *UserDBService) GetAccount(user *models.User) (models.User, error) {
+	dbConn.Where("login = ?", user.Login).Take(&user)
+	if dbConn.Error != nil {
+		return *user, dbConn.Error
+	}
+	return *user, dbConn.Error
 }
 
 //AddContact add spesial user to contact list of special User
@@ -47,10 +64,17 @@ func (u *UserDBService) GetUsers(users *[]models.User) {
 
 //GetUser method get special user from DB.
 //It returns User object.
-func (u *UserDBService) GetUser(user *models.User) models.User {
-
-	dbConn.Where("login = ?", user.Login).Take(&user)
-	return *user
+func (u *UserDBService) GetUser(user *models.User) (models.User, error) {
+	record := dbConn.Where("login = ?", user.Login).Take(&user)
+	switch {
+	case dbConn.Error != nil:
+		return *user, dbConn.Error
+	case record.RecordNotFound():
+		err := errors.New("User does not exist")
+		return *user, err
+	default:
+		return *user, nil
+	}
 }
 
 //GetContactList gets contact list of special user from DB.
@@ -68,10 +92,12 @@ func (u *UserDBService) GetContactList(user *models.User) ([]models.User, error)
 	return contactList, dbConn.Error
 }
 
-func (u *UserDBService) DeleteUser(user *models.User) (bool, error) {
+//DeleteUser delete account from DB.
+//It returns bull and error.
+func (u *UserDBService) DeleteUser(user *models.User) bool {
 	dbConn.Where("login = ?", user.Login).Delete(&user)
 	if dbConn.Error != nil {
-		return false, dbConn.Error
+		return false
 	}
-	return true, dbConn.Error
+	return true
 }

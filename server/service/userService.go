@@ -58,13 +58,17 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
-		messageOut.User = u.userManager.GetUser(&messageIn.User)
+		messageOut.User, err = u.userManager.GetAccount(&messageIn.User)
+		if err != nil {
+			messageOut.Err = "Error when LoginUser. " + err.Error()
+		}
 		messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
 	}
 	messageOut.User = messageIn.User
 	messageOut.Status = ok
 
 	chanOut <- &messageOut
+
 }
 
 //AddContact add spesial user to contact list of special User
@@ -79,6 +83,17 @@ func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut c
 	chanOut <- &messageOut
 }
 
+func (u *UserService) GetContactList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{User: messageIn.User,
+		Action: messageIn.Action}
+	var err error
+	messageOut.ContactList, err = u.userManager.GetContactList(&messageIn.User)
+	if err != nil {
+		messageOut.Err = "Error when GetContactList" + err.Error()
+	}
+	chanOut <- &messageOut
+}
+
 //GetUsers method gets all users from DB.
 func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User}
@@ -89,11 +104,11 @@ func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut cha
 }
 
 //GetUser method get special user from DB.
-func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
-	messageOut.ContactList = append(messageOut.ContactList, u.userManager.GetUser(&messageIn.User))
-	chanOut <- &messageOut
-}
+// func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+// 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
+// 	messageOut.ContactList = append(messageOut.ContactList, u.userManager.GetUser(&messageIn.User))
+// 	chanOut <- &messageOut
+// }
 
 //DeleteUser method delete own account from DB.
 func (u *UserService) DeleteUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {

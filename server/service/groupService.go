@@ -23,10 +23,11 @@ func (g *GroupService) InitGroupService(ui interfaces.UserManager, gi interfaces
 //CreateGroup function creats a special Group and makes a record in DB. It returns bool value
 func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
+	log.Println(messageIn.Group.GroupTypeID)
 	ok := g.groupManager.CreateGroup(&messageIn.Group)
 	if ok {
 		switch messageIn.Group.GroupTypeID {
-		// groupTypeID == 1 means privat message
+		// groupTypeID == 1 means private message
 		case 1:
 			for _, member := range messageIn.Members {
 				g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
@@ -63,6 +64,7 @@ func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOu
 		groupOut := serviceModels.NewGroup(gr, members, messages)
 		messageOut.GroupList = append(messageOut.GroupList, *groupOut)
 	}
+	messageOut.Status = true
 	chanOut <- &messageOut
 }
 

@@ -49,7 +49,7 @@ func DrawAuthWindow(conn net.Conn) {
 	//обработчик кнопки входа, который отправляет запрос на получение всех юзеров в базе
 	//для вывода и создание кнопок с ними
 	signIn.OnClicked(func(*ui.Button) {
-		log.Println("Button SignIn clicked")
+		log.Println("Button Beginning clicked")
 		config.Login = loginInput.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.

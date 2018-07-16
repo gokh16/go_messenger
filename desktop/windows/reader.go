@@ -4,14 +4,13 @@ import (
 	"go_messenger/desktop/config"
 	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
-	"log"
 	"net"
 )
 
 //var InputData = make(chan util.MessageIn)
 var Contacts = make(chan []structure.User)
 var Send = make(chan util.MessageIn)
-var SignIn = make(chan util.MessageIn)
+var Beginning = make(chan util.MessageIn)
 var SignUp = make(chan util.MessageIn)
 var Groups = make(chan util.MessageIn)
 
@@ -21,8 +20,7 @@ func Reader(conn net.Conn) {
 		msg := util.JSONdecode(conn)
 		switch msg.Action {
 		case "LoginUser":
-			log.Println("login")
-			SignIn <- msg
+			Beginning <- msg
 			for _, contacts := range msg.GroupList {
 				config.UserGroups = append(config.UserGroups, contacts.GroupName)
 				config.GroupID[contacts.GroupName] = contacts.ID
@@ -35,6 +33,9 @@ func Reader(conn net.Conn) {
 		case "SendMessageTo":
 			Send <- msg
 		case "GetContactList":
+			Contacts <- msg.ContactList
+		case "GetGroupList":
+			Beginning <- msg
 		}
 	}
 }

@@ -34,6 +34,7 @@ func Reader(conn net.Conn) {
 			Contacts <- msg.ContactList
 		case "SendMessageTo":
 			Send <- msg
+		case "GetContactList":
 		}
 	}
 }

@@ -25,6 +25,16 @@ func DrawContactsWindow(conn net.Conn, chatWindow *ui.Window) {
 	usersBox := ui.NewVerticalBox()
 	mainBox := ui.NewVerticalBox()
 	mainBox.Append(searchBox, false)
+
+	searchButton.OnClicked(func(*ui.Button) {
+		window.Hide()
+		user := util.NewUser(config.Login, "", "", "", true, "")
+		contact := util.NewUser(searchInput.Text(), "", "", "", true, "")
+		message := util.NewMessageOut(user, contact, &structure.Group{}, &structure.Message{}, nil, 1, 0, "AddContact")
+
+		DrawContactsWindow(conn, chatWindow)
+	})
+
 	users := make([]structure.User, 0)
 	buttonUserSlice := make([]*ui.Button, 0)
 	go func() {

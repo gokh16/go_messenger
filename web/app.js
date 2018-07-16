@@ -51,6 +51,7 @@ var test = new Vue({
         RecContents: {},
         RecContent: '',
         joined: false, // True if email and username have been filled in
+        profile: false,
         OnlineUsers: '',
         MyGroups: '',
         searchUser: '',
@@ -233,7 +234,15 @@ var test = new Vue({
                 this.MessageIn.Message.Content = '';
             }
         },
-
+        openProfile: function(){
+            this.profile = true;
+            console.log(this.User.Username);
+            var el =document.getElementsByClassName('profile');
+            var el1 = document.getElementById("profile");
+            console.log(el1);
+            console.log(el);
+            el[0].innerHTML = '<div class="card-content blue-grey darken-3">this.User.Username</div>';
+        },
         join: function () {
             if (Notification.permission !== 'denied') {
                 Notification.requestPermission();
@@ -298,8 +307,8 @@ var test = new Vue({
             this.ws.send(JSON.stringify(this.MessageIn))
         },
         createPublicGroup: function(){
-            this.MessageIn.Action = "GetUsers";
-            this.ws.send(JSON.stringify(this.MessageIn));
+            //this.MessageIn.Action = "GetUsers";
+            //this.ws.send(JSON.stringify(this.MessageIn));
             var modWin = document.getElementById('chat-messages');
             modWin.innerHTML = '<div id="modChange"></div>';
             var modWin = document.getElementById('modChange');
@@ -426,8 +435,10 @@ function createPubGroup() {
         }
     }
     cout = 0;
+    var accept = 0;
     for(var i =0;i<chbox.length-1; i++){
         if(chbox[i].checked){
+            accept++;
             var user1 = {};
             user1.Login = chbox[i].id;
             console.log("sa",user1.Login);
@@ -436,23 +447,25 @@ function createPubGroup() {
             cout++;
         }
     }
-    test.MessageIn.Members[test.MessageIn.Members.length] = test.User;
-    test.MessageIn.Group.Members = test.MessageIn.Members;
+    if(accept>0 && el1.value != null) {
+        test.MessageIn.Members[test.MessageIn.Members.length] = test.User;
+        test.MessageIn.Group.Members = test.MessageIn.Members;
 
-    test.MessageIn.Action = "CreateGroup"
-    test.MessageIn.Group.GroupTypeID = 2;
-    test.MessageIn.Group.User = test.User;
-    test.MessageIn.Group.GroupOwnerID = test.User.ID;
-    test.MessageIn.Group.GroupName = el1.value;
-    test.ws.send(JSON.stringify(test.MessageIn));
-    var modWin = document.getElementById('chat-messages');
-    modWin.innerHTML ='';
-    var element = document.getElementById('groupList');
-    element.innerHTML += '<div class="input-field col s12">' +
-        '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
-        test.MessageIn.Group.GroupName + '>' +
-        test.MessageIn.Group.GroupName +
-        '</button></div>' +
-        '<br/>';
+        test.MessageIn.Action = "CreateGroup"
+        test.MessageIn.Group.GroupTypeID = 2;
+        test.MessageIn.Group.User = test.User;
+        test.MessageIn.Group.GroupOwnerID = test.User.ID;
+        test.MessageIn.Group.GroupName = el1.value;
+        test.ws.send(JSON.stringify(test.MessageIn));
+        var modWin = document.getElementById('chat-messages');
+        modWin.innerHTML = '';
+        var element = document.getElementById('groupList');
+        element.innerHTML += '<div class="input-field col s12">' +
+            '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
+            test.MessageIn.Group.GroupName + '>' +
+            test.MessageIn.Group.GroupName +
+            '</button></div>' +
+            '<br/>';
+    }
 
 }

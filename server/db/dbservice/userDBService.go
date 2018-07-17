@@ -26,12 +26,12 @@ func (u *UserDBService) LoginUser(user *models.User) (bool, error) {
 	record := dbConn.Where("password = ?", user.Password).Where("login = ?", user.Login).Take(&user)
 	switch {
 	case dbConn.Error != nil:
-		return false, dbConn.Error
+		return false, record.Error
 	case record.RecordNotFound():
-		err := errors.New("Login or Password does not correct")
-		return false, err
+		//err := errors.New("Login or Password does not correct")
+		return false, nil
 	default:
-		return true, dbConn.Error
+		return true, nil
 
 	}
 }
@@ -63,7 +63,7 @@ func (u *UserDBService) DeleteContact(user, contact *models.User) (bool, error) 
 	dbConn.Where("login = ?", contact.Login).Take(&contact)
 	record := dbConn.Where("relating_user = ?", user.ID).Where("related_user = ?", contact.ID).Take(&relation)
 	if record.RecordNotFound() {
-		err := errors.New("User already deleted")
+		err := errors.New("Contact already deleted")
 		return false, err
 	}
 	record.Delete(&relation)

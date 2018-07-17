@@ -45,12 +45,15 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		chanOut <- &messageOut
 		return
 	}
+
 	ok, err := u.userManager.LoginUser(&messageIn.User)
 	if err != nil {
 		messageOut.Err = "Error when LoginUser. " + err.Error()
 	}
+
 	if ok {
 		groupList := u.groupManager.GetGroupList(&messageIn.User)
+
 		for _, group := range groupList {
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
 				Members:  u.groupManager.GetMemberList(&group),
@@ -58,17 +61,22 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
+
 		messageOut.User, err = u.userManager.GetAccount(&messageIn.User)
+		if err != nil {
+			messageOut.Err = "Error when GetAccount. " + err.Error()
+		}
+
 		messageOut.ContactList, err = u.userManager.GetContactList(&messageIn.User)
 		if err != nil {
-			messageOut.Err = "Error when LoginUser. " + err.Error()
+			messageOut.Err = "Error when GetContactList. " + err.Error()
 		}
 	}
+
 	messageOut.User = messageIn.User
 	messageOut.Status = ok
 
 	chanOut <- &messageOut
-
 }
 
 //AddContact add spesial user to contact list of special User

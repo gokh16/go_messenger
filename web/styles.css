@@ -24,6 +24,12 @@ nav img {
     overflow-y: auto;
 
 }
+#groupList{
+    min-height: 10vh;
+    height: 40vh;
+    width: 100%;
+    overflow-y: auto;
+}
 #userList{
     margin-top: 20px;
     min-height: 10vh;
@@ -32,9 +38,75 @@ nav img {
     overflow-y: auto;
 }
 
-#signup{
+#signup,#modChange{
     height: 60vh;
     width: 20%;
+}
+#modChange{
+    width: 70%;
+    border: 2px solid #26a69a;
+    
+}
+#profile{
+    height: 50vh;
+    width: 30%;
+    margin: 0 auto;
+    border: 2px solid #26a69a;
+}
+.searchclass{
+    margin-top: 2vh;
+}
+
+.burger_trigger{
+    right: 10px;
+    position: absolute;
+    top: 85px;
+    width: 75px;
+    cursor: pointer;
+
+}
+.menu,.menu_opened{
+    right: 2px;
+    display: none;
+    padding-top: 60px;
+    cursor: pointer;
+    position: absolute;
+    z-index: 5;
+
+}
+.menu_opened li{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 5px;
+    background-color:#73A0E8;
+}
+.menu_opened li:hover{
+    background-color: white;
+    color: black;
+}
+.menu_opened{
+    display: block;
+}
+#menuContent{
+    padding-top: 70px;
+}
+
+#profileIcon{
+    width: 30vh;
+    height: 30vh;
+}
+#userLogin,#userUsername,#userEmail{
+    font-size: 25px;
+}
+#userLogin:before {
+    content: 'Login: ';
+}
+#userEmail:before{
+    content: 'Email: ';
+}
+#userUsername:before{
+    content: 'Username: ';
 }
 
 

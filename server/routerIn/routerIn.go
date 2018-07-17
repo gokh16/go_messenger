@@ -49,6 +49,11 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go groupService.GetGroupList(messageIn, chanOut)
 	case "GetUser":
 		go userService.GetUser(messageIn, chanOut)
+	case "AddContact":
+		go userService.AddContact(messageIn, chanOut)
+	case "GetContactList":
+		go userService.GetContactList(messageIn, chanOut)
+
 
 	default:
 		var errorService = service.ErrorService{}

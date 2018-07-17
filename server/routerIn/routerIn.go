@@ -50,6 +50,7 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 	case "GetUser":
 		go userService.GetUser(messageIn, chanOut)
 
+
 	default:
 		var errorService = service.ErrorService{}
 		err := errors.New("unknown action error")

@@ -47,6 +47,7 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 	case "GetGroupList":
 		go groupService.GetGroupList(messageIn, chanOut)
 
+
 	default:
 		var errorService = service.ErrorService{}
 		go errorService.UnknownActionError(messageIn, chanOut)

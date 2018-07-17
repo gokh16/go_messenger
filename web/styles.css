@@ -47,6 +47,12 @@ nav img {
     border: 2px solid #26a69a;
     
 }
+#profile{
+    height: 50vh;
+    width: 30%;
+    margin: 0 auto;
+    border: 2px solid #26a69a;
+}
 .searchclass{
     margin-top: 2vh;
 }
@@ -85,4 +91,21 @@ nav img {
 #menuContent{
     padding-top: 70px;
 }
+
+#profileIcon{
+    width: 30vh;
+}
+#userLogin,#userUsername,#userEmail{
+    font-size: 25px;
+}
+#userLogin:before {
+    content: 'Login: ';
+}
+#userEmail:before{
+    content: 'Email: ';
+}
+#userUsername:before{
+    content: 'Username: ';
+}
+
 

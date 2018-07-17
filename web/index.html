@@ -81,7 +81,7 @@
     <div class = "row prof" v-if="profile">
         <div class="col s12">
             <div id="profile" class="card-panel teal lighten-2">
-                <img class="responsive-img col s8" src="http://ishowmy.support/img/user-icon-360x360.jpg" id="profileIcon">
+                <img class="responsive-img col s8" id="profileIcon" :src="ProfileStr.ProfileUser.UserIcon">
 
                 <div class="white-text text-darken-2" v-html="ProfileStr.ProfileUser.Login" id="userLogin">
 

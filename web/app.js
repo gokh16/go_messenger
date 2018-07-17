@@ -309,8 +309,12 @@ var test = new Vue({
             this.MessageIn.User.Login = $('<p>').html(this.MessageIn.User.Login).text();
             this.MessageIn.User.Password = $('<p>').html(this.MessageIn.User.Password).text();
             this.MessageIn.User.Email = $('<p>').html(this.MessageIn.User.Email).text();
+            this.MessageIn.User.UserIcon = $('<p>').html(this.MessageIn.User.UserIcon).text();
+            console.log($('<p>').html(this.MessageIn.User.UserIcon).text());
+            if(this.MessageIn.User.UserIcon == ''){
+                this.MessageIn.User.UserIcon = "http://ishowmy.support/img/user-icon-360x360.jpg";
+            }
             this.MessageIn.User.Status = true;
-            this.MessageIn.User.UserIcon = "usericon";
 
             this.MessageIn.Action = "CreateUser";
 

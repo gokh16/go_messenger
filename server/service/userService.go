@@ -49,14 +49,27 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 	ok, err := u.userManager.LoginUser(&messageIn.User)
 	if err != nil {
 		messageOut.Err = "Error when LoginUser. " + err.Error()
+		chanOut <- &messageOut
+		return
 	}
 
 	if ok {
-		groupList := u.groupManager.GetGroupList(&messageIn.User)
+		groupList, err := u.groupManager.GetGroupList(&messageIn.User)
+		if err != nil {
+			messageOut.Err = err.Error()
+			chanOut <- &messageOut
+			return
+		}
 
 		for _, group := range groupList {
+			members, err := u.groupManager.GetMemberList(&group)
+			if err != nil {
+				messageOut.Err = err.Error()
+				chanOut <- &messageOut
+				return
+			}
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-				Members:  u.groupManager.GetMemberList(&group),
+				Members:  members,
 				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
@@ -109,7 +122,7 @@ func (u *UserService) DeleteContact(messageIn *userConnections.MessageIn, chanOu
 	var err error
 	messageOut.Status, err = u.userManager.DeleteContact(&messageIn.User, &messageIn.Contact)
 	if err != nil {
-		messageOut.Err = err.Error()
+		messageOut.Err = "Error when DeleteContact" + err.Error()
 	}
 	chanOut <- &messageOut
 }
@@ -138,7 +151,7 @@ func (u *UserService) DeleteUser(messageIn *userConnections.MessageIn, chanOut c
 	var err error
 	messageOut.Status, err = u.userManager.DeleteUser(&messageIn.User)
 	if err != nil {
-		messageOut.Err = err.Error()
+		messageOut.Err = "Error when DeleteUser" + err.Error()
 	}
 	chanOut <- &messageOut
 }

@@ -68,7 +68,16 @@ func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut c
 		Status: ok, Action: messageIn.Action}
 	chanOut <- &messageOut
 }
-
+func (u *UserService) GetContactList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{User: messageIn.User,
+		Action: messageIn.Action}
+	var err error
+	messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
+	if err != nil {
+		messageOut.Err = "Error when GetContactList" + err.Error()
+	}
+	chanOut <- &messageOut
+}
 //GetUsers method gets all users from DB.
 func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User}

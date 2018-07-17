@@ -90,7 +90,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 
 func (r *RouterOut) getAction(msg *serviceModels.MessageOut) string {
 	switch msg.Action {
-	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "GetUser", "Error":
+	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "GetUser", "Error","GetContactList":
 		return msg.Action
 	default:
 		return "No matches found"

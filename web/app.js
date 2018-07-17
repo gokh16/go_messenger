@@ -40,6 +40,7 @@ var test = new Vue({
         },
         ProfileStr:{
             ProfileUser: user,
+            Friend: false,
             NotMy: false,
             ProfileGroupName: '',
         },
@@ -202,6 +203,28 @@ var test = new Vue({
                 //modWin.innerHTML ='';
 
 
+            }else if(msg.Action == "GetContactList"){
+                var modWin = document.getElementById('chat-messages');
+                modWin.innerHTML ='';
+                modWin.innerHTML = '<div id="modChange"></div>';
+                var modWin = document.getElementById('modChange');
+                modWin.innerHTML ='';
+                if (typeof msg.ContactList != "undefined") {
+                    test.ContactList = msg.ContactList;
+                    for (var i = 0; i < msg.ContactList.length; i++) {
+                        if (test.User.Login != msg.ContactList[i].Login) {
+                            var gName = test.User.Login + msg.ContactList[i].Login;
+                            test.UsersFromServer[gName] = msg.ContactList[i];
+                            modWin.innerHTML +=
+                                '<div class="input-field col s12">' +
+                                '<button class="waves-effect waves-light btn col s12" onclick=reftoshowProfile(this) id = ' +
+                                gName + '>' +
+                                msg.ContactList[i].Username +
+                                '</button></div>' +
+                                '<br/>';
+                        }
+                    }
+                }
             }
 
 
@@ -304,28 +327,20 @@ var test = new Vue({
             this.ws.send(JSON.stringify(this.MessageIn))
         },
         createPublicGroup: function(){
-            //this.MessageIn.Action = "GetUsers";
-            //this.ws.send(JSON.stringify(this.MessageIn));
             var modWin = document.getElementById('chat-messages');
             modWin.innerHTML = '<div id="modChange"></div>';
             var modWin = document.getElementById('modChange');
-
-            //var newWin = window.open('index-2.html', 'example', 'width=600,height=400');
-           // newWin.onload = function() {
-           //     var body = newWin.document.getElementById('createGroups');
-           //     body.innerHTML = '';
-
-                if (typeof test.ContactList != "undefined") {
+                if (typeof this.ContactList != "undefined") {
                     modWin.innerHTML = ' <div class="input-field white-text col s12"><input type="text" id="creatingGroup">\n' +
                         '            <label for="creatingGroup">Название группы</label></div>';
-                    for (var i = 0; i < test.ContactList.length; i++) {
-                        if (test.User.Login != test.ContactList[i].Login) {
+                    for (var i = 0; i < this.ContactList.length; i++) {
+                        if (this.User.Login != this.ContactList[i].Login) {
                             modWin.innerHTML +=
                                 '<div class="form-check">' +
                                 '<input type="checkbox" class="form-check-input col s12"  id = ' +
-                                test.ContactList[i].Login + '><label class="form-check-label" for=' +
-                                test.ContactList[i].Login + '>'+
-                                test.ContactList[i].Username +'</label>'+
+                                this.ContactList[i].Login + '><label class="form-check-label" for=' +
+                                this.ContactList[i].Login + '>'+
+                                this.ContactList[i].Username +'</label>'+
                                 '</div>' +
                                 '<br/>';
                         }
@@ -339,7 +354,6 @@ var test = new Vue({
             
         },
         search: function(){
-
             this.MessageIn.Action = "GetUsers";
             this.ws.send(JSON.stringify(this.MessageIn))
         },
@@ -354,17 +368,13 @@ var test = new Vue({
         },
         openProfile: function(){
             this.ProfileStr.ProfileUser = this.User;
-
-            //console.log(modWin);
-
             this.profile = true;
-            //el.innerHTML = '<div class="card-content blue-grey darken-3">this.User.Username</div>';
         },
         showContacts: function(){
-            // this.MessageIn.User.Login = this.User.Login;
-            // this.MessageIn.User.Username = this.User.Username;
-            // this.MessageIn.Action = "GetUsers";
-            // this.ws.send(JSON.stringify(this.MessageIn))
+            this.MessageIn.User.Login = this.User.Login;
+            this.MessageIn.User.Username = this.User.Username;
+            this.MessageIn.Action = "GetContactList";
+            this.ws.send(JSON.stringify(this.MessageIn))
         },
         changeUserFromProfile:function(){
             this.backtochat();
@@ -405,12 +415,22 @@ var test = new Vue({
         },
 
         AddContact:function(){
-            this.MessageIn.Action
+            this.MessageIn.Action = "AddContact";
+            this.MessageIn.RelationType=1;
+            this.MessageIn.Contact = this.ProfileStr.ProfileUser;
+            test.ws.send(JSON.stringify(test.MessageIn));
         },
         backtochat: function(){
           this.profile = false;
         },
         showProfile: function(a){
+            if(this.ContactList != "undefined"){
+                for(var i=0;i<this.ContactList.length;i++){
+                    if(this.ContactList[i].Login == this.UsersFromServer[a].Login){
+                        this.Friend = true;
+                    }
+                    }
+            }
             this.profile =true;
             this.ProfileStr.ProfileUser = this.UsersFromServer[a];
             this.ProfileStr.NotMy=true;

@@ -99,7 +99,7 @@
                         Send message
                     </button>
                 </div>
-                <div class="input-field col s12" v-if="ProfileStr.NotMy">
+                <div class="input-field col s12" v-if="ProfileStr.NotMy"  v-if="!ProfileStr.Friend">
                     <button class="waves-effect waves-light btn col s12" @click="AddContact">
                         Add to contacts
                     </button>

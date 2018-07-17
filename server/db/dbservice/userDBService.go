@@ -57,6 +57,22 @@ func (u *UserDBService) AddContact(user, contact *models.User, relationType uint
 
 }
 
+func (u *UserDBService) DeleteContact(user, contact *models.User) (bool, error) {
+	relation := models.UserRelation{}
+	dbConn.Where("login = ?", user.Login).Take(&user)
+	dbConn.Where("login = ?", contact.Login).Take(&contact)
+	record := dbConn.Where("relating_user = ?", user.ID).Where("related_user = ?", contact.ID).Take(&relation)
+	if record.RecordNotFound() {
+		err := errors.New("User already deleted")
+		return false, err
+	}
+	record.Delete(&relation)
+	if record.Error != nil {
+		return false, record.Error
+	}
+	return true, nil
+}
+
 //GetUsers method gets all users from DB.
 func (u *UserDBService) GetUsers(users *[]models.User) {
 	dbConn.Find(&users)
@@ -67,13 +83,13 @@ func (u *UserDBService) GetUsers(users *[]models.User) {
 func (u *UserDBService) GetUser(user *models.User) (models.User, error) {
 	record := dbConn.Where("login = ?", user.Login).Take(&user)
 	switch {
-	case dbConn.Error != nil:
-		return *user, dbConn.Error
+	case record.Error != nil:
+		return *user, record.Error
 	case record.RecordNotFound():
 		err := errors.New("User does not exist")
 		return *user, err
 	default:
-		return *user, nil
+		return *user, record.Error
 	}
 }
 
@@ -104,5 +120,5 @@ func (u *UserDBService) DeleteUser(user *models.User) (bool, error) {
 	if record.Error != nil {
 		return false, record.Error
 	}
-	return true, nil
+	return true, record.Error
 }

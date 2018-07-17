@@ -11,4 +11,5 @@ type GroupManager interface {
 	GetGroupList(user *models.User) ([]models.Group, error)
 	GetGroup(group *models.Group) (models.Group, error)
 	GetMemberList(group *models.Group) ([]models.User, error)
+	EditGroup(group *models.Group) bool
 }

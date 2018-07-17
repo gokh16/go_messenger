@@ -27,6 +27,7 @@ func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut c
 		messageOut.Err = "Emty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
+		return
 	}
 	ok, err := u.userManager.CreateUser(&messageIn.User)
 	if err != nil {
@@ -40,7 +41,7 @@ func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut c
 func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	if messageIn.User.Password == "" || messageIn.User.Login == "" {
-		messageOut.Err = "Emty Login or Password"
+		messageOut.Err = "Empty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
 		return
@@ -137,11 +138,24 @@ func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut cha
 }
 
 //GetUser method get special user from DB.
-// func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-// 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
-// 	messageOut.ContactList = append(messageOut.ContactList, u.userManager.GetUser(&messageIn.User))
-// 	chanOut <- &messageOut
-// }
+func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
+	user, err := u.userManager.GetUser(&messageIn.User)
+	if err != nil {
+		messageOut.Err = err.Error()
+		chanOut <- &messageOut
+		return
+	}
+	messageOut.ContactList = append(messageOut.ContactList, user)
+	chanOut <- &messageOut
+}
+
+//EditUser method edit own client's user and saves it in DB.
+func (u *UserService) EditUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	updatedUser := u.userManager.EditUser(&messageIn.User)
+	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User, Status: updatedUser.Status}
+	chanOut <- &messageOut
+}
 
 //DeleteUser method delete own account from DB.
 func (u *UserService) DeleteUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {

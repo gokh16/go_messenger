@@ -11,7 +11,12 @@ import (
 )
 
 //DrawChatWindow is a func which draw window by GTK's help
-func DrawChatWindow(conn net.Conn) *ui.Window {
+func DrawChatWindow(conn net.Conn) {
+	//status := <-StatusForLogin
+	//if !status {
+	//	DrawErrorWindow("Wrong password or login!", conn)
+	//	return
+	//}
 	log.Println("Opened DrawChatWindow")
 	window := ui.NewWindow(config.Login, 800, 500, false)
 	input := ui.NewEntry()
@@ -28,22 +33,33 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 	usersBox := ui.NewVerticalBox()
 	usersBox.Append(searchEntry, false)
 	buttonUserSlice := make([]*ui.Button, 0)
+	status := make(chan bool)
 	go func() {
-		json := <-SignIn
 		log.Println("Routine for accept, hang listeners and show data")
-		for _, group := range config.UserGroups {
-			if group != "" && group != config.Login {
-				buttonWithGroup := ui.NewButton(group)
-				usersBox.Append(buttonWithGroup, false)
-				buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
+		json := <-SignIn
+		log.Println(json.Status)
+		if !json.Status {
+			window.Hide()
+			DrawErrorWindow("Wrong login or password", conn)
+			status <- json.Status
+			return
+		}
+		if json.Status {
+			for _, group := range config.UserGroups {
+				if group != "" && group != config.Login {
+					buttonWithGroup := ui.NewButton(group)
+					usersBox.Append(buttonWithGroup, false)
+					buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
+				}
 			}
+			for i := 0; i < len(buttonUserSlice); i++ {
+				util.ButtonActions(buttonUserSlice[i], conn, output, json)
+				output.SetText("")
+			}
+			status <- json.Status
+			close(SignIn)
+			return
 		}
-		for i := 0; i < len(buttonUserSlice); i++ {
-			util.ButtonActions(buttonUserSlice[i], conn, output, json)
-			output.SetText("")
-		}
-		close(SignIn)
-		return
 	}()
 
 	userHeader.Append(profile, true)
@@ -60,7 +76,6 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		for {
 			json := <-Send
 			output.Append(json.User.Login + ": " + json.Message.Content + "\n")
-
 		}
 	}()
 	send.OnClicked(func(*ui.Button) {
@@ -71,7 +86,7 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 
-		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		user := util.NewUser(config.Login,"", config.Login, "test@test.com", true, "testUserIcon")
 		group := util.NewGroup(user, "private", config.GroupName, config.UserID, 1)
 		msg := util.NewMessage(user, group, input.Text(), config.UserID, id, "Text")
 		message := util.NewMessageOut(user, &structure.User{}, group, msg, nil, 1, 0, "SendMessageTo")
@@ -98,6 +113,8 @@ func DrawChatWindow(conn net.Conn) *ui.Window {
 		ui.Quit()
 		return true
 	})
-	window.Show()
-	return window
+	if a := <-status; a {
+		window.Show()
+	}
+	return
 }

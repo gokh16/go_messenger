@@ -1,9 +1,8 @@
 package service
 
 import (
-	"errors"
+	"go_messenger/server/models"
 	"go_messenger/server/service/serviceModels"
-	"go_messenger/server/userConnections"
 	"log"
 )
 
@@ -12,13 +11,14 @@ type ErrorService struct {
 }
 
 func (e *ErrorService) Error() string {
-	return "Unknown Action Error"
+	return e.err.Error()
 }
 
-func (e *ErrorService) UnknownActionError(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	e.err = errors.New(e.Error())
-	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: "Error"}
-	messageOut.Err = e.err.Error()
+//The SendError method sends description of an error to the client
+func (e *ErrorService) SendError(err error, recipient models.User, chanOut chan<- *serviceModels.MessageOut) {
+	e.err = err
+	messageOut := serviceModels.MessageOut{User: recipient, Action: "Error"}
+	messageOut.Err = e.Error()
 
 	log.Println(messageOut.Err)
 	chanOut <- &messageOut

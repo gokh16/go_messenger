@@ -1,6 +1,7 @@
 package routerIn
 
 import (
+	"errors"
 	"go_messenger/server/service"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
@@ -32,8 +33,12 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go userService.CreateUser(messageIn, chanOut)
 	case "LoginUser":
 		go userService.LoginUser(messageIn, chanOut)
+	case "EditUser":
+		go userService.EditUser(messageIn, chanOut)
 	case "CreateGroup":
 		go groupService.CreateGroup(messageIn, chanOut)
+	case "EditGroup":
+		go groupService.EditGroup(messageIn, chanOut)
 	case "AddGroupMember":
 		go groupService.AddGroupMember(messageIn, chanOut)
 	case "GetUsers":
@@ -42,11 +47,12 @@ func RouterIn(messageIn *userConnections.MessageIn, chanOut chan *serviceModels.
 		go groupService.GetGroup(messageIn, chanOut)
 	case "GetGroupList":
 		go groupService.GetGroupList(messageIn, chanOut)
-	case "DeleteUser":
-		go groupService.GetGroupList(messageIn, chanOut)
+	case "GetUser":
+		go userService.GetUser(messageIn, chanOut)
 
 	default:
 		var errorService = service.ErrorService{}
-		go errorService.UnknownActionError(messageIn, chanOut)
+		err := errors.New("unknown action error")
+		go errorService.SendError(err, messageIn.User, chanOut)
 	}
 }

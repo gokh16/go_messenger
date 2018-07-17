@@ -11,6 +11,7 @@ type UserManager interface {
 	GetUser(user *models.User) (models.User, error)
 	GetAccount(user *models.User) (models.User, error)
 	GetContactList(user *models.User) ([]models.User, error)
+	EditUser(user *models.User) models.User
 	DeleteUser(user *models.User) (bool, error)
 	DeleteContact(user, contact *models.User) (bool, error)
 }

@@ -20,7 +20,7 @@ var Groups = make(chan util.MessageIn)
 func Reader(conn net.Conn) {
 	for {
 		msg := util.JSONdecode(conn)
-		log.Println(msg.Action)
+		log.Println(msg.Status)
 		switch msg.Action {
 		case "LoginUser":
 			log.Println("login")

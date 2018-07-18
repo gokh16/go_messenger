@@ -1,0 +1,45 @@
+struct Connection {
+    wsconn []*net.Conn
+    outChan chan *Message
+}
+
+func (c *Connetion) Add(*net.Conn){
+    mutex...
+}
+
+struct TcpHndler {
+    connections *Connection
+}
+
+func NewTcpHandler(c *Connection) *TcpHandler {
+   tc := TcpHandler{}
+   tc.connections = c
+   go tc.Handle()
+
+   parse...
+}
+
+struct RouteOut {
+    conn *Connection
+    chout chan *Message
+}
+
+func NewRouteOut(c *Connection, chout chan *Message) *RouteOut {
+       n := RouteOut{}
+       n.c = c
+       go n.HandleOut()
+
+}
+
+func (r *RouteOut) HandleOut() {
+    for m in range r.chout {
+          TODO SOMETHING WITH OUT MESSAGE
+    }
+}
+
+func main() {
+    chOut := make(chan *MessageOut, 1024)
+    connetionList := Connection{outChan: chOut}
+    routeOut := NewRouteOut(connetionList, chOut)
+    tcpSrver := NewTcpHandler(connetionList)
+}

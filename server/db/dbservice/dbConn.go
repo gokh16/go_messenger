@@ -6,8 +6,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 	//ignoring init from package below
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"log"
+
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 var dbConn *gorm.DB
@@ -18,7 +19,7 @@ func OpenConnDB() *gorm.DB {
 	dbinfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", db.HostDB, db.PortDB, db.UserDB, db.NameDB, db.PasswordDB, db.SSLModeDB)
 	dbConn, err = gorm.Open("postgres", dbinfo)
 	if err != nil {
-		fmt.Println("gorm Open connection error: ", err)
+		log.Println("gorm Open connection error: ", err)
 	}
 	log.Println("DB opened ok")
 	return dbConn

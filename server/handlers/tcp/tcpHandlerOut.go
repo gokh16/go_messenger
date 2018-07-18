@@ -9,8 +9,6 @@ import (
 
 //SendJSON is waiting for data from route out, parsing data into json format and write to util(linter)
 func SendJSON(conns []net.Conn, str *serviceModels.MessageOut) {
-	log.Println(str.Status)
-	//todo не присылает статут при неправильном логине или пароле
 	outComingData, err := json.Marshal(str)
 	if err != nil {
 		log.Println(err)

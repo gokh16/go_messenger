@@ -1,11 +1,11 @@
 package routerIn
 
 import (
+	"errors"
 	"go_messenger/server/service"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	"errors"
 )
 
 var userService = service.UserService{}

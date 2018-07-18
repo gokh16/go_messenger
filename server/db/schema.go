@@ -109,4 +109,22 @@ func CreateDatabase() {
 	} else {
 		log.Printf("Could not migrate: %v", err)
 	}
+	//initGroupType(db)
+}
+
+func initGroupType(db *gorm.DB) {
+	private := models.GroupType{Type: "private"}
+	private.ID = 1
+	public := models.GroupType{Type: "public"}
+	public.ID = 2
+	rel := models.RelationType{Type: "friend"}
+	if !db.NewRecord(&private) {
+		db.Create(&private)
+	}
+	if !db.NewRecord(&public) {
+		db.Create(&public)
+	}
+	if db.NewRecord(&rel) {
+		db.Create(&rel)
+	}
 }

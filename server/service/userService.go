@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"go_messenger/server/models"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
@@ -24,14 +25,17 @@ func (u *UserService) InitUserService(ui interfaces.UserManager, gi interfaces.G
 func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	if messageIn.User.Password == "" || messageIn.User.Login == "" {
-		messageOut.Err = "Empty Login or Password"
+		messageOut.Err = "Emty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
-	} else {
-		ok := u.userManager.CreateUser(&messageIn.User)
-		messageOut.Status = ok
-		chanOut <- &messageOut
+		return
 	}
+	ok, err := u.userManager.CreateUser(&messageIn.User)
+	if err != nil {
+		messageOut.Err = "DBError when CreateUser. " + err.Error()
+	}
+	messageOut.Status = ok
+	chanOut <- &messageOut
 }
 
 //LoginUser - user's auth.
@@ -41,43 +45,107 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		messageOut.Err = "Empty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
-	} else {
-		ok := u.userManager.LoginUser(&messageIn.User)
-		if ok {
-			groupList := u.groupManager.GetGroupList(&messageIn.User)
-			for _, group := range groupList {
-				groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-					Members:  u.groupManager.GetMemberList(&group),
-					Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
-				}
-				messageOut.GroupList = append(messageOut.GroupList, groupOut)
-			}
-			messageOut.User = u.userManager.GetUser(&messageIn.User)
-			messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
-		}
-		messageOut.User = messageIn.User
-		messageOut.Status = ok
-		chanOut <- &messageOut
+		return
 	}
+
+	ok, err := u.userManager.LoginUser(&messageIn.User)
+	if err != nil {
+		messageOut.Err = "Error when LoginUser. " + err.Error()
+		chanOut <- &messageOut
+		return
+	}
+
+	if ok {
+		groupList, err := u.groupManager.GetGroupList(&messageIn.User)
+		if err != nil {
+			var serviceErr = ErrorService{}
+			custErr := errors.New("Can't get group list")
+			serviceErr.SendError(custErr, messageIn.User, chanOut)
+			return
+		}
+
+		for _, group := range groupList {
+			members, err := u.groupManager.GetMemberList(&group)
+			if err != nil {
+				var serviceErr = ErrorService{}
+				custErr := errors.New("Can't get member list")
+				serviceErr.SendError(custErr, messageIn.User, chanOut)
+				return
+			}
+			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
+				Members:  members,
+				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
+			}
+			messageOut.GroupList = append(messageOut.GroupList, groupOut)
+		}
+
+		messageOut.User, err = u.userManager.GetAccount(&messageIn.User)
+		if err != nil {
+			var serviceErr = ErrorService{}
+			custErr := errors.New("Can't get Account")
+			serviceErr.SendError(custErr, messageIn.User, chanOut)
+			return
+		}
+
+		messageOut.ContactList, err = u.userManager.GetContactList(&messageIn.User)
+		if err != nil {
+			var serviceErr = ErrorService{}
+			custErr := errors.New("Can't get contact list")
+			serviceErr.SendError(custErr, messageIn.User, chanOut)
+			return
+		}
+	}
+
+	messageOut.User = messageIn.User
+	messageOut.Status = ok
+
+	chanOut <- &messageOut
 }
 
 //AddContact add spesial user to contact list of special User
 func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	ok := u.userManager.AddContact(&messageIn.User, &messageIn.Contact, messageIn.RelationType)
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
-		Status: ok, Action: messageIn.Action}
+		Action: messageIn.Action}
+	ok, err := u.userManager.AddContact(&messageIn.User, &messageIn.Contact, messageIn.RelationType)
+	if err != nil {
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't add contact")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
+	}
+	messageOut.Status = ok
 	chanOut <- &messageOut
 }
+
 func (u *UserService) GetContactList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
 		Action: messageIn.Action}
 	var err error
-	messageOut.ContactList = u.userManager.GetContactList(&messageIn.User)
+	messageOut.ContactList, err = u.userManager.GetContactList(&messageIn.User)
 	if err != nil {
-		messageOut.Err = "Error when GetContactList" + err.Error()
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get contact list")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
 	}
 	chanOut <- &messageOut
 }
+
+func (u *UserService) DeleteContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
+	messageOut := serviceModels.MessageOut{
+		Action: messageIn.Action,
+	}
+	var err error
+	messageOut.Status, err = u.userManager.DeleteContact(&messageIn.User, &messageIn.Contact)
+	if err != nil {
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't delete contact")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
+	}
+	chanOut <- &messageOut
+}
+
 //GetUsers method gets all users from DB.
 func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action, User: messageIn.User}
@@ -90,7 +158,14 @@ func (u *UserService) GetUsers(messageIn *userConnections.MessageIn, chanOut cha
 //GetUser method get special user from DB.
 func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
-	messageOut.ContactList = append(messageOut.ContactList, u.userManager.GetUser(&messageIn.User))
+	user, err := u.userManager.GetUser(&messageIn.User)
+	if err != nil {
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get User")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
+	}
+	messageOut.ContactList = append(messageOut.ContactList, user)
 	chanOut <- &messageOut
 }
 
@@ -101,8 +176,18 @@ func (u *UserService) EditUser(messageIn *userConnections.MessageIn, chanOut cha
 	chanOut <- &messageOut
 }
 
-//DeleteUser method delete own account user from DB.
+//DeleteUser method delete own account from DB.
 func (u *UserService) DeleteUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
-	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
+	messageOut := serviceModels.MessageOut{
+		Action: messageIn.Action,
+	}
+	var err error
+	messageOut.Status, err = u.userManager.DeleteUser(&messageIn.User)
+	if err != nil {
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't delete user")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
+	}
 	chanOut <- &messageOut
 }

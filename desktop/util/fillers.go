@@ -17,13 +17,12 @@ func NewUser(login string, password string, username string, email string, statu
 }
 
 //NewGroup fills structure with these fields
-func NewGroup(user *structure.User, groupType string, groupName string, groupOwnerID uint, groupTypeID uint) *structure.Group {
+func NewGroup(user *structure.User, groupName string, groupOwnerID uint, groupTypeID uint) *structure.Group {
 	return &structure.Group{
 		User:         *user,
 		GroupName:    groupName,
 		GroupTypeID:  groupTypeID,
 		GroupOwnerID: groupOwnerID,
-		GroupType:    structure.GroupType{Type: groupType},
 	}
 }
 

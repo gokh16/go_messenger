@@ -12,11 +12,6 @@ import (
 
 //DrawChatWindow is a func which draw window by GTK's help
 func DrawChatWindow(conn net.Conn) {
-	//status := <-StatusForLogin
-	//if !status {
-	//	DrawErrorWindow("Wrong password or login!", conn)
-	//	return
-	//}
 	log.Println("Opened DrawChatWindow")
 	window := ui.NewWindow(config.Login, 800, 500, false)
 	input := ui.NewEntry()
@@ -28,15 +23,15 @@ func DrawChatWindow(conn net.Conn) {
 	output := ui.NewMultilineNonWrappingEntry()
 	output.SetReadOnly(true)
 	mainBox := ui.NewHorizontalBox()
-	searchEntry := ui.NewEntry()
-	searchEntry.SetText("Search")
+	refresh := ui.NewButton("Refresh")
 	usersBox := ui.NewVerticalBox()
-	usersBox.Append(searchEntry, false)
+	usersBox.Append(refresh, false)
+
 	buttonUserSlice := make([]*ui.Button, 0)
 	status := make(chan bool)
 	go func() {
 		log.Println("Routine for accept, hang listeners and show data")
-		json := <-SignIn
+		json := <-Beginning
 		log.Println(json.Status)
 		if !json.Status {
 			window.Hide()
@@ -57,7 +52,6 @@ func DrawChatWindow(conn net.Conn) {
 				output.SetText("")
 			}
 			status <- json.Status
-			close(SignIn)
 			return
 		}
 	}()
@@ -78,6 +72,16 @@ func DrawChatWindow(conn net.Conn) {
 			output.Append(json.User.Login + ": " + json.Message.Content + "\n")
 		}
 	}()
+	refresh.OnClicked(func(*ui.Button) {
+		window.Destroy()
+		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 1, "GetGroupList")
+		_, err := conn.Write([]byte(util.JSONencode(*message)))
+		if err != nil {
+			log.Println("OnClickedError! Empty field.")
+		}
+		DrawChatWindow(conn)
+	})
 	send.OnClicked(func(*ui.Button) {
 		log.Println("Button Send clicked")
 		//FIX SLICEMEMBER
@@ -85,9 +89,8 @@ func DrawChatWindow(conn net.Conn) {
 		id := config.GroupID[config.GroupName]
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-
-		user := util.NewUser(config.Login,"", config.Login, "test@test.com", true, "testUserIcon")
-		group := util.NewGroup(user, "private", config.GroupName, config.UserID, 1)
+		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		group := util.NewGroup(user, config.GroupName, config.UserID, 1)
 		msg := util.NewMessage(user, group, input.Text(), config.UserID, id, "Text")
 		message := util.NewMessageOut(user, &structure.User{}, group, msg, nil, 1, 0, "SendMessageTo")
 		if msg.Content != "" {
@@ -101,7 +104,7 @@ func DrawChatWindow(conn net.Conn) {
 	contacts.OnClicked(func(*ui.Button) {
 		log.Println("Button Contacts clicked")
 		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
-		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "GetUsers")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "GetContactList")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")

@@ -330,6 +330,12 @@ var test = new Vue({
             this.MessageIn.Action = "GetUsers";
             this.ws.send(JSON.stringify(this.MessageIn))
         },
+        showGroupListMob:function(){
+          var el =document.getElementById("chat-messages");
+          console.log(el);
+          el.innerHTML = '';
+          el.innerHTML+=this.MyGroups;
+        },
         createPublicGroup: function(){
             var modWin = document.getElementById('chat-messages');
             modWin.innerHTML = '<div id="modChange"></div>';

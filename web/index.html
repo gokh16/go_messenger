@@ -16,7 +16,7 @@
 <body class="blue-grey darken-4">
 <header>
     <nav class="row blue-grey darken-3">
-        <div class="nav-wrapper col s10">
+        <div class="nav-wrapper col m10 s12">
             <img src="go_icon.png" alt="ss" height="50px">
             <a href="/" class="brand-logo"> go-messenger</a>
         </div>
@@ -25,7 +25,7 @@
 </header>
 <main id="app">
     <div class="row"  v-if="joined && !profile">
-        <div class="col s2">
+        <div class="col m2 s8 mobileGlist">
             <!--<div class ="searchclass input-field white-text"><input class=" darken-3" type="search" placeholder="Search" v-model.trim="searchUser" autocomplete="off" @keyup.enter="search"></div>-->
             <div class="card horizontal">
 
@@ -34,16 +34,17 @@
                 </div>
             </div>
         </div>
-        <div class="col s9">
+        <div class="col m9 s11">
             <div class="card horizontal">
                 <div id="chat-messages" class="card-content blue-grey darken-3" v-html="RecContent">
                 </div>
             </div>
         </div>
-        <div class="col s1">
+        <div class="col s1 burgerMobile">
             <img src="menuIcon.png"  class = "burger_trigger" alt="" @click="burger">
             <ul class="menu"  @click="burger">
                 <li @click = "openProfile">Профиль</li>
+                <li @click = "showGroupListMob" id="showGroupListMob">Мои группы</li>
                 <li @click = "createPublicGroup">Создать группу</li>
                 <li @click ="showContacts">Контакты</li>
                 <li @click ="showUsers">Поиск пользователя</li>
@@ -81,17 +82,17 @@
     <div class = "row prof" v-if="profile">
         <div class="col s12">
             <div id="profile" class="card-panel teal lighten-2">
-                <img class="responsive-img col s8" id="profileIcon" :src="ProfileStr.ProfileUser.UserIcon">
+                <img class="responsive-img col m8 s12" id="profileIcon" :src="ProfileStr.ProfileUser.UserIcon">
 
-                <div class="white-text text-darken-2" v-html="ProfileStr.ProfileUser.Login" id="userLogin">
-
-                </div>
-
-                <div class="white-text text-darken-2" v-html="ProfileStr.ProfileUser.Username" id="userUsername">
+                <div class="white-text text-darken-2 m4 s12" v-html="ProfileStr.ProfileUser.Login" id="userLogin">
 
                 </div>
 
-                <div class="white-text text-darken-2" v-html="ProfileStr.ProfileUser.Email" id="userEmail">
+                <div class="white-text text-darken-2 m4 s12" v-html="ProfileStr.ProfileUser.Username" id="userUsername">
+
+                </div>
+
+                <div class="white-text text-darken-2 m4 s12" v-html="ProfileStr.ProfileUser.Email" id="userEmail">
 
                 </div>
                 <div class="input-field col s12" v-if="ProfileStr.NotMy">

@@ -47,6 +47,7 @@ nav img {
     border: 2px solid #26a69a;
     
 }
+
 #profile{
     height: 50vh;
     width: 30%;
@@ -108,5 +109,48 @@ nav img {
 #userUsername:before{
     content: 'Username: ';
 }
+#showGroupListMob{
+    display: none;
+}
+
+@media only screen and (max-width: 600px) {
+    #signup,#modChange{
+        width: 80%;
+    }
+    .brand-logo{
+        width: 60vh;
+        margin-left: 60px;
+        font-size: 15px;
+    }
+    .mobileGlist{
+        display: none;
+    }
+    #showGroupListMob{
+        display: block;
+    }
+    .burger_trigger{
+        top: 5px;
+        width: 45px;
+    }
+    .menu,.menu_opened{
+        top:55px;
+        padding-top: 0px;
+        margin-top: 0;
+        z-index: 100;
+    }
+    #profile{
+        width: 90%;
+        height: 90%;
+    }
+    #userLogin,#userUsername,#userEmail{
+        font-size: 15px;
+    }
+    #profileIcon{
+        width: 100%;
+        height: 100%;
+    }
+}
+
+
 
 

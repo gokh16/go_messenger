@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
@@ -25,8 +26,9 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	ok, err := g.groupManager.CreateGroup(&messageIn.Group)
 	if err != nil {
-		messageOut.Err = err.Error()
-		chanOut <- &messageOut
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't create group")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
 		return
 	}
 	if ok {
@@ -35,6 +37,7 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 		case 1:
 			for _, member := range messageIn.Members {
 				g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
+
 			}
 			// groupType == 2 means group chat
 		case 2:
@@ -53,15 +56,17 @@ func (g *GroupService) GetGroup(messageIn *userConnections.MessageIn, chanOut ch
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModel, err := g.groupManager.GetGroup(&messageIn.Group)
 	if err != nil {
-		messageOut.Err = err.Error()
-		chanOut <- &messageOut
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get group")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
 		return
 	}
 	log.Printf("GET GROUP SERVICE, group_id -> %d, group_name -> %s", groupModel.ID, groupModel.GroupName)
 	members, err := g.groupManager.GetMemberList(&groupModel)
 	if err != nil {
-		messageOut.Err = err.Error()
-		chanOut <- &messageOut
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get member list")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
 		return
 	}
 	messages := g.messageManager.GetGroupMessages(&groupModel, messageIn.MessageLimit)
@@ -75,16 +80,18 @@ func (g *GroupService) GetGroupList(messageIn *userConnections.MessageIn, chanOu
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	groupModelList, err := g.groupManager.GetGroupList(&messageIn.User)
 	if err != nil {
-		messageOut.Err = err.Error()
-		chanOut <- &messageOut
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get group list")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
 		return
 	}
 	for _, group := range groupModelList {
 		log.Printf("GET GROUP LIST SERVICE, group_id -> %d, group_name -> %s", group.ID, group.GroupName)
 		members, err := g.groupManager.GetMemberList(&group)
 		if err != nil {
-			messageOut.Err = err.Error()
-			chanOut <- &messageOut
+			var serviceErr = ErrorService{}
+			custErr := errors.New("Can't get member list")
+			serviceErr.SendError(custErr, messageIn.User, chanOut)
 			return
 		}
 		messages := g.messageManager.GetGroupMessages(&group, messageIn.MessageLimit)
@@ -107,8 +114,9 @@ func (g *GroupService) GetMemberList(messageIn *userConnections.MessageIn, chanO
 		Action: messageIn.Action}
 	recipients, err := g.groupManager.GetMemberList(&messageIn.Group)
 	if err != nil {
-		messageOut.Err = err.Error()
-		chanOut <- &messageOut
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get member list")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
 		return
 	}
 	messageOut.Recipients = recipients

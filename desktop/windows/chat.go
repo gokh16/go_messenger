@@ -89,7 +89,6 @@ func DrawChatWindow(conn net.Conn) {
 		id := config.GroupID[config.GroupName]
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-
 		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
 		group := util.NewGroup(user, config.GroupName, config.UserID, 1)
 		msg := util.NewMessage(user, group, input.Text(), config.UserID, id, "Text")

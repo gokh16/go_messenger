@@ -5,6 +5,7 @@ import (
 	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
 	"net"
+	"log"
 )
 
 //var InputData = make(chan util.MessageIn)
@@ -26,6 +27,7 @@ func Reader(conn net.Conn) {
 				config.GroupID[contacts.GroupName] = contacts.ID
 			}
 			config.UserID = msg.User.ID
+			log.Println(config.UserID)
 		case "CreateUser":
 			SignUp <- msg
 		case "GetUser":

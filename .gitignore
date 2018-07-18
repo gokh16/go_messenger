@@ -2,6 +2,6 @@
 #IDEA files
 .idea/*
 ignore/*
-.github.com/*
-.*.lock
+vendor/*
+*Gopkg.lock
 *~

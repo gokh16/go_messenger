@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"go_messenger/server/models"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
@@ -27,15 +28,17 @@ func (m *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, cha
 	m.messageManager.AddMessage(&messageIn.Message)
 	members, err := m.groupManager.GetMemberList(&messageIn.Group)
 	if err != nil {
-		messageOut.Err = err.Error()
-		chanOut <- &messageOut
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get member list")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
 		return
 	}
 	message := []models.Message{messageIn.Message}
 	group, err := m.groupManager.GetGroup(&messageIn.Group)
 	if err != nil {
-		messageOut.Err = err.Error()
-		chanOut <- &messageOut
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get group")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
 		return
 	}
 	groupOut := serviceModels.NewGroup(group, members, message)

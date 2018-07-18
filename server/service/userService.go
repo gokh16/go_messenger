@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"go_messenger/server/models"
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
@@ -57,16 +58,18 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 	if ok {
 		groupList, err := u.groupManager.GetGroupList(&messageIn.User)
 		if err != nil {
-			messageOut.Err = err.Error()
-			chanOut <- &messageOut
+			var serviceErr = ErrorService{}
+			custErr := errors.New("Can't get group list")
+			serviceErr.SendError(custErr, messageIn.User, chanOut)
 			return
 		}
 
 		for _, group := range groupList {
 			members, err := u.groupManager.GetMemberList(&group)
 			if err != nil {
-				messageOut.Err = err.Error()
-				chanOut <- &messageOut
+				var serviceErr = ErrorService{}
+				custErr := errors.New("Can't get member list")
+				serviceErr.SendError(custErr, messageIn.User, chanOut)
 				return
 			}
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
@@ -78,12 +81,18 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 
 		messageOut.User, err = u.userManager.GetAccount(&messageIn.User)
 		if err != nil {
-			messageOut.Err = "Error when GetAccount. " + err.Error()
+			var serviceErr = ErrorService{}
+			custErr := errors.New("Can't get Account")
+			serviceErr.SendError(custErr, messageIn.User, chanOut)
+			return
 		}
 
 		messageOut.ContactList, err = u.userManager.GetContactList(&messageIn.User)
 		if err != nil {
-			messageOut.Err = "Error when GetContactList. " + err.Error()
+			var serviceErr = ErrorService{}
+			custErr := errors.New("Can't get contact list")
+			serviceErr.SendError(custErr, messageIn.User, chanOut)
+			return
 		}
 	}
 
@@ -99,7 +108,10 @@ func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut c
 		Action: messageIn.Action}
 	ok, err := u.userManager.AddContact(&messageIn.User, &messageIn.Contact, messageIn.RelationType)
 	if err != nil {
-		messageOut.Err = "Error when AddContact" + err.Error()
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't add contact")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
 	}
 	messageOut.Status = ok
 	chanOut <- &messageOut
@@ -111,7 +123,10 @@ func (u *UserService) GetContactList(messageIn *userConnections.MessageIn, chanO
 	var err error
 	messageOut.ContactList, err = u.userManager.GetContactList(&messageIn.User)
 	if err != nil {
-		messageOut.Err = "Error when GetContactList" + err.Error()
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get contact list")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
 	}
 	chanOut <- &messageOut
 }
@@ -123,7 +138,10 @@ func (u *UserService) DeleteContact(messageIn *userConnections.MessageIn, chanOu
 	var err error
 	messageOut.Status, err = u.userManager.DeleteContact(&messageIn.User, &messageIn.Contact)
 	if err != nil {
-		messageOut.Err = "Error when DeleteContact" + err.Error()
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't delete contact")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
 	}
 	chanOut <- &messageOut
 }
@@ -149,8 +167,9 @@ func (u *UserService) GetUser(messageIn *userConnections.MessageIn, chanOut chan
 	messageOut := serviceModels.MessageOut{User: messageIn.User, Action: messageIn.Action}
 	user, err := u.userManager.GetUser(&messageIn.User)
 	if err != nil {
-		messageOut.Err = err.Error()
-		chanOut <- &messageOut
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't get User")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
 		return
 	}
 	messageOut.ContactList = append(messageOut.ContactList, user)
@@ -172,7 +191,10 @@ func (u *UserService) DeleteUser(messageIn *userConnections.MessageIn, chanOut c
 	var err error
 	messageOut.Status, err = u.userManager.DeleteUser(&messageIn.User)
 	if err != nil {
-		messageOut.Err = "Error when DeleteUser" + err.Error()
+		var serviceErr = ErrorService{}
+		custErr := errors.New("Can't delete user")
+		serviceErr.SendError(custErr, messageIn.User, chanOut)
+		return
 	}
 	chanOut <- &messageOut
 }

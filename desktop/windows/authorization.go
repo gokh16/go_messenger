@@ -51,9 +51,10 @@ func DrawAuthWindow(conn net.Conn) {
 	signIn.OnClicked(func(*ui.Button) {
 		log.Println("Button Beginning clicked")
 		config.Login = loginInput.Text()
+		config.Password = passwordInput.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-		user := util.NewUser(config.Login, passwordInput.Text(), config.Login, "test@test.com", true, "testUserIcon")
+		user := util.NewUser(config.Login, config.Password, config.Login, "test@test.com", true, "testUserIcon")
 		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "LoginUser")
 
 		_, err := conn.Write([]byte(util.JSONencode(*message)))

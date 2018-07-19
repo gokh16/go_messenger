@@ -40,6 +40,7 @@ func DrawChatWindow(conn net.Conn) {
 			return
 		}
 		if json.Status {
+			buttonUserSlice = nil
 			for _, group := range config.UserGroups {
 				if group != "" && group != config.Login {
 					buttonWithGroup := ui.NewButton(group)
@@ -69,13 +70,16 @@ func DrawChatWindow(conn net.Conn) {
 		log.Println("Routine whis is printing input messages from server")
 		for {
 			json := <-Send
-			output.Append(json.User.Login + ": " + json.Message.Content + "\n")
+			log.Println(config.CurrentGroup, json.Message.MessageRecipientID)
+			if config.CurrentGroup == json.Message.MessageRecipientID {
+				output.Append(json.User.Login + ": " + json.Message.Content + "\n")
+			}
 		}
 	}()
 	refresh.OnClicked(func(*ui.Button) {
 		window.Destroy()
-		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
-		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 1, "GetGroupList")
+		user := util.NewUser(config.Login, config.Password, config.Login, "test@test.com", true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 1, "LoginUser")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")

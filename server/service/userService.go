@@ -73,8 +73,9 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 				return
 			}
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-				Members:  members,
+				Members: members,
 				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
+				ID: group.ID,
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
@@ -98,7 +99,6 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 
 	messageOut.User = messageIn.User
 	messageOut.Status = ok
-
 	chanOut <- &messageOut
 }
 

@@ -11,7 +11,7 @@ type MessageDBService struct {
 
 //AddMessage func.
 func (m *MessageDBService) AddMessage(message *models.Message) bool {
-	dbConn.Where("login = ?", message.User.Username).First(&message.User)
+	dbConn.Where("login = ?", message.User.Login).First(&message.User)
 	dbConn.Where("group_name = ?", message.Group.GroupName).First(&message.Group)
 	message.MessageSenderID = message.User.ID
 	message.MessageRecipientID = message.Group.ID

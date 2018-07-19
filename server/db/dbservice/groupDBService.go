@@ -14,7 +14,7 @@ type GroupDBService struct {
 //CreateGroup method creates new record in DB Group table.
 // It returns bool value.
 func (g *GroupDBService) CreateGroup(group *models.Group) (bool, error) {
-	dbConn.Where("login = ?", group.User.Username).First(&group.User)
+	dbConn.Where("login = ?", group.User.Login).First(&group.User)
 	dbConn.Where("group_name = ?", group.GroupName).First(&group)
 	group.GroupOwnerID = group.User.ID
 	if dbConn.NewRecord(group) {

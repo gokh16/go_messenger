@@ -148,7 +148,8 @@ var humble = new Vue({
                     modWin.innerHTML ='';
                     modWin.innerHTML = '<div id="modChange"></div>';
                     var modWin = document.getElementById('modChange');
-                    modWin.innerHTML ='';
+                    modWin.className = 'col m2 offset-m9';
+                    modWin.innerHTML ='<h4 class="white-text">User list:</h4>';
                     if (typeof msg.ContactList != "undefined") {
                         humble.ContactList = msg.ContactList;
                         for (var i = 0; i < msg.ContactList.length; i++) {
@@ -171,7 +172,8 @@ var humble = new Vue({
                     modWin.innerHTML ='';
                     modWin.innerHTML = '<div id="modChange"></div>';
                     var modWin = document.getElementById('modChange');
-                    modWin.innerHTML ='';
+                    modWin.className = 'col m2 offset-m9';
+                    modWin.innerHTML ='<h4 class="white-text">Contact list:</h4>';
                     if (typeof msg.ContactList != "undefined") {
                         humble.ContactList = msg.ContactList;
                         for (var i = 0; i < msg.ContactList.length; i++) {
@@ -197,7 +199,7 @@ var humble = new Vue({
     methods: {
         send: function () {
             var element = document.getElementById('chat-messages');
-            if (this.MessageIn.Message.Content != '') {
+            if (this.MessageIn.Message.Content != '' && typeof this.MessageIn.Group.GroupName !="undefined") {
                 this.MessageIn.Message.User.Username = humble.User.Username;
                 this.MessageIn.Message.User.Login = humble.User.Login;
                 this.MessageIn.Message.User.ID = humble.User.ID;
@@ -313,14 +315,15 @@ var humble = new Vue({
             var modWin = document.getElementById('chat-messages');
             modWin.innerHTML = '<div id="modChange"></div>';
             var modWin = document.getElementById('modChange');
+            modWin.className = 'col m2 offset-m9';
             if (typeof this.ContactList != "undefined") {
-                modWin.innerHTML = ' <div class="input-field white-text col s12"><input type="text" id="creatingGroup">\n' +
+                modWin.innerHTML = ' <div class="input-field white-text "><input type="text" id="creatingGroup">\n' +
                     '<label for="creatingGroup">Название группы</label></div>';
                 for (var i = 0; i < this.ContactList.length; i++) {
                     if (this.User.Login != this.ContactList[i].Login) {
                         modWin.innerHTML +=
                             '<div class="form-check">' +
-                            '<input type="checkbox" class="form-check-input col s12"  id = ' +
+                            '<input type="checkbox" class="form-check-input "  id = ' +
                             this.ContactList[i].Login + '><label class="form-check-label" for=' +
                             this.ContactList[i].Login + '>'+
                             this.ContactList[i].Username +'</label>'+
@@ -395,8 +398,10 @@ var humble = new Vue({
                         '<br/>';
                 })
             }else{
-                this.MessageIn.Group.GroupName =el ;
-                this.RecContent = this.RecContents[el];
+                this.$nextTick(function () {
+                    this.MessageIn.Group.GroupName =el ;
+                    this.RecContent = this.RecContents[el];
+                })
             }
         },
 

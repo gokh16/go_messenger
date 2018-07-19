@@ -34,13 +34,11 @@
                 </div>
             </div>
         </div>
-        <div class="col m9 s11">
+        <div class="col m10 s11">
             <div class="card horizontal">
                 <div id="chat-messages" class="card-content blue-grey darken-3" v-html="RecContent">
                 </div>
             </div>
-        </div>
-        <div class="col s1 burgerMobile">
             <img src="menuIcon.png"  class = "burger_trigger" alt="" @click="burger">
             <ul class="menu"  @click="burger">
                 <li @click = "openProfile">Профиль</li>
@@ -50,27 +48,18 @@
                 <li @click ="showUsers">Поиск пользователя</li>
                 <li @click="exit">Выйти</li>
             </ul>
-            <div id="menuContent"></div>
         </div>
-        <!--<div class="col s2">
-            <div class="card vertical">
-                <div class="input-field col s2">
-                    <button class="waves-effect waves-light btn" @click="showUsers()">
-                        ShowUsers
-                    </button>
-                </div>
-                <div id="userList" class="card-content blue-grey darken-3 col" v-html="OnlineUsers">
 
-                </div>
-            </div>
-        </div>-->
+
+
+
     </div>
     <div class="row" v-if="joined && !profile">
-        <div class="input-field white-text col s8">
+        <div class="input-field white-text col s8 offset-s2">
             <input type="text" v-model.trim="MessageIn.Message.Content" @keyup.enter="send">
             <label for="Content">Write a message...</label>
         </div>
-        <div class="input-field col s4">
+        <div class="input-field col s4 offset-s2">
             <button class="waves-effect waves-light btn" @click="send">
                 <i class="material-icons right">chat</i>
                 Send
@@ -80,8 +69,8 @@
 
 
     <div class = "row prof" v-if="profile">
-        <div class="col s12">
-            <div id="profile" class="card-panel teal lighten-2">
+        <div class="col m6 offset-m3 s12">
+            <div id="profile" class="card-panel teal lighten-2 ">
                 <img class="responsive-img col m8 s12" id="profileIcon" :src="ProfileStr.ProfileUser.UserIcon">
 
                 <div class="white-text text-darken-2 m4 s12" v-html="ProfileStr.ProfileUser.Login" id="userLogin">

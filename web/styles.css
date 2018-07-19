@@ -43,14 +43,13 @@ nav img {
     width: 20%;
 }
 #modChange{
-    width: 70%;
-    border: 2px solid #26a69a;
+    background-color:#303e45;
     
 }
 
 #profile{
     height: 50vh;
-    width: 30%;
+
     margin: 0 auto;
     border: 2px solid #26a69a;
 }
@@ -61,12 +60,13 @@ nav img {
 .burger_trigger{
     right: 10px;
     position: absolute;
-    top: 85px;
-    width: 75px;
+    top: 5px;
+    width: 50px;
     cursor: pointer;
 
 }
 .menu,.menu_opened{
+    top: 0;
     right: 2px;
     display: none;
     padding-top: 60px;
@@ -86,16 +86,14 @@ nav img {
     background-color: white;
     color: black;
 }
-.menu_opened{
+.menu_opened {
     display: block;
-}
-#menuContent{
-    padding-top: 70px;
 }
 
 #profileIcon{
     width: 30vh;
     height: 30vh;
+    margin-right: 20px;
 }
 #userLogin,#userUsername,#userEmail{
     font-size: 25px;

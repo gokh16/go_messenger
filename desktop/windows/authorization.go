@@ -53,7 +53,7 @@ func DrawAuthWindow(conn net.Conn) {
 		config.Login = loginInput.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-		user := util.NewUser(config.Login, passwordInput.Text(), config.Login, "test@test.com", true, "testUserIcon")
+		user := util.NewUser(config.Login, passwordInput.Text(), config.Login, "humble@humble.com", true, "humbleUserIcon")
 		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "LoginUser")
 
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
@@ -74,7 +74,7 @@ func DrawAuthWindow(conn net.Conn) {
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 		config.Login = loginInput.Text()
-		user := util.NewUser(config.Login, passwordInput.Text(), config.Login, "test@test.com", true, "testUserIcon")
+		user := util.NewUser(config.Login, passwordInput.Text(), config.Login, "humble@humble.com", true, "humbleUserIcon")
 		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "CreateUser")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {

@@ -43,13 +43,13 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry, 
 		}()
 
 		var members []structure.User
-		members = append(members, *NewUser(config.Login, "testPassword", config.Login, "test@test.com", true, "testUserIcon"))
-		members = append(members, *NewUser(button.Text(), "testPassword", button.Text(), "test@test.com", true, "testUserIcon"))
+		members = append(members, *NewUser(config.Login, "humblePassword", config.Login, "humble@humble.com", true, "humbleUserIcon"))
+		members = append(members, *NewUser(button.Text(), "humblePassword", button.Text(), "humble@humble.com", true, "humbleUserIcon"))
 
 		config.GroupName = button.Text()
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
-		user := NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		user := NewUser(config.Login, "", config.Login, "humble@humble.com", true, "humbleUserIcon")
 		group := NewGroup(user, "private", config.GroupName, config.UserID, 1)
 		msg := NewMessage(user, group, "", config.UserID, 1, "Text")
 		message := NewMessageOut(user, &structure.User{}, group, msg, members, 1, 0, "GetGroup")
@@ -70,7 +70,7 @@ func ContactsAction(button *ui.Button, conn net.Conn, contacts *ui.Window, chat 
 		members = append(members, *NewUser(button.Text(), "", button.Text(), "", true, ""))
 		config.GroupName = config.Login + button.Text()
 		config.UserGroups = append(config.UserGroups, config.GroupName)
-		user := NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		user := NewUser(config.Login, "", config.Login, "humble@humble.com", true, "humbleUserIcon")
 		group := NewGroup(user, "private", config.GroupName, config.UserID, 1)
 		message := NewMessageOut(user, &structure.User{}, group, &structure.Message{}, members, 1, 0, "CreateGroup")
 		_, err := conn.Write([]byte(JSONencode(*message)))

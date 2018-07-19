@@ -86,7 +86,7 @@ func DrawChatWindow(conn net.Conn) {
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 
-		user := util.NewUser(config.Login,"", config.Login, "test@test.com", true, "testUserIcon")
+		user := util.NewUser(config.Login,"", config.Login, "humble@humble.com", true, "humbleUserIcon")
 		group := util.NewGroup(user, "private", config.GroupName, config.UserID, 1)
 		msg := util.NewMessage(user, group, input.Text(), config.UserID, id, "Text")
 		message := util.NewMessageOut(user, &structure.User{}, group, msg, nil, 1, 0, "SendMessageTo")
@@ -100,7 +100,7 @@ func DrawChatWindow(conn net.Conn) {
 	})
 	contacts.OnClicked(func(*ui.Button) {
 		log.Println("Button Contacts clicked")
-		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
+		user := util.NewUser(config.Login, "", config.Login, "humble@humble.com", true, "humbleUserIcon")
 		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 0, "GetUsers")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {

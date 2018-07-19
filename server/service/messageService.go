@@ -6,7 +6,6 @@ import (
 	"go_messenger/server/service/interfaces"
 	"go_messenger/server/service/serviceModels"
 	"go_messenger/server/userConnections"
-	"log"
 )
 
 //MessageService struct of Message model on service level
@@ -45,6 +44,5 @@ func (m *MessageService) SendMessageTo(messageIn *userConnections.MessageIn, cha
 	groupOut := serviceModels.NewGroup(group, members, message)
 	messageOut.Recipients = members
 	messageOut.GroupList = append(messageOut.GroupList, *groupOut)
-	log.Println(messageOut.Message.MessageRecipientID)
 	chanOut <- &messageOut
 }

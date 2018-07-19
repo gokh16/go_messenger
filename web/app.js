@@ -133,6 +133,8 @@ var test = new Vue({
             }else if (msg.Action == "SendMessageTo") {
                 if(msg.Message.User.Username != test.User.Username) {
                     if (typeof self.RecContents[msg.Message.Group.GroupName] == "undefined") {
+
+
                         self.RecContents[msg.Message.Group.GroupName] = '';
                         if(msg.Message.Group.GroupTypeID == 1) {
                             var a = document.getElementById(test.User.Login + msg.Message.User.Login);
@@ -150,7 +152,6 @@ var test = new Vue({
                         }else{
                             var elg = document.getElementById(msg.Message.Group.GroupName);
                             if(elg ==null) {
-
                                 self.MyGroups +=
                                     '<div class="input-field col s12">' +
                                     '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
@@ -244,6 +245,14 @@ var test = new Vue({
                 this.MessageIn.User.Username = this.User.Username;
                 this.MessageIn.Message.Content = $('<p>').html(this.MessageIn.Message.Content).text();
                 this.MessageIn.Message.Group.GroupName = this.MessageIn.Group.GroupName;
+                if(typeof test.GroupList != "undefined")
+                for(var i=0;i<test.GroupList.length;i++)
+                {
+                    if(test.GroupList[i].GroupName == this.MessageIn.Group.GroupName)
+                    {
+                        this.MessageIn.Message.Group = test.GroupList[i];
+                    }
+                }
                 this.MessageIn.Action = "SendMessageTo";
                 if (typeof this.RecContents[this.MessageIn.Group.GroupName] == "undefined"){
                     this.RecContents[this.MessageIn.Group.GroupName] = '';

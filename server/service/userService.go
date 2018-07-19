@@ -65,17 +65,17 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		}
 
 		for _, group := range groupList {
-			members, err := u.groupManager.GetMemberList(&group)
-			if err != nil {
+			members, er := u.groupManager.GetMemberList(&group)
+			if er != nil {
 				var serviceErr = ErrorService{}
 				custErr := errors.New("Can't get member list")
 				serviceErr.SendError(custErr, messageIn.User, chanOut)
 				return
 			}
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-				Members: members,
+				Members:  members,
 				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
-				ID: group.ID,
+				ID:       group.ID,
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}

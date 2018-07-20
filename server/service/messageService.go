@@ -15,6 +15,7 @@ type MessageService struct {
 	groupManager   interfaces.GroupManager
 }
 
+//InitMessageService Method that init Interfaces of DB level
 func (m *MessageService) InitMessageService(ui interfaces.UserManager, gi interfaces.GroupManager, mi interfaces.MessageManager) {
 	m.userManager = ui
 	m.groupManager = gi

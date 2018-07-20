@@ -73,7 +73,7 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 				return
 			}
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
-				Members:  members,
+				Members: members, ID: group.ID,
 				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)

@@ -15,10 +15,10 @@ func SendJSON(conns []net.Conn, str *serviceModels.MessageOut) {
 	}
 	for _, conn := range conns {
 		//todo ask how i may optimize it!
-		if _, err := conn.Write(outComingData); err != nil {
+		if _, er := conn.Write(outComingData); er != nil {
 			log.Println(err)
 		}
-		if _, err = conn.Write([]byte("\n")); err != nil {
+		if _, er := conn.Write([]byte("\n")); er != nil {
 			log.Println(err)
 		}
 	}

@@ -18,7 +18,7 @@ type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
-//Function InitRouterOut is an init for routerOut struct
+//InitRouterOut is an init for routerOut struct
 func InitRouterOut(conn *userConnections.Connections) {
 	initRout := RouterOut{}
 	initRout.Connection = conn
@@ -90,7 +90,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 
 func (r *RouterOut) getAction(msg *serviceModels.MessageOut) string {
 	switch msg.Action {
-	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "GetUser", "Error","GetContactList":
+	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "GetUser", "Error", "GetContactList":
 		return msg.Action
 	default:
 		return "No matches found"

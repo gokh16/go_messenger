@@ -138,9 +138,8 @@ nav img {
         width: 80%;
     }
     .brand-logo{
-        width: 60vh;
         margin-left: 60px;
-        font-size: 15px;
+        font-size: 10px;
     }
     .mobileGlist{
         display: none;

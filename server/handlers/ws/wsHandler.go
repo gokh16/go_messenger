@@ -44,7 +44,7 @@ func Handler(str HandlerWS) {
 		go ReadMessage(conn, str)
 	})
 	log.Println("HTTP server started on :12345")
-	err := http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -66,11 +66,6 @@ func ReadMessage(conn *websocket.Conn, str HandlerWS) {
 			return
 		}
 		GetJSON(data, conn, str)
-		/*_, data, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("Cannot read message")
-		}*/
-		//GetJSON(data, conn, str)
 	}
 }
 

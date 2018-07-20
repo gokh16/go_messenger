@@ -42,6 +42,7 @@ var humble = new Vue({
             switch (msg.Action){
                 case "LoginUser":
                     if(msg.Status == false){
+                        alert("Не правильный пароль или логин!")
                         location.reload();
                     }
                     if (typeof msg.User != "undefined") {
@@ -141,6 +142,7 @@ var humble = new Vue({
                             msg.Message.Content + '</div>' +
                             '<br/>';
                         self.RecContent = self.RecContents[msg.Message.Group.GroupName];
+                        this.scrollInBot();
                     }
                     break;
                 case "GetUsers":
@@ -192,7 +194,7 @@ var humble = new Vue({
                     }
                     break;
             }
-            element.scrollTop = element.scrollHeight;
+
         });
     },
 
@@ -215,6 +217,7 @@ var humble = new Vue({
                         if(humble.GroupList[i].GroupName == this.MessageIn.Group.GroupName)
                         {
                             this.MessageIn.Message.Group = humble.GroupList[i];
+                            this.MessageIn.Message.MessageRecipientID=humble.GroupList[i];
                         }
                     }
                 this.MessageIn.Action = "SendMessageTo";
@@ -286,9 +289,8 @@ var humble = new Vue({
             this.MessageIn.User.Password = $('<p>').html(this.MessageIn.User.Password).text();
             this.MessageIn.User.Email = $('<p>').html(this.MessageIn.User.Email).text();
             this.MessageIn.User.UserIcon = $('<p>').html(this.MessageIn.User.UserIcon).text();
-            console.log($('<p>').html(this.MessageIn.User.UserIcon).text());
             if(this.MessageIn.User.UserIcon == ''){
-                this.MessageIn.User.UserIcon = "http://ishowmy.support/img/user-icon-360x360.jpg";
+                this.MessageIn.User.UserIcon = "http://www.it-academy.kg/img/lang_img/hand/750e3525a8c1f3f242c2a7a081ef464d.png";
             }
             this.MessageIn.User.Status = true;
             this.MessageIn.Action = "CreateUser";
@@ -374,6 +376,7 @@ var humble = new Vue({
             if(typeof this.GroupList != "undefined" || this.GroupList !=null){
                 for (var i = 0; i < this.GroupList.length; i++) {
                     if (this.GroupList[i].GroupName == el || rgName == this.GroupList[i].GroupName) {
+                        if(rgName == this.GroupList[i].GroupName) el = rgName;
                         net = false;
                         break;
                     }
@@ -399,8 +402,10 @@ var humble = new Vue({
                 })
             }else{
                 this.$nextTick(function () {
+                    console.log(el);
                     this.MessageIn.Group.GroupName =el ;
                     this.RecContent = this.RecContents[el];
+                    this.scrollInBot();
                 })
             }
         },
@@ -470,7 +475,7 @@ function createPubGroup() {
     }
     cout = 0;
     var accept = 0;
-    for(var i =0;i<chbox.length-1; i++){
+    for(var i =0;i<chbox.length; i++){
         if(chbox[i].checked){
             accept++;
             var user1 = {};

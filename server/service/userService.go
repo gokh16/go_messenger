@@ -25,7 +25,7 @@ func (u *UserService) InitUserService(ui interfaces.UserManager, gi interfaces.G
 func (u *UserService) CreateUser(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{Action: messageIn.Action}
 	if messageIn.User.Password == "" || messageIn.User.Login == "" {
-		messageOut.Err = "Emty Login or Password"
+		messageOut.Err = "Empty Login or Password"
 		messageOut.Status = false
 		chanOut <- &messageOut
 		return
@@ -65,8 +65,8 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 		}
 
 		for _, group := range groupList {
-			members, err := u.groupManager.GetMemberList(&group)
-			if err != nil {
+			members, er := u.groupManager.GetMemberList(&group)
+			if er != nil {
 				var serviceErr = ErrorService{}
 				custErr := errors.New("Can't get member list")
 				serviceErr.SendError(custErr, messageIn.User, chanOut)
@@ -75,6 +75,7 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 			groupOut := serviceModels.Group{GroupName: group.GroupName, GroupType: group.GroupType,
 				Members: members, ID: group.ID,
 				Messages: u.messageManager.GetGroupMessages(&group, messageIn.MessageLimit),
+				ID:       group.ID,
 			}
 			messageOut.GroupList = append(messageOut.GroupList, groupOut)
 		}
@@ -98,7 +99,6 @@ func (u *UserService) LoginUser(messageIn *userConnections.MessageIn, chanOut ch
 
 	messageOut.User = messageIn.User
 	messageOut.Status = ok
-
 	chanOut <- &messageOut
 }
 

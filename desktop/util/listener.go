@@ -19,7 +19,6 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry, 
 
 		go func() {
 			log.Println("Routine which is getting messages and opening group")
-
 			for _, group := range data.GroupList {
 				if group.GroupName == button.Text() {
 					config.MessagesInGroup = group.Messages
@@ -43,17 +42,17 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry, 
 		}()
 
 		var members []structure.User
-		members = append(members, *NewUser(config.Login, "testPassword", config.Login, "test@test.com", true, "testUserIcon"))
-		members = append(members, *NewUser(button.Text(), "testPassword", button.Text(), "test@test.com", true, "testUserIcon"))
+		members = append(members, *NewUser(config.Login, "humblePassword", config.Login, "humble@humble.com", true, "humbleUserIcon"))
+		members = append(members, *NewUser(button.Text(), "humblePassword", button.Text(), "humble@humble.com", true, "humbleUserIcon"))
 
 		config.GroupName = button.Text()
+		config.CurrentGroup = config.GroupID[config.GroupName]
 		//формирование новой структуры на отправку на сервер,
 		//заполнение текущего экземпляра требуемыми полями.
 		user := NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
 		group := NewGroup(user, config.GroupName, config.UserID, 1)
 		msg := NewMessage(user, group, "", config.UserID, 1, "Text")
 		message := NewMessageOut(user, &structure.User{}, group, msg, members, 1, 0, "GetGroup")
-
 		_, err := conn.Write([]byte(JSONencode(*message)))
 		if err != nil {
 			log.Println(err)

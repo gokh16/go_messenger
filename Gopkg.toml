@@ -21,7 +21,7 @@
 #
 # [prune]
 #   non-go = false
-#   go-tests = true
+#   go-humbles = true
 #   unused-packages = true
 
 
@@ -42,5 +42,5 @@
   version = "1.9.1"
 
 [prune]
-  go-tests = true
+  go-humbles = true
   unused-packages = true

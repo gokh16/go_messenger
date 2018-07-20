@@ -42,8 +42,8 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry, 
 		}()
 
 		var members []structure.User
-		members = append(members, *NewUser(config.Login, "testPassword", config.Login, "test@test.com", true, "testUserIcon"))
-		members = append(members, *NewUser(button.Text(), "testPassword", button.Text(), "test@test.com", true, "testUserIcon"))
+		members = append(members, *NewUser(config.Login, "humblePassword", config.Login, "humble@humble.com", true, "humbleUserIcon"))
+		members = append(members, *NewUser(button.Text(), "humblePassword", button.Text(), "humble@humble.com", true, "humbleUserIcon"))
 
 		config.GroupName = button.Text()
 		config.CurrentGroup = config.GroupID[config.GroupName]

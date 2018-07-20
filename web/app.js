@@ -15,6 +15,7 @@ var message={
     'User': user,
     'Group': {'GroupName': ''},
     'Content': '',
+    'MessageRecipientID':0,
 };
 var group={
     'GroupName': '',
@@ -244,6 +245,15 @@ var test = new Vue({
                 this.MessageIn.User.Username = this.User.Username;
                 this.MessageIn.Message.Content = $('<p>').html(this.MessageIn.Message.Content).text();
                 this.MessageIn.Message.Group.GroupName = this.MessageIn.Group.GroupName;
+                if(typeof test.GroupList != "undefined")
+                    for(var i=0;i<test.GroupList.length;i++)
+                    {
+                        if(test.GroupList[i].GroupName == this.MessageIn.Group.GroupName)
+                        {
+                            this.MessageIn.Message.Group = test.GroupList[i];
+                            this.MessageIn.Message.MessageRecipientID = test.GroupList[i].ID
+                        }
+                    }
                 this.MessageIn.Action = "SendMessageTo";
                 if (typeof this.RecContents[this.MessageIn.Group.GroupName] == "undefined"){
                     this.RecContents[this.MessageIn.Group.GroupName] = '';

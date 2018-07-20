@@ -118,13 +118,14 @@ func initGroupType(db *gorm.DB) {
 	public := models.GroupType{Type: "public"}
 	public.ID = 2
 	rel := models.RelationType{Type: "friend"}
+	rel.ID = 1
 	if !db.NewRecord(&private) {
 		db.Create(&private)
 	}
 	if !db.NewRecord(&public) {
 		db.Create(&public)
 	}
-	if db.NewRecord(&rel) {
+	if !db.NewRecord(&rel) {
 		db.Create(&rel)
 	}
 }

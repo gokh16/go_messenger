@@ -12,6 +12,7 @@ import (
 	"github.com/ProtonMail/ui"
 )
 
+//DrawRegistrationWindow is a method which draw the registration window
 func DrawRegistrationWindow(conn net.Conn) {
 	log.Println("Opened DrawRegistrationWindow")
 	window := ui.NewWindow("Humble", 500, 500, false)

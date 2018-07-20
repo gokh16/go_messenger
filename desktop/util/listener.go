@@ -39,7 +39,6 @@ func ButtonActions(button *ui.Button, conn net.Conn, output *ui.MultilineEntry, 
 				}
 				output.Append(login + ": " + message.Content + "\n")
 			}
-			return
 		}()
 
 		var members []structure.User

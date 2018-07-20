@@ -25,19 +25,19 @@
 <main id="app">
     <div class="row .align-middle" id="signup" v-if="!joined">
         <div class="input-field white-text col s12">
-            <input type="text" v-model.trim="MessageIn.User.Login">
+            <input type="text" v-model.trim="MessageIn.User.Login" @keyup.enter="signUp()">
             <label for="MessageIn.User.Login">Login</label>
         </div>
         <div class="input-field white-text col s12">
-            <input type="password" v-model.trim="MessageIn.User.Password">
+            <input type="password" v-model.trim="MessageIn.User.Password" @keyup.enter="signUp()">
             <label for="MessageIn.User.Password">Password</label>
         </div>
         <div class="input-field white-text col s12">
-            <input type="text" v-model.trim="MessageIn.User.Username">
+            <input type="text" v-model.trim="MessageIn.User.Username" @keyup.enter="signUp()">
             <label for="MessageIn.User.Username">Username</label>
         </div>
         <div class="input-field white-text col s12">
-            <input type="text" v-model.trim="MessageIn.User.Email">
+            <input type="text" v-model.trim="MessageIn.User.Email" @keyup.enter="signUp()">
             <label for="MessageIn.User.Email">Email</label>
         </div>
         <div class="input-field white-text col s12">

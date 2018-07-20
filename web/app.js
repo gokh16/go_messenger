@@ -213,7 +213,7 @@ var humble = new Vue({
                         if(humble.GroupList[i].GroupName == this.MessageIn.Group.GroupName)
                         {
                             this.MessageIn.Message.Group = humble.GroupList[i];
-                            this.MessageIn.Message.MessageRecipientID=humble.GroupList[i];
+                            this.MessageIn.Message.MessageRecipientID=humble.GroupList[i].ID;
                         }
                     }
                 this.MessageIn.Action = "SendMessageTo";

@@ -67,7 +67,9 @@ nav img {
 #menuContent{
     background-color:#303e45;
     width: 30%;
+    height: 65vh;
     border-left: 5px solid #171d21;
+    overflow-y: auto;
 }
 
 #profile{

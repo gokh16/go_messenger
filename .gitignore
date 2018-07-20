@@ -1,0 +1,6 @@
+#IDEA files
+.idea/*
+ignore/*
+vendor/*
+Gopkg.lock
+*~

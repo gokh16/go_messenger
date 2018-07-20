@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Humble</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/emojione/2.2.6/assets/css/emojione.min.css"/>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="blue-grey darken-4">
+<header>
+    <nav class="row blue-grey darken-3">
+        <div class="nav-wrapper col m10 s12">
+            <img src="go_icon.png" alt="ss" height="50px">
+            <a href="/" class="brand-logo col s8 offset-s4 m4"> go-messenger</a>
+        </div>
+
+    </nav>
+</header>
+<main id="app">
+    <div class="row"  v-if="joined && !profile">
+        <div class="col l2 m4 s8 mobileGlist">
+            <!--<div class ="searchclass input-field white-text"><input class=" darken-3" type="search" placeholder="Search" v-model.trim="searchUser" autocomplete="off" @keyup.enter="search"></div>-->
+            <div class="card horizontal">
+                <div id="groupList" class="card-content blue-grey darken-3" v-html="MyGroups">
+
+                </div>
+            </div>
+        </div>
+        <div class="col l10 m8 s11">
+
+            <div class="card horizontal">
+                <div id="chat-messages" class="card-content blue-grey darken-3 " v-html="RecContent">
+                </div>
+                <div id="menuContent" class ="card-content blue-grey darken-3"></div>
+            </div>
+            <img src="menuIcon.png"  class = "burger_trigger" alt="" @click="burger">
+            <ul class="menu"  @click="burger">
+                <li @click = "openProfile">Профиль</li>
+                <li @click = "showGroupListMob" id="showGroupListMob">Мои группы</li>
+                <li @click = "createPublicGroup">Создать группу</li>
+                <li @click ="showContacts">Контакты</li>
+                <li @click ="showUsers">Поиск пользователя</li>
+                <li @click="exit">Выйти</li>
+            </ul>
+        </div>
+
+
+
+
+    </div>
+    <div class="row" v-if="joined && !profile">
+        <div class="input-field white-text col l8 offset-l2 offset-m4 s8">
+            <input type="text" v-model.trim="MessageIn.Message.Content" @keyup.enter="send">
+            <label for="Content">Write a message...</label>
+        </div>
+        <div class="input-field col l4 offset-l2 offset-m4 s4">
+            <button class="waves-effect waves-light btn" @click="send">
+                <i class="material-icons right">chat</i>
+                Send
+            </button>
+        </div>
+    </div>
+
+
+    <div class = "row prof" v-if="profile">
+        <div class="container col m6 offset-m3 s12">
+            <div id="profile" class="card-panel teal lighten-2 ">
+                <img class="responsive-img col m8 s12" id="profileIcon" :src="ProfileStr.ProfileUser.UserIcon">
+
+                <div class="white-text text-darken-2 m4 s12" v-html="ProfileStr.ProfileUser.Login" id="userLogin">
+
+                </div>
+
+                <div class="white-text text-darken-2 m4 s12" v-html="ProfileStr.ProfileUser.Username" id="userUsername">
+
+                </div>
+
+                <div class="white-text text-darken-2 m4 s12" v-html="ProfileStr.ProfileUser.Email" id="userEmail">
+
+                </div>
+                <div class="input-field col s12" v-if="ProfileStr.NotMy">
+                    <button class="waves-effect waves-light btn col s12" @click="changeUserFromProfile">
+                        Send message
+                    </button>
+                </div>
+                <div class="input-field col s12" v-if="ProfileStr.NotMy"  v-if="!ProfileStr.Friend">
+                    <button class="waves-effect waves-light btn col s12" @click="AddContact">
+                        Add to contacts
+                    </button>
+                </div>
+                <div class="input-field col s12">
+                    <button class="waves-effect waves-light btn col s12" @click="backtochat">
+                        Go back
+                    </button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+    <div class="row .align-middle"  id="signup" v-if="!joined">
+        <div class="input-field white-text col s12">
+            <input type="text" v-model.trim="MessageIn.User.Login" @keyup.enter="join()">
+            <label for="MessageIn.User.Login">Login</label>
+        </div>
+        <div class="input-field white-text col s12">
+            <input type="password" v-model.trim="MessageIn.User.Password" @keyup.enter="join()">
+            <label for="MessageIn.User.Password">Password</label>
+        </div>
+        <div class="input-field col s12">
+            <button class="waves-effect waves-light btn col s12" @click="join()">
+                Sign in
+            </button>
+        </div>
+        <div class="input-field col s12">
+            <button class="waves-effect waves-light btn col s12" onClick='location.href="signUp.html"'> <!--@click="signUp()"> -->
+                Sign up
+            </button>
+        </div>
+    </div>
+</main>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/emojione/2.2.6/lib/js/emojione.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="app.js"></script>
+
+</body>
+
+</html>

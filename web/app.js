@@ -147,6 +147,8 @@ var humble = new Vue({
                     break;
                 case "GetUsers":
                     var modWin = document.getElementById('menuContent');
+                    modWin.style.zIndex = '100';
+                    modWin.style.display = 'block';
                     modWin.innerHTML ='<h4 class="white-text">User list:</h4>';
                     if (typeof msg.ContactList != "undefined") {
                         humble.ContactList = msg.ContactList;
@@ -167,6 +169,8 @@ var humble = new Vue({
                     break;
                 case "GetContactList":
                     var modWin = document.getElementById('menuContent');
+                    modWin.style.zIndex = '100';
+                    modWin.style.display = 'block';
                     modWin.innerHTML ='<h4 class="white-text">Contact list:</h4>';
                     if (typeof msg.ContactList != "undefined") {
                         humble.ContactList = msg.ContactList;
@@ -300,13 +304,19 @@ var humble = new Vue({
         },
 
         showGroupListMob:function(){
+            var modWin = document.getElementById('menuContent');
+            modWin.style.display = 'none';
             var el =document.getElementById("chat-messages");
+            el.style += 'z-index: 120';
+
             el.innerHTML = '';
             el.innerHTML+=this.MyGroups;
         },
 
         createPublicGroup: function(){
             var modWin = document.getElementById('menuContent');
+            modWin.style.display = 'block';
+            modWin.style.zIndex = '100';
             if (typeof this.ContactList != "undefined") {
                 modWin.innerHTML = ' <div class="input-field white-text "><input type="text" id="creatingGroup">\n' +
                     '<label for="creatingGroup">Название группы</label></div>';

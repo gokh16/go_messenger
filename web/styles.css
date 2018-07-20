@@ -179,8 +179,8 @@ nav img {
     #menuContent{
         width: 100%;
         position: absolute;
-        z-index: 100;
         border-left: 0;
+        height: 100%;
     }
 }
 

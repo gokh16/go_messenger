@@ -29,7 +29,7 @@ var humble = new Vue({
         RecContent: '',
         joined: false,
         profile: false,
-        MyGroups: '',
+        MyGroups: '<h4 class="white-text">Group list:</h4>',
         creatingGroup:'',
     },
 
@@ -146,11 +146,7 @@ var humble = new Vue({
                     }
                     break;
                 case "GetUsers":
-                    var modWin = document.getElementById('chat-messages');
-                    modWin.innerHTML ='';
-                    modWin.innerHTML = '<div id="modChange"></div>';
-                    var modWin = document.getElementById('modChange');
-                    modWin.className = 'col m2 offset-m9';
+                    var modWin = document.getElementById('menuContent');
                     modWin.innerHTML ='<h4 class="white-text">User list:</h4>';
                     if (typeof msg.ContactList != "undefined") {
                         humble.ContactList = msg.ContactList;
@@ -170,11 +166,7 @@ var humble = new Vue({
                     }
                     break;
                 case "GetContactList":
-                    var modWin = document.getElementById('chat-messages');
-                    modWin.innerHTML ='';
-                    modWin.innerHTML = '<div id="modChange"></div>';
-                    var modWin = document.getElementById('modChange');
-                    modWin.className = 'col m2 offset-m9';
+                    var modWin = document.getElementById('menuContent');
                     modWin.innerHTML ='<h4 class="white-text">Contact list:</h4>';
                     if (typeof msg.ContactList != "undefined") {
                         humble.ContactList = msg.ContactList;
@@ -314,10 +306,7 @@ var humble = new Vue({
         },
 
         createPublicGroup: function(){
-            var modWin = document.getElementById('chat-messages');
-            modWin.innerHTML = '<div id="modChange"></div>';
-            var modWin = document.getElementById('modChange');
-            modWin.className = 'col m2 offset-m9';
+            var modWin = document.getElementById('menuContent');
             if (typeof this.ContactList != "undefined") {
                 modWin.innerHTML = ' <div class="input-field white-text "><input type="text" id="creatingGroup">\n' +
                     '<label for="creatingGroup">Название группы</label></div>';
@@ -339,6 +328,7 @@ var humble = new Vue({
                 'Создать группу' +
                 '</button></div>' +
                 '<br/>';
+
 
         },
 
@@ -393,7 +383,14 @@ var humble = new Vue({
                 this.ws.send(JSON.stringify(this.MessageIn))
                 this.$nextTick(function () {
                     var element = document.getElementById('groupList');
-                    element.innerHTML += '<div class="input-field col s12">' +
+                    /*element.innerHTML += '<div class="input-field col s12">' +
+                        '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
+                        this.ProfileStr.ProfileGroupName + '>' +
+                        this.UsersFromServer[this.ProfileStr.ProfileGroupName].Username +
+                        '</button></div>' +
+                        '<br/>';*/
+
+                    this.MyGroups += '<div class="input-field col s12">' +
                         '<button class="waves-effect waves-light btn col s12" onclick=changeUser(this) id = ' +
                         this.ProfileStr.ProfileGroupName + '>' +
                         this.UsersFromServer[this.ProfileStr.ProfileGroupName].Username +
@@ -462,12 +459,15 @@ function addGroupMember(el){
 }
 function createPubGroup() {
     var el1 = document.getElementById('creatingGroup');
+    if (!el1.value) {
+        Materialize.toast('You must write a group name', 2000);
+        return;
+    }
     var chbox=[];
     var cout =0;
     if (typeof humble.ContactList != "undefined") {
         for (var i = 0; i < humble.ContactList.length; i++) {
             chbox[cout]=document.getElementById(humble.ContactList[i].Login);
-
             if(chbox[cout] != null){
                 cout++;
             }
@@ -475,6 +475,7 @@ function createPubGroup() {
     }
     cout = 0;
     var accept = 0;
+    document.getElementById('menuContent').innerHTML = '';
     for(var i =0;i<chbox.length; i++){
         if(chbox[i].checked){
             accept++;

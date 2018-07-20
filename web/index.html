@@ -28,16 +28,17 @@
         <div class="col l2 m4 s8 mobileGlist">
             <!--<div class ="searchclass input-field white-text"><input class=" darken-3" type="search" placeholder="Search" v-model.trim="searchUser" autocomplete="off" @keyup.enter="search"></div>-->
             <div class="card horizontal">
-
                 <div id="groupList" class="card-content blue-grey darken-3" v-html="MyGroups">
 
                 </div>
             </div>
         </div>
         <div class="col l10 m8 s11">
+
             <div class="card horizontal">
-                <div id="chat-messages" class="card-content blue-grey darken-3" v-html="RecContent">
+                <div id="chat-messages" class="card-content blue-grey darken-3 " v-html="RecContent">
                 </div>
+                <div id="menuContent" class ="card-content blue-grey darken-3"></div>
             </div>
             <img src="menuIcon.png"  class = "burger_trigger" alt="" @click="burger">
             <ul class="menu"  @click="burger">
@@ -108,11 +109,11 @@
 
     <div class="row .align-middle"  id="signup" v-if="!joined">
         <div class="input-field white-text col s12">
-            <input type="text" v-model.trim="MessageIn.User.Login">
+            <input type="text" v-model.trim="MessageIn.User.Login" @keyup.enter="join()">
             <label for="MessageIn.User.Login">Login</label>
         </div>
         <div class="input-field white-text col s12">
-            <input type="password" v-model.trim="MessageIn.User.Password">
+            <input type="password" v-model.trim="MessageIn.User.Password" @keyup.enter="join()">
             <label for="MessageIn.User.Password">Password</label>
         </div>
         <div class="input-field col s12">

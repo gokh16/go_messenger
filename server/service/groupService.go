@@ -15,6 +15,7 @@ type GroupService struct {
 	messageManager interfaces.MessageManager
 }
 
+//InitGroupService ...
 func (g *GroupService) InitGroupService(ui interfaces.UserManager, gi interfaces.GroupManager, mi interfaces.MessageManager) {
 	g.userManager = ui
 	g.groupManager = gi

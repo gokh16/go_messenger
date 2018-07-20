@@ -4,11 +4,10 @@ import (
 	"go_messenger/desktop/config"
 	"go_messenger/desktop/structure"
 	"go_messenger/desktop/util"
-	"net"
 	"log"
+	"net"
 )
 
-//var InputData = make(chan util.MessageIn)
 var Contacts = make(chan []structure.User)
 var Send = make(chan util.MessageIn)
 var Beginning = make(chan util.MessageIn)

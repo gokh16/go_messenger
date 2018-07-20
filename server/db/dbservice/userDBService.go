@@ -8,7 +8,6 @@ import (
 
 //UserDBService type with build-in model of User.
 type UserDBService struct {
-	models *models.User
 }
 
 //CreateUser method creates User in DB.
@@ -37,6 +36,7 @@ func (u *UserDBService) LoginUser(user *models.User) (bool, error) {
 	}
 }
 
+//GetAccount is getting the account from db
 func (u *UserDBService) GetAccount(user *models.User) (models.User, error) {
 	dbConn.Where("login = ?", user.Login).Take(&user)
 	if dbConn.Error != nil {
@@ -58,6 +58,7 @@ func (u *UserDBService) AddContact(user, contact *models.User, relationType uint
 
 }
 
+//DeleteContact is deleting contact from database
 func (u *UserDBService) DeleteContact(user, contact *models.User) (bool, error) {
 	relation := models.UserRelation{}
 	dbConn.Where("login = ?", user.Login).Take(&user)
@@ -142,8 +143,7 @@ func (u *UserDBService) EditUser(user *models.User) models.User {
 		dbConn.Save(&userInstance)
 		log.Printf("User with login %s was updated", userInstance.Login)
 		return userInstance
-	} else {
-		userInstance.Status = false
-		return userInstance
 	}
+	userInstance.Status = false
+	return userInstance
 }

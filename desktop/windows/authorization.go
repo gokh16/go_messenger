@@ -10,7 +10,7 @@ import (
 	"github.com/ProtonMail/ui"
 )
 
-//DrawAuthWindow is a func which draw window by GTK's help
+//DrawAuthWindow is a func which draw window by GTK's  help
 func DrawAuthWindow(conn net.Conn) {
 	log.Println("Opened DrawAuthWindow")
 	window := ui.NewWindow("Humble", 500, 500, false)
@@ -48,6 +48,7 @@ func DrawAuthWindow(conn net.Conn) {
 
 	//обработчик кнопки входа, который отправляет запрос на получение всех юзеров в базе
 	//для вывода и создание кнопок с ними
+
 	signIn.OnClicked(func(*ui.Button) {
 		log.Println("Button Beginning clicked")
 		config.Login = loginInput.Text()
@@ -68,13 +69,11 @@ func DrawAuthWindow(conn net.Conn) {
 			window.Hide()
 			DrawErrorWindow("Enter the password!", conn)
 		}
-		return
 	})
 	signUp.OnClicked(func(*ui.Button) {
 		log.Println("Button SignUp clicked")
 		DrawRegistrationWindow(conn)
 		window.Hide()
-		return
 	})
 
 }

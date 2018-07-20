@@ -18,7 +18,7 @@ type RouterOut struct {
 	Connection *userConnections.Connections
 }
 
-//Function InitRouterOut is an init for routerOut struct
+//InitRouterOut is an init for routerOut struct
 func InitRouterOut(conn *userConnections.Connections) {
 	initRout := RouterOut{}
 	initRout.Connection = conn
@@ -30,7 +30,6 @@ func InitRouterOut(conn *userConnections.Connections) {
 func (r *RouterOut) Handler() {
 	//var msg is (*) pointer of serviceModels.MessageOut struct
 	for msg := range r.Connection.OutChan {
-		log.Println(msg.Message.MessageRecipientID)
 		log.Printf("Action of %s: -> %s", msg.User.Username, msg.Action)
 		if sliceTCPCon := r.getSliceOfTCP(msg); sliceTCPCon != nil {
 			tcp.SendJSON(sliceTCPCon, msg)
@@ -91,7 +90,7 @@ func (r *RouterOut) getSliceOfWS(msg *serviceModels.MessageOut) []*websocket.Con
 
 func (r *RouterOut) getAction(msg *serviceModels.MessageOut) string {
 	switch msg.Action {
-	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "GetUser", "Error","GetContactList":
+	case "LoginUser", "GetUsers", "GetGroupList", "GetGroup", "GetUser", "Error", "GetContactList":
 		return msg.Action
 	default:
 		return "No matches found"

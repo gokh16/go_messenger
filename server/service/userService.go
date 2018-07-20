@@ -15,6 +15,7 @@ type UserService struct {
 	messageManager interfaces.MessageManager
 }
 
+//InitUserService Method that init Interfaces of DB level
 func (u *UserService) InitUserService(ui interfaces.UserManager, gi interfaces.GroupManager, mi interfaces.MessageManager) {
 	u.userManager = ui
 	u.groupManager = gi
@@ -117,6 +118,7 @@ func (u *UserService) AddContact(messageIn *userConnections.MessageIn, chanOut c
 	chanOut <- &messageOut
 }
 
+//GetContactList get list of User's contacts
 func (u *UserService) GetContactList(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{User: messageIn.User,
 		Action: messageIn.Action}
@@ -131,6 +133,7 @@ func (u *UserService) GetContactList(messageIn *userConnections.MessageIn, chanO
 	chanOut <- &messageOut
 }
 
+//DeleteContact delete User's contact from contact list
 func (u *UserService) DeleteContact(messageIn *userConnections.MessageIn, chanOut chan<- *serviceModels.MessageOut) {
 	messageOut := serviceModels.MessageOut{
 		Action: messageIn.Action,

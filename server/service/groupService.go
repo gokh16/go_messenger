@@ -33,18 +33,8 @@ func (g *GroupService) CreateGroup(messageIn *userConnections.MessageIn, chanOut
 		return
 	}
 	if ok {
-		switch messageIn.Group.GroupTypeID {
-		// groupTypeID == 1 means privat message
-		case 1:
-			for _, member := range messageIn.Members {
-				g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
-
-			}
-			// groupType == 2 means group chat
-		case 2:
-			for _, member := range messageIn.Members {
-				g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
-			}
+		for _, member := range messageIn.Members {
+			g.groupManager.AddGroupMember(&member, &messageIn.Group, &messageIn.Message)
 
 		}
 	}

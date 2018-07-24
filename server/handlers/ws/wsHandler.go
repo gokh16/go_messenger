@@ -34,7 +34,7 @@ func NewHandlerWS(conns *userConnections.Connections) {
 //Handler is a main func which is establish connections and call func for reading data from
 //connection
 func Handler(str HandlerWS) {
-	fs := http.FileServer(http.Dir("../web"))
+	fs := http.FileServer(http.Dir("./web"))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -52,7 +52,12 @@ func Handler(str HandlerWS) {
 
 //ReadMessage is a func for reading data from ws connection
 func ReadMessage(conn *websocket.Conn, str HandlerWS) {
-	defer conn.Close()
+	defer func() {
+		err := conn.Close()
+		if err != nil {
+			log.Println("Connection ain't closed!")
+		}
+	}()
 	for {
 		messageType, data, err := conn.ReadMessage()
 		if err != nil {
@@ -66,11 +71,6 @@ func ReadMessage(conn *websocket.Conn, str HandlerWS) {
 			return
 		}
 		GetJSON(data, conn, str)
-		/*_, data, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("Cannot read message")
-		}*/
-		//GetJSON(data, conn, str)
 	}
 }
 

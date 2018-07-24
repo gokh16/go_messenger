@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"go_messenger/server/db"
 
-	"github.com/jinzhu/gorm"
-	//ignoring init from package below
 	"log"
 
+	"github.com/jinzhu/gorm"
+	//ignoring init from package below
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 

@@ -48,7 +48,12 @@ func (t *HandlerTCP) Handler() {
 
 //HandleJSON method is handling json and call parser
 func HandleJSON(conn net.Conn, str *HandlerTCP) {
-	defer conn.Close()
+	defer func() {
+		err := conn.Close()
+		if err != nil {
+			log.Println("Connection ain't closed!")
+		}
+	}()
 	remoteAddr := conn.RemoteAddr().String()
 	fmt.Println("Client connected from " + remoteAddr)
 	for {
@@ -71,7 +76,6 @@ func ParseJSON(bytes []byte, conn net.Conn, str *HandlerTCP) {
 		log.Print("Unmarshal doesn't work: ")
 		log.Fatal(err)
 	}
-	log.Println(message.Message.MessageSenderID)
 	str.Connection.AddTCPConn(conn, message.User.Login)
 	routerIn.RouterIn(&message, str.Connection.OutChan)
 }

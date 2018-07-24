@@ -29,32 +29,8 @@ func DrawChatWindow(conn net.Conn) {
 
 	buttonUserSlice := make([]*ui.Button, 0)
 	status := make(chan bool)
-	go func() {
-		log.Println("Routine for accept, hang listeners and show data")
-		json := <-Beginning
-		log.Println(json.Status)
-		if !json.Status {
-			window.Hide()
-			DrawErrorWindow("Wrong login or password", conn)
-			status <- json.Status
-			return
-		}
-		if json.Status {
-			for _, group := range config.UserGroups {
-				if group != "" && group != config.Login {
-					buttonWithGroup := ui.NewButton(group)
-					usersBox.Append(buttonWithGroup, false)
-					buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
-				}
-			}
-			for i := 0; i < len(buttonUserSlice); i++ {
-				util.ButtonActions(buttonUserSlice[i], conn, output, json)
-				output.SetText("")
-			}
-			status <- json.Status
-			return
-		}
-	}()
+
+	go fillButtons(buttonUserSlice, status, window, usersBox, conn, output)
 
 	userHeader.Append(profile, true)
 	userHeader.Append(contacts, true)
@@ -69,13 +45,16 @@ func DrawChatWindow(conn net.Conn) {
 		log.Println("Routine whis is printing input messages from server")
 		for {
 			json := <-Send
-			output.Append(json.User.Login + ": " + json.Message.Content + "\n")
+			log.Println(config.CurrentGroup, json.Message.MessageRecipientID)
+			if config.CurrentGroup == json.Message.MessageRecipientID {
+				output.Append(json.User.Login + ": " + json.Message.Content + "\n")
+			}
 		}
 	}()
 	refresh.OnClicked(func(*ui.Button) {
 		window.Destroy()
-		user := util.NewUser(config.Login, "", config.Login, "test@test.com", true, "testUserIcon")
-		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 1, "GetGroupList")
+		user := util.NewUser(config.Login, config.Password, config.Login, "test@test.com", true, "testUserIcon")
+		message := util.NewMessageOut(user, &structure.User{}, &structure.Group{}, &structure.Message{}, nil, 1, 1, "LoginUser")
 		_, err := conn.Write([]byte(util.JSONencode(*message)))
 		if err != nil {
 			log.Println("OnClickedError! Empty field.")
@@ -119,5 +98,31 @@ func DrawChatWindow(conn net.Conn) {
 	if a := <-status; a {
 		window.Show()
 	}
-	return
+}
+
+func fillButtons(buttonUserSlice []*ui.Button, status chan bool, window *ui.Window, usersBox *ui.Box, conn net.Conn, output *ui.MultilineEntry) {
+	log.Println("Routine for accept, hang listeners and show data")
+	json := <-Beginning
+	if !json.Status {
+		window.Hide()
+		DrawErrorWindow("Wrong login or password", conn)
+		status <- json.Status
+		return
+	}
+	if json.Status {
+		buttonUserSlice = nil
+		for _, group := range config.UserGroups {
+			if group != "" && group != config.Login {
+				buttonWithGroup := ui.NewButton(group)
+				usersBox.Append(buttonWithGroup, false)
+				buttonUserSlice = append(buttonUserSlice, buttonWithGroup)
+			}
+		}
+		for i := 0; i < len(buttonUserSlice); i++ {
+			util.ButtonActions(buttonUserSlice[i], conn, output, json)
+			output.SetText("")
+		}
+		status <- json.Status
+		return
+	}
 }
